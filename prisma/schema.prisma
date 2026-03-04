@@ -68,3 +68,12 @@ model Match {
 
   @@map("matches")
 }
+
+model ShadowTeam {
+  id        String   @id @default("main")
+  formation String   @default("4-3-3")
+  slots     Json     @default("{}")
+  updatedAt DateTime @updatedAt
+
+  @@map("shadow_team")
+}

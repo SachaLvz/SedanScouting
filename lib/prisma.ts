@@ -9,7 +9,7 @@ function createPrismaClient() {
 }
 
 // Clear cached client if it's missing models (e.g. after schema changes in dev)
-if (globalForPrisma.prisma && (!('player' in globalForPrisma.prisma) || !('match' in globalForPrisma.prisma))) {
+if (globalForPrisma.prisma && (!('player' in globalForPrisma.prisma) || !('match' in globalForPrisma.prisma) || !('shadowTeam' in globalForPrisma.prisma))) {
   (globalForPrisma as unknown as Record<string, unknown>).prisma = undefined;
 }
 
