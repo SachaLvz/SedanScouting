@@ -32,11 +32,13 @@ export default function ScoutJoueursPage() {
       && (!fListe || (p.listes || []).includes(fListe));
   });
 
-  const readFile = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const readFile = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const f = e.target.files?.[0]; if (!f) return;
-    const reader = new FileReader();
-    reader.onload = ev => setForm((p: any) => ({ ...p, [field]: ev.target?.result }));
-    reader.readAsDataURL(f);
+    const data = new FormData();
+    data.append('file', f);
+    const res = await fetch('/api/upload', { method: 'POST', body: data });
+    const json = await res.json();
+    if (json.url) setForm((p: any) => ({ ...p, [field]: json.url }));
   };
 
   const save = async () => {

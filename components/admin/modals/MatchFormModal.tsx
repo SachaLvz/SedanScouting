@@ -21,7 +21,7 @@ export default function MatchFormModal({ matchForm, setMatchForm, onSave, onClos
           <div><label className="lbl">Équipe 2 *</label><input className="inp" value={matchForm.equipe2} onChange={e => setMatchForm(p => p ? { ...p, equipe2: e.target.value } : p)} placeholder="Thiès United" /></div>
           <div><label className="lbl">Date</label><input type="date" className="inp" value={matchForm.date} onChange={e => setMatchForm(p => p ? { ...p, date: e.target.value } : p)} /></div>
           <div><label className="lbl">Lieu</label><select className="inp" value={matchForm.lieu} onChange={e => setMatchForm(p => p ? { ...p, lieu: e.target.value } : p)}>{VILLES.map(v => <option key={v}>{v}</option>)}</select></div>
-          <div><label className="lbl">Horaire</label><input type="time" className="inp" value={matchForm.hour} onChange={e => setMatchForm(p => p ? { ...p, horaire: e.target.value } : p)} /></div>
+          <div><label className="lbl">Horaire</label><input type="time" className="inp" value={matchForm.hour} onChange={e => setMatchForm(p => p ? { ...p, hour: e.target.value } : p)} /></div>
           <div><label className="lbl">Compétition</label><input className="inp" value={matchForm.competition} onChange={e => setMatchForm(p => p ? { ...p, competition: e.target.value } : p)} placeholder="Détection, Championnat..." /></div>
           <div>
             <label className="lbl">Type</label>

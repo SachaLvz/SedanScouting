@@ -32,6 +32,7 @@ export default function CalendrierPage({ pendingMatches, doneMatches, showMF, se
                   <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--navy)' }}>{m.equipe1} vs {m.equipe2}</div>
                   <div style={{ display: 'flex', gap: 5, marginTop: 4 }}>
                     <Tag>{m.date}</Tag><Tag>{m.lieu}</Tag>
+                    <Tag>{m.hour} H</Tag>
                     <Tag color="#2563eb" bg="#eff6ff">{m.competition}</Tag>
                     <Tag>{m.type === 'live' ? '🏟 Live' : '📹 Vidéo'}</Tag>
                   </div>
@@ -53,6 +54,7 @@ export default function CalendrierPage({ pendingMatches, doneMatches, showMF, se
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--t2)' }}>{m.equipe1} vs {m.equipe2}</div>
                   <div style={{ display: 'flex', gap: 5, marginTop: 4 }}><Tag>{m.date}</Tag><Tag>{m.lieu}</Tag></div>
+                  <div style={{ display: 'flex', gap: 5, marginTop: 4 }}><Tag>{m.hour}</Tag></div>
                 </div>
                 <Tag color="#16a34a" bg="#f0fdf4">✓ Terminé</Tag>
               </div>

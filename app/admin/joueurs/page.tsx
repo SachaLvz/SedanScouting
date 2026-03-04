@@ -39,11 +39,13 @@ export default function JoueursPage() {
     );
   });
 
-  const readFile = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => {
+  const readFile = async (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => {
     const f = e.target.files?.[0]; if (!f) return;
-    const r = new FileReader();
-    r.onload = ev => setForm(p => p ? { ...p, [field]: ev.target?.result as string } : p);
-    r.readAsDataURL(f);
+    const data = new FormData();
+    data.append('file', f);
+    const res = await fetch('/api/upload', { method: 'POST', body: data });
+    const json = await res.json();
+    if (json.url) setForm(p => p ? { ...p, [field]: json.url } : p);
   };
 
   const save = async () => {
