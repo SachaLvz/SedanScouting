@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  SCOUT
+}
+
+model User {
+  id           String   @id @default(cuid())
+  nom          String
+  role         Role     @default(SCOUT)
+  passwordHash String?  // null pour les scouts, bcrypt hash pour les admins
+  actif        Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Player {
+  id              String   @id
+  prenom          String   @default("")
+  nom             String
+  dateNaissance   String   @default("")
+  ville           String   @default("")
+  poste           String   @default("Gardien")
+  posteSecondaire String   @default("")
+  pied            String   @default("Droitier")
+  taille          String   @default("")
+  poids           String   @default("")
+  photo           String   @default("")
+  pieceIdentite   String   @default("")
+  agent           String   @default("")
+  finContrat      String   @default("")
+  valeur          String   @default("")
+  clubActuel      String   @default("")
+  historique      String   @default("")
+  rapports        Json     @default("[]")
+  notes           Json     @default("[]")
+  listes          Json     @default("[]")
+  createdAt       String   @default("")
+  updatedAt       DateTime @updatedAt
+
+  @@map("players")
+}
+
+model Match {
+  id          String   @id
+  date        String   @default("")
+  hour        String   @default("")
+  equipe1     String   @default("")
+  equipe2     String   @default("")
+  lieu        String   @default("")
+  competition String   @default("")
+  type        String   @default("live")
+  statut      String   @default("planifie")
+  updatedAt   DateTime @updatedAt
+
+  @@map("matches")
+}
