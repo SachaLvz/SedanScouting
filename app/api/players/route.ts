@@ -14,7 +14,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    if (!body.nom) return NextResponse.json({ error: 'Le nom est obligatoire' }, { status: 400 });
+    if (!body.lastName) return NextResponse.json({ error: 'Le nom est obligatoire' }, { status: 400 });
     const player = await prisma.player.create({ data: body });
     return NextResponse.json(player, { status: 201 });
   } catch (err) {

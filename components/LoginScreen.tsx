@@ -37,7 +37,8 @@ body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
 
 interface LoginUser {
   id: string;
-  nom: string;
+  firstName: string;
+  lastName: string;
   role: 'admin' | 'scout';
 }
 
@@ -64,7 +65,7 @@ export default function LoginScreen({ onLogin }: Props) {
 
   const handleAdmin = () => {
     if (password === ADMIN_PASSWORD) {
-      onLogin({ id: "admin-1", nom: "Admin", role: "admin" });
+      onLogin({ id: "admin-1", firstName: '', lastName: "Admin", role: "admin" });
     } else {
       setError("Mot de passe incorrect.");
     }
@@ -77,7 +78,7 @@ export default function LoginScreen({ onLogin }: Props) {
       const name = scoutName.trim();
       if (!name) { setError("Sélectionnez ou entrez votre nom."); return; }
       const id = "scout-" + Math.random().toString(36).substr(2, 8);
-      onLogin({ id, nom: name, role: "scout" });
+      onLogin({ id, firstName: '', lastName: name, role: "scout" });
     }
   };
 
@@ -178,7 +179,7 @@ export default function LoginScreen({ onLogin }: Props) {
                           transition: "all 0.15s",
                         }}
                       >
-                        👤 {s.nom}
+                        👤 {[s.firstName, s.lastName].filter(Boolean).join(' ')}
                       </button>
                     ))}
                   </div>

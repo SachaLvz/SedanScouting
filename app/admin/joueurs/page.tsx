@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useAdminData } from '@/components/admin/context';
 import ListPage from '@/components/admin/pages/ListPage';
 import DetailPage from '@/components/admin/pages/DetailPage';
@@ -26,13 +27,27 @@ export default function JoueursPage() {
   const [showR, setShowR] = useState(false);
   const [openR, setOpenR] = useState<string | null>(null);
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Navigation depuis une autre page (ex: shadow team)
+  useEffect(() => {
+    const pid = searchParams.get('player');
+    if (pid && players.length > 0 && players.some(p => p.id === pid)) {
+      setSelId(pid);
+      setView('detail');
+      setTab('profil');
+      router.replace('/admin/joueurs');
+    }
+  }, [searchParams, players]);
+
   const sel = players.find(p => p.id === selId);
   const pendingMatches = matches.filter(m => m.statut === 'planifie');
 
   const filtered = players.filter(p => {
     const q = search.toLowerCase();
     return (
-      (!q || `${p.nom} ${p.prenom}`.toLowerCase().includes(q)) &&
+      (!q || `${p.lastName} ${p.firstName}`.toLowerCase().includes(q)) &&
       (!fVille || p.ville === fVille) &&
       (!fPoste || p.poste === fPoste) &&
       (!fDec || lr(p)?.decision === fDec)
@@ -49,7 +64,7 @@ export default function JoueursPage() {
   };
 
   const save = async () => {
-    if (!form?.nom) return;
+    if (!form?.lastName) return;
     const isEdit = players.some(p => p.id === form.id);
     if (isEdit) {
       await updatePlayer(form);
@@ -81,7 +96,7 @@ export default function JoueursPage() {
     const player = players.find(p => p.id === selId);
     if (!player || !text.trim()) return;
     const { uid, today } = await import('@/components/admin/config');
-    await updatePlayer({ ...player, notes: [{ id: uid(), date: today(), text: text.trim(), scout: scout?.nom ?? '' }, ...(player.notes ?? [])] });
+    await updatePlayer({ ...player, notes: [{ id: uid(), date: today(), text: text.trim(), scout: [scout?.firstName, scout?.lastName].filter(Boolean).join(' ') }, ...(player.notes ?? [])] });
   };
 
   const toggleListe = async (liste: string) => {

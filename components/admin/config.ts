@@ -66,8 +66,8 @@ export interface Note {
 
 export interface Player {
   id: string;
-  prenom: string;
-  nom: string;
+  firstName: string;
+  lastName: string;
   dateNaissance: string;
   ville: string;
   poste: string;
@@ -98,11 +98,14 @@ export interface Match {
   competition: string;
   type: string;
   statut: string;
+  scouts: string[];
 }
 
 export interface Scout {
   id: string;
-  nom: string;
+  firstName?: string;
+  lastName: string;
+  email?: string | null;
   role: string;
   color: string;
 }
@@ -122,8 +125,8 @@ export const VILLES: string[] = [
 ];
 
 export const SCALE: ScaleItem[] = [
-  { v:1, l:'Missing',      c:'#dc2626', bg:'#fef2f2' },
-  { v:2, l:'Pauvre',       c:'#ea580c', bg:'#fff7ed' },
+  { v:1, l:'Pauvre',        c:'#dc2626', bg:'#fef2f2' },
+  { v:2, l:'Inadéquat',    c:'#ea580c', bg:'#fff7ed' },
   { v:3, l:'Moyen',        c:'#ca8a04', bg:'#fefce8' },
   { v:4, l:'Satisfaisant', c:'#65a30d', bg:'#f7fee7' },
   { v:5, l:'Bon',          c:'#16a34a', bg:'#f0fdf4' },

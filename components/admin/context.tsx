@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode, type Di
 import { uid, today, CATS, DECISIONS, VILLES, NIVEAUX } from './config';
 import type { Player, Match, Scout, Rapport, Ratings, DecisionItem } from './config';
 
-interface AdminUser { id: string; nom: string; role: string; }
+interface AdminUser { id: string; firstName: string; lastName: string; role: string; }
 
 export interface AdminContextValue {
   players: Player[];
@@ -46,7 +46,7 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
   const [players, setPlayers] = useState<Player[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [scouts, setScouts] = useState<Scout[]>([
-    { id: initialUser.id, nom: initialUser.nom, role: initialUser.role, color: '#2563eb' },
+    { id: initialUser.id, firstName: initialUser.firstName, lastName: initialUser.lastName, role: initialUser.role, color: '#2563eb' },
   ]);
   const [curScout, setCurScout] = useState(initialUser.id);
 
@@ -54,8 +54,11 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
     fetch('/api/players').then(r => r.json()).then(d => { if (Array.isArray(d)) setPlayers(d); }).catch(() => {});
     fetch('/api/matches').then(r => r.json()).then(d => { if (Array.isArray(d)) setMatches(d); }).catch(() => {});
     fetch('/api/scouts').then(r => r.json()).then(d => {
-      if (Array.isArray(d) && d.length > 0)
-        setScouts(d.map((u: { id: string; nom: string; role: string }) => ({ id: u.id, nom: u.nom, role: u.role, color: '#2563eb' })));
+      if (Array.isArray(d)) {
+        const fetched = d.map((u: { id: string; firstName: string; lastName: string; role: string }) => ({ id: u.id, firstName: u.firstName, lastName: u.lastName, role: u.role, color: '#2563eb' }));
+        const adminEntry = { id: initialUser.id, firstName: initialUser.firstName, lastName: initialUser.lastName, role: initialUser.role, color: '#2563eb' };
+        setScouts([adminEntry, ...fetched.filter((u: { id: string }) => u.id !== initialUser.id)]);
+      }
     }).catch(() => {});
   }, []);
 
@@ -91,7 +94,7 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
   const reportCount = (p: Player): number => (p.rapports ?? []).length;
 
   const blank = (): Player => ({
-    id: uid(), prenom: '', nom: '', dateNaissance: '', ville: VILLES[0], poste: 'Gardien',
+    id: uid(), firstName: '', lastName: '', dateNaissance: '', ville: VILLES[0], poste: 'Gardien',
     posteSecondaire: '', pied: 'Droitier', taille: '', poids: '', photo: '', pieceIdentite: '',
     agent: '', finContrat: '', valeur: '', clubActuel: '', historique: '',
     rapports: [], notes: [], listes: [], createdAt: today(),
@@ -104,12 +107,12 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
       ratings: { physique: 3, technique: 3, tactique: 3, mentalite: 3 },
       commentaires: { physique: '', technique: '', tactique: '', mentalite: '' },
       conclusion: '', niveauActuel: NIVEAUX[2], potentiel: NIVEAUX[3],
-      decision: 'revoir', scoutId: curScout, scoutNom: scout?.nom ?? '', locked: false,
+      decision: 'revoir', scoutId: curScout, scoutNom: [scout?.firstName, scout?.lastName].filter(Boolean).join(' '), locked: false,
     };
   };
   const blankMatch = (): Match => ({
     id: uid(), date: today(), hour: '', equipe1: '', equipe2: '', lieu: VILLES[0],
-    competition: 'Détection', type: 'live', statut: 'planifie',
+    competition: 'Détection', type: 'live', statut: 'planifie', scouts: [],
   });
 
   return (

@@ -28,7 +28,7 @@ export default function DetailPage({
           </div>
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "var(--navy)", letterSpacing: -0.5, lineHeight: 1.2 }}>
-              {sel.nom.toUpperCase()} <span style={{ fontWeight: 500, color: "var(--text-2)" }}>{sel.prenom}</span>
+              {(sel.lastName ?? '').toUpperCase()} <span style={{ fontWeight: 500, color: "var(--text-2)" }}>{sel.firstName}</span>
             </h2>
             <div style={{ display: "flex", gap: 6, marginTop: 10, flexWrap: "wrap" }}>
               <Tag color="var(--blue)" bg="var(--blue-ghost)">{sel.poste}</Tag>
@@ -61,57 +61,67 @@ export default function DetailPage({
 
       {/* PROFIL */}
       {tab === "profil" && r && (
-        <div className="fade-up" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-          <div className="card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", flex: "0 0 auto" }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 }}>Dernier rapport · {r.date}</div>
-            <Radar ratings={r.ratings} size={200} />
-            <div style={{ marginTop: 8 }}>
-              <span style={{ fontSize: 38, fontWeight: 800, fontFamily: "var(--mono)", color: "var(--navy)" }}>{avg(r.ratings).toFixed(1)}</span>
-              <span style={{ fontSize: 16, fontWeight: 500, color: "var(--text-3)" }}>/6</span>
-            </div>
-          </div>
-          <div style={{ flex: 1, minWidth: 260, display: "flex", flexDirection: "column", gap: 12 }}>
-            <div className="card" style={{ padding: 22 }}>
-              {CATS.map(cat => {
-                const v = r.ratings[cat.key]; const s = getSc(v);
-                return (
-                  <div key={cat.key} style={{ marginBottom: 16 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text-1)" }}>{cat.icon} {cat.label}</span>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: s.c, padding: "2px 8px", borderRadius: 6, background: s.bg }}>{s.l}</span>
-                        <span style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--mono)", color: s.c }}>{v}</span>
-                      </div>
-                    </div>
-                    <div style={{ height: 6, background: "#f1f5f9", borderRadius: 3, overflow: "hidden" }}>
-                      <div style={{ height: "100%", borderRadius: 3, width: `${(v / 6) * 100}%`, background: `linear-gradient(90deg, ${s.c}88, ${s.c})`, transition: "width 0.5s ease" }} />
-                    </div>
-                    {r.commentaires[cat.key] && (
-                      <p style={{ margin: "6px 0 0", fontSize: 12, color: "var(--text-3)", lineHeight: 1.6, fontStyle: "italic" }}>« {r.commentaires[cat.key]} »</p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="card" style={{ padding: 20 }}>
-              <div style={{ display: "flex", gap: 24, marginBottom: 14 }}>
-                <div>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 }}>Niveau actuel</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#d97706" }}>{r.niveauActuel}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 }}>Potentiel</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#16a34a" }}>{r.potentiel}</div>
-                </div>
+        <div style={{ position: "relative" }}>
+          <div className="fade-up" style={{ display: "flex", gap: 16, flexWrap: "wrap", filter: r.scout === scoutNom ? undefined : "blur(6px)", userSelect: r.scout === scoutNom ? undefined : "none", pointerEvents: r.scout === scoutNom ? undefined : "none" }}>
+            <div className="card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", flex: "0 0 auto" }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 }}>Dernier rapport · {r.date}</div>
+              <Radar ratings={r.ratings} size={200} />
+              <div style={{ marginTop: 8 }}>
+                <span style={{ fontSize: 38, fontWeight: 800, fontFamily: "var(--mono)", color: "var(--navy)" }}>{avg(r.ratings).toFixed(1)}</span>
+                <span style={{ fontSize: 16, fontWeight: 500, color: "var(--text-3)" }}>/6</span>
               </div>
-              {r.conclusion && (
-                <>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Conclusion</div>
-                  <p style={{ margin: 0, fontSize: 13, color: "var(--text-2)", lineHeight: 1.8, whiteSpace: "pre-wrap" }}>{r.conclusion}</p>
-                </>
-              )}
+            </div>
+            <div style={{ flex: 1, minWidth: 260, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div className="card" style={{ padding: 22 }}>
+                {CATS.map(cat => {
+                  const v = r.ratings[cat.key]; const s = getSc(v);
+                  return (
+                    <div key={cat.key} style={{ marginBottom: 16 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text-1)" }}>{cat.icon} {cat.label}</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: s.c, padding: "2px 8px", borderRadius: 6, background: s.bg }}>{s.l}</span>
+                          <span style={{ fontSize: 18, fontWeight: 800, fontFamily: "var(--mono)", color: s.c }}>{v}</span>
+                        </div>
+                      </div>
+                      <div style={{ height: 6, background: "#f1f5f9", borderRadius: 3, overflow: "hidden" }}>
+                        <div style={{ height: "100%", borderRadius: 3, width: `${(v / 6) * 100}%`, background: `linear-gradient(90deg, ${s.c}88, ${s.c})`, transition: "width 0.5s ease" }} />
+                      </div>
+                      {r.commentaires[cat.key] && (
+                        <p style={{ margin: "6px 0 0", fontSize: 12, color: "var(--text-3)", lineHeight: 1.6, fontStyle: "italic" }}>« {r.commentaires[cat.key]} »</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="card" style={{ padding: 20 }}>
+                <div style={{ display: "flex", gap: 24, marginBottom: 14 }}>
+                  <div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 }}>Niveau actuel</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#d97706" }}>{r.niveauActuel}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 }}>Potentiel</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#16a34a" }}>{r.potentiel}</div>
+                  </div>
+                </div>
+                {r.conclusion && (
+                  <>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Conclusion</div>
+                    <p style={{ margin: 0, fontSize: 13, color: "var(--text-2)", lineHeight: 1.8, whiteSpace: "pre-wrap" }}>{r.conclusion}</p>
+                  </>
+                )}
+              </div>
             </div>
           </div>
+          {r.scout !== scoutNom && (
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 28, marginBottom: 6 }}>🔒</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-2)" }}>Rapport confidentiel</div>
+              </div>
+            </div>
+          )}
         </div>
       )}
       {tab === "profil" && !r && (
@@ -126,45 +136,56 @@ export default function DetailPage({
             : (sel.rapports || []).map(rp => {
               const dec = DECISIONS.find(x => x.v === rp.decision);
               const a = avg(rp.ratings); const open = openR === rp.id;
+              const isOwn = rp.scout === scoutNom;
               return (
-                <div key={rp.id} className="card" style={{ padding: open ? 20 : 16, cursor: "pointer", borderColor: open ? "var(--blue-light)" : undefined }}
-                  onClick={() => setOpenR(open ? null : rp.id)}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "var(--mono)", color: "var(--blue)" }}>{rp.date}</span>
-                      <Tag>{rp.lieu}</Tag>
-                      {rp.scout && <Tag>✍ {rp.scout}</Tag>}
+                <div key={rp.id} style={{ position: "relative" }}>
+                  <div className="card" style={{ padding: open ? 20 : 16, cursor: isOwn ? "pointer" : "default", borderColor: open ? "var(--blue-light)" : undefined, filter: isOwn ? undefined : "blur(6px)", userSelect: isOwn ? undefined : "none", pointerEvents: isOwn ? undefined : "none" }}
+                    onClick={() => isOwn && setOpenR(open ? null : rp.id)}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "var(--mono)", color: "var(--blue)" }}>{rp.date}</span>
+                        <Tag>{rp.lieu}</Tag>
+                        {rp.scout && <Tag>✍ {rp.scout}</Tag>}
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        {dec && <Tag bg={dec.bg} color={dec.c}>{dec.i} {dec.l}</Tag>}
+                        <span style={{ fontSize: 16, fontWeight: 800, fontFamily: "var(--mono)", color: a >= 5 ? "#16a34a" : a >= 3.5 ? "#d97706" : "#dc2626" }}>{a.toFixed(1)}</span>
+                      </div>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      {dec && <Tag bg={dec.bg} color={dec.c}>{dec.i} {dec.l}</Tag>}
-                      <span style={{ fontSize: 16, fontWeight: 800, fontFamily: "var(--mono)", color: a >= 5 ? "#16a34a" : a >= 3.5 ? "#d97706" : "#dc2626" }}>{a.toFixed(1)}</span>
-                    </div>
+                    {open && (
+                      <div className="fade-up" style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
+                        {rp.contexte && <p style={{ fontSize: 11, color: "var(--text-3)", margin: "0 0 12px" }}>📍 {rp.contexte}{rp.minutesJouees ? ` · ${rp.minutesJouees} min` : ""}</p>}
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
+                          {CATS.map(cat => {
+                            const v = rp.ratings[cat.key]; const s = getSc(v);
+                            return (
+                              <div key={cat.key}>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
+                                  <span style={{ color: "var(--text-2)" }}>{cat.icon} {cat.label}</span>
+                                  <span style={{ color: s.c, fontWeight: 700, fontFamily: "var(--mono)" }}>{v}</span>
+                                </div>
+                                <div style={{ height: 4, background: "#f1f5f9", borderRadius: 2 }}>
+                                  <div style={{ height: "100%", borderRadius: 2, width: `${(v / 6) * 100}%`, background: s.c }} />
+                                </div>
+                                {rp.commentaires[cat.key] && <p style={{ fontSize: 10, color: "var(--text-3)", margin: "4px 0 0", fontStyle: "italic" }}>« {rp.commentaires[cat.key]} »</p>}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div style={{ display: "flex", gap: 16, fontSize: 11, marginBottom: 10 }}>
+                          <span style={{ color: "#d97706", fontWeight: 600 }}>Niveau: {rp.niveauActuel}</span>
+                          <span style={{ color: "#16a34a", fontWeight: 600 }}>Potentiel: {rp.potentiel}</span>
+                        </div>
+                        {rp.conclusion && <p style={{ fontSize: 12, color: "var(--text-2)", margin: 0, lineHeight: 1.8, whiteSpace: "pre-wrap" }}>{rp.conclusion}</p>}
+                      </div>
+                    )}
                   </div>
-                  {open && (
-                    <div className="fade-up" style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
-                      {rp.contexte && <p style={{ fontSize: 11, color: "var(--text-3)", margin: "0 0 12px" }}>📍 {rp.contexte}{rp.minutesJouees ? ` · ${rp.minutesJouees} min` : ""}</p>}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
-                        {CATS.map(cat => {
-                          const v = rp.ratings[cat.key]; const s = getSc(v);
-                          return (
-                            <div key={cat.key}>
-                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
-                                <span style={{ color: "var(--text-2)" }}>{cat.icon} {cat.label}</span>
-                                <span style={{ color: s.c, fontWeight: 700, fontFamily: "var(--mono)" }}>{v}</span>
-                              </div>
-                              <div style={{ height: 4, background: "#f1f5f9", borderRadius: 2 }}>
-                                <div style={{ height: "100%", borderRadius: 2, width: `${(v / 6) * 100}%`, background: s.c }} />
-                              </div>
-                              {rp.commentaires[cat.key] && <p style={{ fontSize: 10, color: "var(--text-3)", margin: "4px 0 0", fontStyle: "italic" }}>« {rp.commentaires[cat.key]} »</p>}
-                            </div>
-                          );
-                        })}
+                  {!isOwn && (
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 16 }}>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 20, marginBottom: 4 }}>🔒</div>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-2)" }}>Rapport confidentiel</div>
                       </div>
-                      <div style={{ display: "flex", gap: 16, fontSize: 11, marginBottom: 10 }}>
-                        <span style={{ color: "#d97706", fontWeight: 600 }}>Niveau: {rp.niveauActuel}</span>
-                        <span style={{ color: "#16a34a", fontWeight: 600 }}>Potentiel: {rp.potentiel}</span>
-                      </div>
-                      {rp.conclusion && <p style={{ fontSize: 12, color: "var(--text-2)", margin: 0, lineHeight: 1.8, whiteSpace: "pre-wrap" }}>{rp.conclusion}</p>}
                     </div>
                   )}
                 </div>
@@ -196,13 +217,13 @@ export default function DetailPage({
 
       {/* RAPPORT MODAL */}
       {showR && rForm && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.5)", zIndex: 1000, display: "flex", justifyContent: "center", padding: "24px 16px", overflowY: "auto", backdropFilter: "blur(4px)" }}
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.5)", zIndex: 1000, display: "flex", justifyContent: "center", padding: "24px 16px", overflowY: "auto", backdropFilter: "blur(6px)" }}
           onClick={e => { if (e.target === e.currentTarget) { setShowR(false); setRForm(null); } }}>
           <div className="card fade-up" style={{ maxWidth: 620, width: "100%", padding: 30, alignSelf: "flex-start", boxShadow: "var(--shadow-lg)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
               <div>
                 <h3 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "var(--navy)" }}>Rapport de match</h3>
-                <p style={{ margin: "4px 0 0", fontSize: 12, color: "var(--text-3)" }}>{sel.nom.toUpperCase()} {sel.prenom} · {sel.poste} · Scout: {scoutNom}</p>
+                <p style={{ margin: "4px 0 0", fontSize: 12, color: "var(--text-3)" }}>{(sel.lastName ?? '').toUpperCase()} {sel.firstName} · {sel.poste} · Scout: {scoutNom}</p>
               </div>
               <button className="ghost-btn" style={{ padding: "6px 10px", fontSize: 16 }} onClick={() => { setShowR(false); setRForm(null); }}>✕</button>
             </div>

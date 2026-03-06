@@ -16,21 +16,25 @@ enum Role {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  nom          String
-  role         Role     @default(SCOUT)
-  passwordHash String?  // null pour les scouts, bcrypt hash pour les admins
-  actif        Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id           String    @id @default(cuid())
+  firstName    String    @default("") @map("prenom")
+  lastName     String    @map("nom")
+  email        String?   @unique
+  role         Role      @default(SCOUT)
+  passwordHash String?
+  inviteToken  String?
+  inviteExpiry DateTime?
+  actif        Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@map("users")
 }
 
 model Player {
   id              String   @id
-  prenom          String   @default("")
-  nom             String
+  firstName       String   @default("") @map("prenom")
+  lastName        String   @map("nom")
   dateNaissance   String   @default("")
   ville           String   @default("")
   poste           String   @default("Gardien")
@@ -64,6 +68,7 @@ model Match {
   competition String   @default("")
   type        String   @default("live")
   statut      String   @default("planifie")
+  scouts      Json     @default("[]")
   updatedAt   DateTime @updatedAt
 
   @@map("matches")

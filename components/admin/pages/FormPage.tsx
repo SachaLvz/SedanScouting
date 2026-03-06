@@ -33,8 +33,8 @@ export default function FormPage({ form, setForm, players, onSave, readFile }: F
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
-        <div><label className="lbl">Nom *</label><input className="inp" value={form.nom} onChange={e => setForm(p => p ? { ...p, nom: e.target.value } : p)} placeholder="Nom" /></div>
-        <div><label className="lbl">Prénom</label><input className="inp" value={form.prenom} onChange={e => setForm(p => p ? { ...p, prenom: e.target.value } : p)} placeholder="Prénom" /></div>
+        <div><label className="lbl">Nom *</label><input className="inp" value={form.lastName} onChange={e => setForm(p => p ? { ...p, lastName: e.target.value } : p)} placeholder="Nom" /></div>
+        <div><label className="lbl">Prénom</label><input className="inp" value={form.firstName} onChange={e => setForm(p => p ? { ...p, firstName: e.target.value } : p)} placeholder="Prénom" /></div>
         <div><label className="lbl">Date de naissance</label><input type="date" className="inp" value={form.dateNaissance} onChange={e => setForm(p => p ? { ...p, dateNaissance: e.target.value } : p)} /></div>
         <div><label className="lbl">Ville</label><select className="inp" value={form.ville} onChange={e => setForm(p => p ? { ...p, ville: e.target.value } : p)}>{VILLES.map(v => <option key={v}>{v}</option>)}</select></div>
         <div><label className="lbl">Poste</label><select className="inp" value={form.poste} onChange={e => setForm(p => p ? { ...p, poste: e.target.value } : p)}>{POSITIONS.map(pos => <option key={pos}>{pos}</option>)}</select></div>
