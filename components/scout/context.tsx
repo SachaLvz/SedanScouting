@@ -77,7 +77,7 @@ export function ScoutDataProvider({ initialUser, children }: { initialUser: Scou
     ratings: { physique: 3, technique: 3, tactique: 3, mentalite: 3 },
     commentaires: { physique: '', technique: '', tactique: '', mentalite: '' },
     conclusion: '', niveauActuel: NIVEAUX[1], potentiel: NIVEAUX[2],
-    decision: 'revoir_detection', scout: scoutNom,
+    decision: 'revoir_detection', scoutName: scoutNom,
   });
 
   return (

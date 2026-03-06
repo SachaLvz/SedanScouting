@@ -62,7 +62,7 @@ export default function DetailPage({
       {/* PROFIL */}
       {tab === "profil" && r && (
         <div style={{ position: "relative" }}>
-          <div className="fade-up" style={{ display: "flex", gap: 16, flexWrap: "wrap", filter: r.scout === scoutNom ? undefined : "blur(6px)", userSelect: r.scout === scoutNom ? undefined : "none", pointerEvents: r.scout === scoutNom ? undefined : "none" }}>
+          <div className="fade-up" style={{ display: "flex", gap: 16, flexWrap: "wrap", filter: r.scoutName === scoutNom ? undefined : "blur(6px)", userSelect: r.scoutName === scoutNom ? undefined : "none", pointerEvents: r.scoutName === scoutNom ? undefined : "none" }}>
             <div className="card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", flex: "0 0 auto" }}>
               <div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 }}>Dernier rapport · {r.date}</div>
               <Radar ratings={r.ratings} size={200} />
@@ -114,7 +114,7 @@ export default function DetailPage({
               </div>
             </div>
           </div>
-          {r.scout !== scoutNom && (
+          {r.scoutName !== scoutNom && (
             <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <div style={{ textAlign: "center" }}>
                 <div style={{ fontSize: 28, marginBottom: 6 }}>🔒</div>
@@ -136,7 +136,7 @@ export default function DetailPage({
             : (sel.rapports || []).map(rp => {
               const dec = DECISIONS.find(x => x.v === rp.decision);
               const a = avg(rp.ratings); const open = openR === rp.id;
-              const isOwn = rp.scout === scoutNom;
+              const isOwn = rp.scoutName === scoutNom;
               return (
                 <div key={rp.id} style={{ position: "relative" }}>
                   <div className="card" style={{ padding: open ? 20 : 16, cursor: isOwn ? "pointer" : "default", borderColor: open ? "var(--blue-light)" : undefined, filter: isOwn ? undefined : "blur(6px)", userSelect: isOwn ? undefined : "none", pointerEvents: isOwn ? undefined : "none" }}
@@ -145,7 +145,7 @@ export default function DetailPage({
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "var(--mono)", color: "var(--blue)" }}>{rp.date}</span>
                         <Tag>{rp.lieu}</Tag>
-                        {rp.scout && <Tag>✍ {rp.scout}</Tag>}
+                        {rp.scoutName && <Tag>✍ {rp.scoutName}</Tag>}
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         {dec && <Tag bg={dec.bg} color={dec.c}>{dec.i} {dec.l}</Tag>}

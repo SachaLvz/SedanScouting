@@ -102,7 +102,7 @@ export default function DetailPage({
       {tab === 'profil' && r && (
         <div className="fu" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
           <div className="card" style={{ padding: 22, display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '0 0 auto' }}>
-            <div className="lbl" style={{ marginBottom: 10 }}>Dernier rapport · {r.date} · par {r.scoutNom}</div>
+            <div className="lbl" style={{ marginBottom: 10 }}>Dernier rapport · {r.date} · par {r.scoutName}</div>
             <Radar ratings={r.ratings} size={190} />
             <div style={{ marginTop: 6 }}>
               <span style={{ fontSize: 36, fontWeight: 800, fontFamily: 'var(--m)', color: 'var(--navy)' }}>{avg(r.ratings).toFixed(1)}</span>
@@ -162,7 +162,7 @@ export default function DetailPage({
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <span style={{ fontSize: 12, fontWeight: 700, fontFamily: 'var(--m)', color: 'var(--blue)' }}>{rp.date}</span>
                       <Tag>{rp.lieu}</Tag>
-                      <Tag color="#9333ea" bg="#faf5ff">✍ {rp.scoutNom}</Tag>
+                      {rp.scoutName && <Tag color="#9333ea" bg="#faf5ff">✍ {rp.scoutName}</Tag>}
                       {match && <Tag color="#0f766e" bg="#f0fdfa">{match.equipe1} vs {match.equipe2}</Tag>}
                       {rp.locked && <Tag color="#16a34a" bg="#f0fdf4">🔒</Tag>}
                     </div>
