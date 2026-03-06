@@ -107,7 +107,7 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
       ratings: { physique: 3, technique: 3, tactique: 3, mentalite: 3 },
       commentaires: { physique: '', technique: '', tactique: '', mentalite: '' },
       conclusion: '', niveauActuel: NIVEAUX[2], potentiel: NIVEAUX[3],
-      decision: 'revoir', scoutId: curScout, scoutNom: [scout?.firstName, scout?.lastName].filter(Boolean).join(' '), locked: false,
+      decision: 'revoir', scoutId: curScout, scoutName: [scout?.firstName, scout?.lastName].filter(Boolean).join(' '), locked: false,
     };
   };
   const blankMatch = (): Match => ({

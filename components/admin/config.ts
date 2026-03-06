@@ -53,7 +53,7 @@ export interface Rapport {
   potentiel: string;
   decision: string;
   scoutId: string;
-  scoutNom: string;
+  scoutName: string;
   locked: boolean;
 }
 
