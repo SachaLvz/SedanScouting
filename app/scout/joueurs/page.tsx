@@ -21,9 +21,18 @@ export default function ScoutJoueursPage() {
   const [rForm, setRForm] = useState<any>(null);
   const [showR, setShowR] = useState(false);
   const [openR, setOpenR] = useState<string | null>(null);
+  const [matches, setMatches] = useState<any[]>([]);
 
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  useEffect(() => {
+    const scoutId = (() => { try { return JSON.parse(localStorage.getItem('mbarodi_user') ?? '{}').id ?? ''; } catch { return ''; } })();
+    fetch('/api/matches')
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d)) setMatches(d.filter((m: any) => (m.scouts ?? []).includes(scoutId))); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const pid = searchParams.get('player');
@@ -112,7 +121,7 @@ export default function ScoutJoueursPage() {
           showR={showR} setShowR={(v: boolean) => { setShowR(v); if (v) setRForm(blankR(sel)); }}
           rForm={rForm} setRForm={setRForm}
           openR={openR} setOpenR={setOpenR}
-          scoutNom={scoutNom} avg={avg}
+          scoutNom={scoutNom} avg={avg} matches={matches}
           onBack={() => setView('list')}
           onEdit={() => { setForm({ ...sel }); setView('form'); }}
           onDelete={del}
