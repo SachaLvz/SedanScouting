@@ -1,10 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { ScoutDataProvider } from '@/components/scout/context';
 import CSS from '@/components/scout/styles';
 
-interface User { id: string; nom: string; role: 'admin' | 'scout'; }
+interface User { id: string; firstName: string; lastName: string; role: 'admin' | 'scout'; }
 
 function ScoutHeader({ nom, onLogout }: { nom: string; onLogout: () => void }) {
   return (
@@ -27,6 +28,30 @@ function ScoutHeader({ nom, onLogout }: { nom: string; onLogout: () => void }) {
           Déconnexion
         </button>
       </div>
+    </div>
+  );
+}
+
+function ScoutNav() {
+  const pathname = usePathname();
+  const NAV = [
+    { href: '/scout/joueurs', label: '👥 Joueurs' },
+    { href: '/scout/planning', label: '📅 Planning' },
+    { href: '/scout/shadow-team', label: '⚽ Shadow Team' },
+  ];
+  return (
+    <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 20px 20px', display: 'flex', gap: 6 }}>
+      {NAV.map(n => (
+        <Link key={n.href} href={n.href} style={{
+          padding: '8px 18px', borderRadius: 10, fontSize: 13, fontWeight: 600,
+          background: pathname === n.href ? 'var(--blue)' : 'transparent',
+          color: pathname === n.href ? '#fff' : 'var(--text-2)',
+          border: `1.5px solid ${pathname === n.href ? 'var(--blue)' : 'var(--border)'}`,
+          textDecoration: 'none', transition: 'all .15s',
+        }}>
+          {n.label}
+        </Link>
+      ))}
     </div>
   );
 }
@@ -57,7 +82,8 @@ export default function ScoutLayout({ children }: { children: React.ReactNode })
     <ScoutDataProvider initialUser={user}>
       <style>{CSS}</style>
       <div style={{ minHeight: '100vh', fontFamily: 'var(--font)', color: 'var(--text-1)', background: 'var(--bg)' }}>
-        <ScoutHeader nom={user.nom} onLogout={handleLogout} />
+        <ScoutHeader nom={[user.firstName, user.lastName].filter(Boolean).join(' ')} onLogout={handleLogout} />
+        <ScoutNav />
         {children}
       </div>
     </ScoutDataProvider>

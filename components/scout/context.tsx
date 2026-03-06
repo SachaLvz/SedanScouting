@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode, type Dispatch, type SetStateAction } from 'react';
 import { uid, today, CATS, VILLES, NIVEAUX } from './config';
 
-interface ScoutUser { id: string; nom: string; role: string; }
+interface ScoutUser { id: string; firstName: string; lastName: string; role: string; }
 
 export interface ScoutContextValue {
   players: any[];
@@ -30,7 +30,7 @@ export function useScoutData(): ScoutContextValue {
 
 export function ScoutDataProvider({ initialUser, children }: { initialUser: ScoutUser; children: ReactNode }) {
   const [players, setPlayers] = useState<any[]>([]);
-  const scoutNom = initialUser.nom;
+  const scoutNom = [initialUser.firstName, initialUser.lastName].filter(Boolean).join(' ');
 
   useEffect(() => {
     fetch('/api/players').then(r => r.json()).then(d => { if (Array.isArray(d)) setPlayers(d); }).catch(() => {});
@@ -65,7 +65,7 @@ export function ScoutDataProvider({ initialUser, children }: { initialUser: Scou
   };
 
   const blank = () => ({
-    id: uid(), prenom: '', nom: '', dateNaissance: '',
+    id: uid(), firstName: '', lastName: '', dateNaissance: '',
     ville: VILLES[0], poste: 'Gardien', posteSecondaire: '',
     pied: 'Droitier', taille: '', poids: '',
     photo: '', pieceIdentite: '',

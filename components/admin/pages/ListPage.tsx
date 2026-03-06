@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import Tag from '../Tag';
 import type { Player, Match, DecisionItem, Rapport, Ratings } from '../config';
 import { POSITIONS, VILLES, DECISIONS } from '../config';
+
+const PAGE_SIZE = 20;
 
 interface ListPageProps {
   players: Player[];
@@ -29,6 +32,13 @@ export default function ListPage({
   players, matches, search, setSearch, fVille, setFVille, fPoste, setFPoste, fDec, setFDec,
   filtered, setSelId, setView, setTab, setForm, lr, getDec, avg, reportCount, blank,
 }: ListPageProps) {
+  const [page, setPage] = useState(1);
+
+  useEffect(() => { setPage(1); }, [search, fVille, fPoste, fDec]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   const stats = [
     { l: 'Joueurs',  v: players.length,                                                                          c: 'var(--blue)',   bg: 'var(--blueG)' },
     { l: 'Rapports', v: players.reduce((s, p) => s + reportCount(p), 0),                                        c: '#9333ea',       bg: '#faf5ff' },
@@ -76,7 +86,7 @@ export default function ListPage({
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {filtered.map((p, idx) => {
+          {paginated.map((p, idx) => {
             const r = lr(p);
             const d = getDec(p);
             const a = r ? avg(r.ratings) : null;
@@ -95,7 +105,7 @@ export default function ListPage({
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--navy)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {p.nom.toUpperCase()} <span style={{ fontWeight: 500, color: 'var(--t2)' }}>{p.prenom}</span>
+                      {(p.lastName ?? '').toUpperCase()} <span style={{ fontWeight: 500, color: 'var(--t2)' }}>{p.firstName}</span>
                     </span>
                     {rc > 0 && <span style={{ fontSize: 10, fontWeight: 800, color: 'var(--blue)', background: 'var(--blueG)', padding: '2px 7px', borderRadius: 6, fontFamily: 'var(--m)' }}>{rc}</span>}
                   </div>
@@ -113,6 +123,37 @@ export default function ListPage({
               </div>
             );
           })}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 24 }}>
+          <button
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            style={{ padding: '7px 14px', borderRadius: 10, border: '1.5px solid var(--border)', background: '#fff', color: page === 1 ? '#cbd5e1' : 'var(--navy)', cursor: page === 1 ? 'default' : 'pointer', fontSize: 13, fontWeight: 700 }}
+          >
+            ‹
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+            <button
+              key={n}
+              onClick={() => setPage(n)}
+              style={{ padding: '7px 12px', borderRadius: 10, border: `1.5px solid ${n === page ? 'var(--blue)' : 'var(--border)'}`, background: n === page ? 'var(--blue)' : '#fff', color: n === page ? '#fff' : 'var(--navy)', cursor: 'pointer', fontSize: 13, fontWeight: 700, minWidth: 36 }}
+            >
+              {n}
+            </button>
+          ))}
+          <button
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            style={{ padding: '7px 14px', borderRadius: 10, border: '1.5px solid var(--border)', background: '#fff', color: page === totalPages ? '#cbd5e1' : 'var(--navy)', cursor: page === totalPages ? 'default' : 'pointer', fontSize: 13, fontWeight: 700 }}
+          >
+            ›
+          </button>
+          <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 8 }}>
+            {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} / {filtered.length}
+          </span>
         </div>
       )}
     </div>

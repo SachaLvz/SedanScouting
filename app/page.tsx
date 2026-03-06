@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LoginScreen from '@/components/LoginScreen';
 
-interface User { id: string; nom: string; role: 'admin' | 'scout'; }
+interface User { id: string; firstName: string; lastName: string; role: 'admin' | 'scout'; }
 
 export default function Home() {
   const [ready, setReady] = useState(false);

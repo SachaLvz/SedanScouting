@@ -5,7 +5,7 @@ import { AdminDataProvider } from '@/components/admin/context';
 import Nav from '@/components/admin/pages/Nav';
 import CSS from '@/components/admin/styles';
 
-interface User { id: string; nom: string; role: 'admin' | 'scout'; }
+interface User { id: string; firstName: string; lastName: string; role: 'admin' | 'scout'; }
 
 function AdminHeader({ user, onLogout }: { user: User; onLogout: () => void }) {
   return (
@@ -17,7 +17,7 @@ function AdminHeader({ user, onLogout }: { user: User; onLogout: () => void }) {
             <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: 4, textTransform: 'uppercase', background: 'linear-gradient(135deg,#7db8e8,#b8ddf8,#fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>MBARODI FC</h1>
           </div>
           <div style={{ fontSize: 9, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: 4, fontFamily: 'var(--m)' }}>Scouting · Détection · Recrutement</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,.3)', marginTop: 4 }}>Admin : <strong style={{ color: 'rgba(255,255,255,.6)' }}>{user.nom}</strong></div>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,.3)', marginTop: 4 }}>Admin : <strong style={{ color: 'rgba(255,255,255,.6)' }}>{[user.firstName, user.lastName].filter(Boolean).join(' ')}</strong></div>
         </div>
         <button
           onClick={onLogout}

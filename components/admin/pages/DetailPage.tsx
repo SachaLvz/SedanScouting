@@ -58,7 +58,7 @@ export default function DetailPage({
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <h2 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: 'var(--navy)' }}>{sel.nom.toUpperCase()} <span style={{ fontWeight: 500, color: 'var(--t2)' }}>{sel.prenom}</span></h2>
+              <h2 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: 'var(--navy)' }}>{sel.lastName.toUpperCase()} <span style={{ fontWeight: 500, color: 'var(--t2)' }}>{sel.firstName}</span></h2>
               <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--blue)', background: 'var(--blueG)', padding: '3px 10px', borderRadius: 8, fontFamily: 'var(--m)' }}>{reportCount(sel)} rapport{reportCount(sel) > 1 ? 's' : ''}</span>
             </div>
             <div style={{ display: 'flex', gap: 5, marginTop: 10, flexWrap: 'wrap' }}>

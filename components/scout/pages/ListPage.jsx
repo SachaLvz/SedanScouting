@@ -78,7 +78,7 @@ export default function ListPage({
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--navy)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {p.nom.toUpperCase()} <span style={{ fontWeight: 500, color: "var(--text-2)" }}>{p.prenom}</span>
+                    {(p.lastName ?? '').toUpperCase()} <span style={{ fontWeight: 500, color: "var(--text-2)" }}>{p.firstName}</span>
                   </div>
                   <div style={{ display: "flex", gap: 5, marginTop: 5, alignItems: "center", flexWrap: "wrap" }}>
                     <Tag color="var(--blue)" bg="var(--blue-ghost)">{p.poste}</Tag>

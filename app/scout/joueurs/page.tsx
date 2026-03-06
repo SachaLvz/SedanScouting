@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useScoutData } from '@/components/scout/context';
 import ListPage from '@/components/scout/pages/ListPage';
 import DetailPage from '@/components/scout/pages/DetailPage';
@@ -21,11 +22,24 @@ export default function ScoutJoueursPage() {
   const [showR, setShowR] = useState(false);
   const [openR, setOpenR] = useState<string | null>(null);
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const pid = searchParams.get('player');
+    if (pid && players.length > 0 && players.some((p: any) => p.id === pid)) {
+      setSelId(pid);
+      setView('detail');
+      setTab('profil');
+      router.replace('/scout/joueurs');
+    }
+  }, [searchParams, players]);
+
   const sel = players.find((p: any) => p.id === selId);
 
   const filtered = players.filter((p: any) => {
     const q = search.toLowerCase();
-    return (!q || `${p.nom} ${p.prenom}`.toLowerCase().includes(q))
+    return (!q || `${p.lastName} ${p.firstName}`.toLowerCase().includes(q))
       && (!fVille || p.ville === fVille)
       && (!fPoste || p.poste === fPoste)
       && (!fDec || lr(p)?.decision === fDec)
@@ -42,7 +56,7 @@ export default function ScoutJoueursPage() {
   };
 
   const save = async () => {
-    if (!form?.nom) return;
+    if (!form?.lastName) return;
     const isEdit = players.some((p: any) => p.id === form.id);
     if (isEdit) { await updatePlayer(form); } else { await createPlayer(form); }
     setSelId(form.id); setView('detail'); setTab('profil');

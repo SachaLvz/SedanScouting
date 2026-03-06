@@ -6,7 +6,7 @@ import ShadowPage from '@/components/admin/pages/ShadowPage';
 export default function ShadowTeamRoute() {
   const { players, lr, avg } = useAdminData();
   const [formation, setFormation] = useState('4-3-3');
-  const [shadowTeam, setShadowTeam] = useState<Record<number, string>>({});
+  const [shadowTeam, setShadowTeam] = useState<Record<number, string[]>>({});
   const [slotPick, setSlotPick] = useState<{ idx: number; pos: string } | null>(null);
   const loaded = useRef(false);
 
@@ -17,8 +17,10 @@ export default function ShadowTeamRoute() {
       .then(d => {
         if (d.formation) setFormation(d.formation);
         if (d.slots && typeof d.slots === 'object') {
-          const parsed: Record<number, string> = {};
-          Object.entries(d.slots).forEach(([k, v]) => { parsed[Number(k)] = v as string; });
+          const parsed: Record<number, string[]> = {};
+          Object.entries(d.slots).forEach(([k, v]) => {
+            parsed[Number(k)] = Array.isArray(v) ? v : [v as string];
+          });
           setShadowTeam(parsed);
         }
         loaded.current = true;

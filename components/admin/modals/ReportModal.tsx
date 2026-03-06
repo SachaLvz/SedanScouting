@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { CATS, VILLES, NIVEAUX, DECISIONS } from '../config';
 import NotePicker from '../NotePicker';
 import type { Rapport, Player, Scout, Match } from '../config';
@@ -13,6 +14,28 @@ interface ReportModalProps {
 }
 
 export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatches, onSave, onClose }: ReportModalProps) {
+  const [submitted, setSubmitted] = useState(false);
+
+  const missingComments = submitted
+    ? CATS.filter(c => !rForm.commentaires[c.key]?.trim()).map(c => c.key)
+    : [];
+
+  const errors = submitted ? {
+    date: !rForm.date,
+    minutesJouees: !rForm.minutesJouees,
+    contexte: !rForm.contexte?.trim(),
+    conclusion: !rForm.conclusion?.trim(),
+  } : {} as Record<string, boolean>;
+
+  const hasError = !rForm.date || !rForm.minutesJouees || !rForm.contexte?.trim()
+    || CATS.some(c => !rForm.commentaires[c.key]?.trim()) || !rForm.conclusion?.trim();
+
+  const handleSave = () => {
+    setSubmitted(true);
+    if (hasError) return;
+    onSave();
+  };
+
   return (
     <div
       style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', padding: '20px 16px', overflowY: 'auto', backdropFilter: 'blur(4px)' }}
@@ -22,7 +45,7 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 22 }}>
           <div>
             <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--navy)' }}>Rapport de match</h3>
-            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--t3)' }}>{sel.nom.toUpperCase()} {sel.prenom} · {sel.poste} · Scout: {scout?.nom}</p>
+            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--t3)' }}>{sel.lastName.toUpperCase()} {sel.firstName} · {sel.poste} · Scout: {[scout?.firstName, scout?.lastName].filter(Boolean).join(' ')}</p>
           </div>
           <button className="btn-g" style={{ padding: '6px 10px', fontSize: 14 }} onClick={onClose}>✕</button>
         </div>
@@ -38,10 +61,22 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
         )}
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-          <div><label className="lbl">Date *</label><input type="date" className="inp" value={rForm.date} onChange={e => setRForm(p => p ? { ...p, date: e.target.value } : p)} /></div>
+          <div>
+            <label className="lbl" style={{ color: errors.date ? '#dc2626' : undefined }}>Date *</label>
+            <input type="date" className="inp" style={{ borderColor: errors.date ? '#dc2626' : undefined }} value={rForm.date} onChange={e => setRForm(p => p ? { ...p, date: e.target.value } : p)} />
+            {errors.date && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Date obligatoire</div>}
+          </div>
           <div><label className="lbl">Lieu</label><select className="inp" value={rForm.lieu} onChange={e => setRForm(p => p ? { ...p, lieu: e.target.value } : p)}>{VILLES.map(v => <option key={v}>{v}</option>)}</select></div>
-          <div><label className="lbl">Minutes jouées</label><input type="number" className="inp" value={rForm.minutesJouees} onChange={e => setRForm(p => p ? { ...p, minutesJouees: e.target.value } : p)} placeholder="90" /></div>
-          <div><label className="lbl">Contexte</label><input className="inp" value={rForm.contexte} onChange={e => setRForm(p => p ? { ...p, contexte: e.target.value } : p)} placeholder="Match amical, détection..." /></div>
+          <div>
+            <label className="lbl" style={{ color: errors.minutesJouees ? '#dc2626' : undefined }}>Minutes jouées *</label>
+            <input type="number" className="inp" style={{ borderColor: errors.minutesJouees ? '#dc2626' : undefined }} value={rForm.minutesJouees} onChange={e => setRForm(p => p ? { ...p, minutesJouees: e.target.value } : p)} placeholder="90" />
+            {errors.minutesJouees && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Champ obligatoire</div>}
+          </div>
+          <div>
+            <label className="lbl" style={{ color: errors.contexte ? '#dc2626' : undefined }}>Contexte *</label>
+            <input className="inp" style={{ borderColor: errors.contexte ? '#dc2626' : undefined }} value={rForm.contexte} onChange={e => setRForm(p => p ? { ...p, contexte: e.target.value } : p)} placeholder="Match amical, détection..." />
+            {errors.contexte && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Champ obligatoire</div>}
+          </div>
         </div>
 
         {CATS.map(cat => (
@@ -56,11 +91,12 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
             />
             <textarea
               className="inp"
-              style={{ marginTop: 8, height: 52, resize: 'vertical', background: '#fff' }}
+              style={{ marginTop: 8, height: 52, resize: 'vertical', background: '#fff', borderColor: missingComments.includes(cat.key) ? '#dc2626' : undefined }}
               value={rForm.commentaires[cat.key]}
               onChange={e => setRForm(p => p ? { ...p, commentaires: { ...p.commentaires, [cat.key]: e.target.value } } : p)}
-              placeholder={`Analyse ${cat.label.toLowerCase()}...`}
+              placeholder={`Analyse ${cat.label.toLowerCase()}... *`}
             />
+            {missingComments.includes(cat.key) && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Commentaire obligatoire</div>}
           </div>
         ))}
 
@@ -70,14 +106,15 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
         </div>
 
         <div style={{ marginBottom: 14 }}>
-          <label className="lbl" style={{ color: !rForm.conclusion ? '#dc2626' : undefined }}>Conclusion * (obligatoire)</label>
+          <label className="lbl" style={{ color: errors.conclusion ? '#dc2626' : undefined }}>Conclusion *</label>
           <textarea
             className="inp"
-            style={{ height: 80, resize: 'vertical', borderColor: !rForm.conclusion ? '#fca5a5' : undefined }}
+            style={{ height: 80, resize: 'vertical', borderColor: errors.conclusion ? '#dc2626' : undefined }}
             value={rForm.conclusion}
             onChange={e => setRForm(p => p ? { ...p, conclusion: e.target.value } : p)}
             placeholder="Profil complet du joueur..."
           />
+          {errors.conclusion && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Conclusion obligatoire</div>}
         </div>
 
         <div style={{ marginBottom: 20 }}>
@@ -105,13 +142,17 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
           🔒 Une fois validé, le rapport sera verrouillé définitivement.
         </div>
 
+        {submitted && hasError && (
+          <div style={{ marginBottom: 12, padding: '10px 14px', background: '#fef2f2', borderRadius: 10, fontSize: 12, color: '#dc2626', fontWeight: 600 }}>
+            Veuillez remplir tous les champs obligatoires (*) avant de valider.
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="btn-g" style={{ flex: 1, padding: 14, fontSize: 14, fontWeight: 600 }} onClick={onClose}>Annuler</button>
           <button
-            className={rForm.conclusion ? 'btn-p' : 'btn-g'}
-            disabled={!rForm.conclusion}
-            style={{ flex: 1, padding: 14, fontSize: 14, fontWeight: 700, opacity: rForm.conclusion ? 1 : .4, cursor: rForm.conclusion ? 'pointer' : 'not-allowed' }}
-            onClick={onSave}
+            className="btn-p"
+            style={{ flex: 1, padding: 14, fontSize: 14, fontWeight: 700 }}
+            onClick={handleSave}
           >
             🔒 Valider et verrouiller
           </button>
