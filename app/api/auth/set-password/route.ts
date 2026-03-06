@@ -10,7 +10,7 @@ const SetPasswordSchema = z.object({
 
 // Simple SHA-256 hash (no bcrypt dependency needed for this use case)
 function hashPassword(password: string): string {
-  return createHash('sha256').update(password + process.env.PASSWORD_SALT ?? 'sedan-salt').digest('hex');
+  return createHash('sha256').update(password + (process.env.PASSWORD_SALT ?? 'sedan-salt')).digest('hex');
 }
 
 export async function POST(req: Request) {
