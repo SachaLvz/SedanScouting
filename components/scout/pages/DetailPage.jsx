@@ -4,6 +4,27 @@ import NotePicker from '../NotePicker';
 import NotesPanel from '../NotesPanel';
 import { CATS, DECISIONS, NIVEAUX, VILLES, LISTES, getSc } from '../config';
 
+/**
+ * @param {Object} props
+ * @param {any} props.sel
+ * @param {string} props.tab
+ * @param {Function} props.setTab
+ * @param {boolean} props.showR
+ * @param {Function} props.setShowR
+ * @param {any} props.rForm
+ * @param {Function} props.setRForm
+ * @param {string|null} props.openR
+ * @param {Function} props.setOpenR
+ * @param {string} props.scoutNom
+ * @param {Function} props.avg
+ * @param {import('@/components/admin/config').Match[]} [props.matches]
+ * @param {Function} props.onBack
+ * @param {Function} props.onEdit
+ * @param {Function} props.onDelete
+ * @param {Function} props.onSaveReport
+ * @param {Function} props.onAddNote
+ * @param {Function} props.onToggleListe
+ */
 export default function DetailPage({
   sel, tab, setTab,
   showR, setShowR, rForm, setRForm, openR, setOpenR,
