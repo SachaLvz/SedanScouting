@@ -7,7 +7,7 @@ import { CATS, DECISIONS, NIVEAUX, VILLES, LISTES, getSc } from '../config';
 export default function DetailPage({
   sel, tab, setTab,
   showR, setShowR, rForm, setRForm, openR, setOpenR,
-  scoutNom, avg,
+  scoutNom, avg, matches = [],
   onBack, onEdit, onDelete, onSaveReport, onAddNote, onToggleListe,
 }) {
   if (!sel) return null;
@@ -227,6 +227,23 @@ export default function DetailPage({
               </div>
               <button className="ghost-btn" style={{ padding: "6px 10px", fontSize: 16 }} onClick={() => { setShowR(false); setRForm(null); }}>✕</button>
             </div>
+
+            {matches.length > 0 && (
+              <div style={{ marginBottom: 16 }}>
+                <label className="label">Rattacher à un match</label>
+                <select className="inp" value={rForm.matchId ?? ''} onChange={e => {
+                  const m = matches.find(x => x.id === e.target.value);
+                  setRForm(p => m
+                    ? { ...p, matchId: m.id, date: m.date, lieu: m.lieu, contexte: `${m.equipe1} vs ${m.equipe2}${m.competition ? ' · ' + m.competition : ''}` }
+                    : { ...p, matchId: '' });
+                }}>
+                  <option value="">— Rapport libre —</option>
+                  {matches.map(m => (
+                    <option key={m.id} value={m.id}>{m.date} · {m.equipe1} vs {m.equipe2}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
               <div><label className="label">Date *</label><input type="date" className="inp" value={rForm.date} onChange={e => setRForm(p => ({ ...p, date: e.target.value }))} /></div>
