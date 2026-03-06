@@ -5,6 +5,7 @@ import { useScoutData } from '@/components/scout/context';
 import ListPage from '@/components/scout/pages/ListPage';
 import DetailPage from '@/components/scout/pages/DetailPage';
 import FormPage from '@/components/scout/pages/FormPage';
+import { Match } from '@/components/admin/config';
 
 export default function ScoutJoueursPage() {
   const { players, setPlayers, scoutNom, updatePlayer, createPlayer, deletePlayer, lr, avg, getDec, blank, blankR } = useScoutData();
@@ -21,7 +22,7 @@ export default function ScoutJoueursPage() {
   const [rForm, setRForm] = useState<any>(null);
   const [showR, setShowR] = useState(false);
   const [openR, setOpenR] = useState<string | null>(null);
-  const [matches, setMatches] = useState<any[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function ScoutJoueursPage() {
     const scoutId = (() => { try { return JSON.parse(localStorage.getItem('mbarodi_user') ?? '{}').id ?? ''; } catch { return ''; } })();
     fetch('/api/matches')
       .then(r => r.json())
-      .then(d => { if (Array.isArray(d)) setMatches(d.filter((m: any) => (m.scouts ?? []).includes(scoutId))); })
+      .then(d => { if (Array.isArray(d)) setMatches(d.filter((m: Match) => (m.scouts ?? []).includes(scoutId)) as Match[]); })
       .catch(() => {});
   }, []);
 
