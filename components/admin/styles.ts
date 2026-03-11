@@ -1,6 +1,6 @@
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
-:root{--bg:#f4f7fb;--card:#fff;--input:#f0f4f9;--navy:#0c2340;--navy2:#1a3a5c;--blue:#1e6cb6;--blueL:#4a9de8;--blueP:#dbeafe;--blueG:#eef5fd;--border:#e2e8f0;--borderH:#cbd5e1;--t1:#0f172a;--t2:#475569;--t3:#94a3b8;--sh:0 4px 16px rgba(15,23,42,0.06);--shL:0 12px 40px rgba(15,23,42,0.1);--r:16px;--f:'Plus Jakarta Sans',sans-serif;--m:'JetBrains Mono',monospace;}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+:root{--bg:#f4f7fb;--card:#fff;--input:#f0f4f9;--navy:#0c2340;--navy2:#1a3a5c;--blue:#1e6cb6;--blueL:#4a9de8;--blueP:#dbeafe;--blueG:#eef5fd;--border:#e2e8f0;--borderH:#cbd5e1;--t1:#0f172a;--t2:#475569;--t3:#94a3b8;--sh:0 4px 16px rgba(15,23,42,0.06);--shL:0 12px 40px rgba(15,23,42,0.1);--r:16px;--f:'Inter',sans-serif;--m:'JetBrains Mono',monospace;}
 *{box-sizing:border-box}input,select,textarea,button{font-family:var(--f)}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 1px 3px rgba(15,23,42,0.04);transition:border-color .2s,box-shadow .2s,transform .15s}
 .card:hover{border-color:var(--borderH);box-shadow:var(--sh)}.card-click:hover{transform:translateY(-1px);cursor:pointer}

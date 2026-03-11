@@ -1,5 +1,5 @@
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 :root {
   --bg: #f4f7fb; --bg-card: #ffffff; --bg-input: #f0f4f9;
   --navy: #0c2340; --navy-soft: #1a3a5c;
@@ -10,7 +10,7 @@ const CSS = `
   --shadow-sm: 0 1px 3px rgba(15,23,42,0.04);
   --shadow: 0 4px 16px rgba(15,23,42,0.06), 0 1px 3px rgba(15,23,42,0.04);
   --shadow-lg: 0 12px 40px rgba(15,23,42,0.1), 0 4px 12px rgba(15,23,42,0.05);
-  --radius: 16px; --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --radius: 16px; --font: 'Inter', -apple-system, sans-serif;
   --mono: 'JetBrains Mono', monospace;
 }
 * { box-sizing: border-box; }
