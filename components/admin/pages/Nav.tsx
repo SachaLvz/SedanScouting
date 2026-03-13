@@ -15,7 +15,7 @@ export default function Nav() {
   ];
 
   return (
-    <div style={{ display: 'flex', gap: 2, padding: '0 20px', borderBottom: '1px solid var(--border)', maxWidth: 960, margin: '0 auto 24px' }}>
+    <div className="nav-scroll">
       {items.map(n => {
         const active = pathname.startsWith(n.href);
         return (
@@ -23,11 +23,10 @@ export default function Nav() {
             key={n.href}
             className={`tab ${active ? 'on' : ''}`}
             onClick={() => router.push(n.href)}
-            style={{ fontSize: 13, padding: '12px 16px' }}
           >
             {n.label}
             {n.count !== undefined && (
-              <span style={{ fontSize: 10, marginLeft: 6, padding: '1px 6px', borderRadius: 10, background: active ? 'var(--blueG)' : '#f1f5f9', color: active ? 'var(--blue)' : 'var(--t3)' }}>
+              <span className={`text-[10px] ml-1.5 px-1.5 py-px rounded-[10px] ${active ? 'bg-[#eef5fd] text-[#1e6cb6]' : 'bg-[#f1f5f9] text-[#94a3b8]'}`}>
                 {n.count}
               </span>
             )}

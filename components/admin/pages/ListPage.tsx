@@ -40,52 +40,52 @@ export default function ListPage({
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const stats = [
-    { l: 'Joueurs',  v: players.length,                                                                          c: 'var(--blue)',   bg: 'var(--blueG)' },
-    { l: 'Rapports', v: players.reduce((s, p) => s + reportCount(p), 0),                                        c: '#9333ea',       bg: '#faf5ff' },
-    { l: 'Retenus',  v: players.filter(p => ['retenu','signer','europe'].includes(lr(p)?.decision ?? '')).length, c: '#16a34a',       bg: '#f0fdf4' },
-    { l: 'Matchs',   v: matches.length,                                                                          c: '#d97706',       bg: '#fffbeb' },
+    { l: 'Joueurs',  v: players.length,                                                                          c: '#1e6cb6',  bg: '#eef5fd' },
+    { l: 'Rapports', v: players.reduce((s, p) => s + reportCount(p), 0),                                        c: '#9333ea',  bg: '#faf5ff' },
+    { l: 'Retenus',  v: players.filter(p => ['retenu','signer','europe'].includes(lr(p)?.decision ?? '')).length, c: '#16a34a',  bg: '#f0fdf4' },
+    { l: 'Matchs',   v: matches.length,                                                                          c: '#d97706',  bg: '#fffbeb' },
   ];
 
   return (
-    <div className="fu" style={{ maxWidth: 960, margin: '0 auto', padding: '0 20px 60px' }}>
-      <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: 200, position: 'relative' }}>
-          <input className="inp" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft: 40 }} />
-          <svg style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <div className="fu max-w-[960px] mx-auto px-5 pb-[60px]">
+      <div className="flex gap-2.5 mb-3.5 flex-wrap">
+        <div className="flex-1 min-w-[200px] relative">
+          <input className="inp pl-10" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)} />
+          <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94a3b8]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
         </div>
-        <button className="btn-p" style={{ padding: '12px 24px', fontSize: 13 }} onClick={() => { setForm(blank()); setView('form'); }}>+ Nouveau joueur</button>
+        <button className="btn-p px-6 py-3 text-[13px]" onClick={() => { setForm(blank()); setView('form'); }}>+ Nouveau joueur</button>
       </div>
 
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 22 }}>
-        <select className="inp" value={fPoste} onChange={e => setFPoste(e.target.value)} style={{ width: 'auto', padding: '8px 12px', fontSize: 11 }}>
+      <div className="flex gap-1.5 flex-wrap mb-[22px]">
+        <select className="inp w-auto px-3 py-2 text-[11px]" value={fPoste} onChange={e => setFPoste(e.target.value)}>
           <option value="">Poste</option>{POSITIONS.map(p => <option key={p}>{p}</option>)}
         </select>
-        <select className="inp" value={fVille} onChange={e => setFVille(e.target.value)} style={{ width: 'auto', padding: '8px 12px', fontSize: 11 }}>
+        <select className="inp w-auto px-3 py-2 text-[11px]" value={fVille} onChange={e => setFVille(e.target.value)}>
           <option value="">Ville</option>{VILLES.map(v => <option key={v}>{v}</option>)}
         </select>
-        <select className="inp" value={fDec} onChange={e => setFDec(e.target.value)} style={{ width: 'auto', padding: '8px 12px', fontSize: 11 }}>
+        <select className="inp w-auto px-3 py-2 text-[11px]" value={fDec} onChange={e => setFDec(e.target.value)}>
           <option value="">Décision</option>{DECISIONS.map(d => <option key={d.v} value={d.v}>{d.l}</option>)}
         </select>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 24 }}>
+      <div className="stats-grid">
         {stats.map(s => (
-          <div key={s.l} style={{ padding: '16px 10px', textAlign: 'center', borderRadius: 14, background: s.bg }}>
-            <div style={{ fontSize: 24, fontWeight: 800, color: s.c, fontFamily: 'var(--m)' }}>{s.v}</div>
-            <div style={{ fontSize: 8, fontWeight: 700, color: s.c, marginTop: 6, textTransform: 'uppercase', letterSpacing: 1.5, opacity: .6 }}>{s.l}</div>
+          <div key={s.l} className="px-2.5 py-4 text-center rounded-2xl" style={{ background: s.bg }}>
+            <div className="text-[24px] font-extrabold font-mono" style={{ color: s.c }}>{s.v}</div>
+            <div className="text-[8px] font-bold mt-1.5 uppercase tracking-[1.5px] opacity-60" style={{ color: s.c }}>{s.l}</div>
           </div>
         ))}
       </div>
 
       {filtered.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: 60 }}>
-          <div style={{ fontSize: 52, marginBottom: 14 }}>🦁</div>
-          <p style={{ fontSize: 14, color: 'var(--t3)' }}>{players.length === 0 ? 'Aucun joueur. Lancez la détection !' : 'Aucun résultat.'}</p>
+        <div className="text-center py-[60px]">
+          <div className="text-[52px] mb-3.5">🦁</div>
+          <p className="text-sm text-[#94a3b8]">{players.length === 0 ? 'Aucun joueur. Lancez la détection !' : 'Aucun résultat.'}</p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div className="flex flex-col gap-1.5">
           {paginated.map((p, idx) => {
             const r = lr(p);
             const d = getDec(p);
@@ -95,30 +95,33 @@ export default function ListPage({
             return (
               <div
                 key={p.id}
-                className="card card-click"
-                style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, animationDelay: `${idx * 25}ms`, animation: 'fu .3s ease-out forwards', opacity: 0 }}
+                className="card card-click px-4 py-3 flex items-center gap-3"
+                style={{ animationDelay: `${idx * 25}ms`, animation: 'fadeUp .3s ease-out forwards', opacity: 0 }}
                 onClick={() => { setSelId(p.id); setView('detail'); setTab('profil'); }}
               >
-                <div style={{ width: 46, height: 46, borderRadius: 13, overflow: 'hidden', flexShrink: 0, background: 'linear-gradient(145deg,var(--blueP),#f1f5f9)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--border)' }}>
-                  {p.photo ? <img src={p.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 18, opacity: .3 }}>👤</span>}
+                <div className="w-[46px] h-[46px] rounded-[13px] overflow-hidden shrink-0 flex items-center justify-center border-2 border-[#e2e8f0]" style={{ background: 'linear-gradient(145deg,#dbeafe,#f1f5f9)' }}>
+                  {p.photo ? <img src={p.photo} alt="" className="w-full h-full object-cover" /> : <span className="text-[18px] opacity-30">👤</span>}
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--navy)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {(p.lastName ?? '').toUpperCase()} <span style={{ fontWeight: 500, color: 'var(--t2)' }}>{p.firstName}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-[#0c2340] truncate">
+                      {(p.lastName ?? '').toUpperCase()} <span className="font-medium text-[#475569]">{p.firstName}</span>
                     </span>
-                    {rc > 0 && <span style={{ fontSize: 10, fontWeight: 800, color: 'var(--blue)', background: 'var(--blueG)', padding: '2px 7px', borderRadius: 6, fontFamily: 'var(--m)' }}>{rc}</span>}
+                    {rc > 0 && <span className="text-[10px] font-extrabold text-[#1e6cb6] bg-[#eef5fd] px-[7px] py-px rounded-[6px] font-mono">{rc}</span>}
                   </div>
-                  <div style={{ display: 'flex', gap: 4, marginTop: 4, flexWrap: 'wrap' }}>
-                    <Tag color="var(--blue)" bg="var(--blueG)">{p.poste}</Tag>
+                  <div className="flex gap-1 mt-1 flex-wrap">
+                    <Tag color="#1e6cb6" bg="#eef5fd">{p.poste}</Tag>
                     <Tag>{p.ville}</Tag>
                     <Tag>{p.pied}</Tag>
                     {p.agent && <Tag color="#9333ea" bg="#faf5ff">Agent: {p.agent}</Tag>}
                   </div>
                 </div>
                 {d && <Tag bg={d.bg} color={d.c}>{d.i} {d.l}</Tag>}
-                <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: a ? `${aC}08` : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `2px solid ${a ? `${aC}20` : '#e2e8f0'}` }}>
-                  <span style={{ fontFamily: 'var(--m)', fontSize: 15, fontWeight: 700, color: aC ?? '#cbd5e1' }}>{a ? a.toFixed(1) : '—'}</span>
+                <div
+                  className="w-11 h-11 rounded-xl shrink-0 flex items-center justify-center border-2"
+                  style={{ background: a ? `${aC}08` : '#f8fafc', borderColor: a ? `${aC}20` : '#e2e8f0' }}
+                >
+                  <span className="font-mono text-[15px] font-bold" style={{ color: aC ?? '#cbd5e1' }}>{a ? a.toFixed(1) : '—'}</span>
                 </div>
               </div>
             );
@@ -127,11 +130,12 @@ export default function ListPage({
       )}
 
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 24 }}>
+        <div className="flex justify-center items-center gap-1.5 mt-6">
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            style={{ padding: '7px 14px', borderRadius: 10, border: '1.5px solid var(--border)', background: '#fff', color: page === 1 ? '#cbd5e1' : 'var(--navy)', cursor: page === 1 ? 'default' : 'pointer', fontSize: 13, fontWeight: 700 }}
+            className="px-3.5 py-[7px] rounded-[10px] border-[1.5px] border-[#e2e8f0] bg-white text-[13px] font-bold"
+            style={{ color: page === 1 ? '#cbd5e1' : '#0c2340', cursor: page === 1 ? 'default' : 'pointer' }}
           >
             ‹
           </button>
@@ -139,7 +143,8 @@ export default function ListPage({
             <button
               key={n}
               onClick={() => setPage(n)}
-              style={{ padding: '7px 12px', borderRadius: 10, border: `1.5px solid ${n === page ? 'var(--blue)' : 'var(--border)'}`, background: n === page ? 'var(--blue)' : '#fff', color: n === page ? '#fff' : 'var(--navy)', cursor: 'pointer', fontSize: 13, fontWeight: 700, minWidth: 36 }}
+              className="px-3 py-[7px] rounded-[10px] border-[1.5px] cursor-pointer text-[13px] font-bold min-w-9"
+              style={{ borderColor: n === page ? '#1e6cb6' : '#e2e8f0', background: n === page ? '#1e6cb6' : '#fff', color: n === page ? '#fff' : '#0c2340' }}
             >
               {n}
             </button>
@@ -147,11 +152,12 @@ export default function ListPage({
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            style={{ padding: '7px 14px', borderRadius: 10, border: '1.5px solid var(--border)', background: '#fff', color: page === totalPages ? '#cbd5e1' : 'var(--navy)', cursor: page === totalPages ? 'default' : 'pointer', fontSize: 13, fontWeight: 700 }}
+            className="px-3.5 py-[7px] rounded-[10px] border-[1.5px] border-[#e2e8f0] bg-white text-[13px] font-bold"
+            style={{ color: page === totalPages ? '#cbd5e1' : '#0c2340', cursor: page === totalPages ? 'default' : 'pointer' }}
           >
             ›
           </button>
-          <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 8 }}>
+          <span className="text-[11px] text-[#94a3b8] ml-2">
             {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} / {filtered.length}
           </span>
         </div>

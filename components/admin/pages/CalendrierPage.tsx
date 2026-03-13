@@ -15,22 +15,22 @@ interface CalendrierPageProps {
 
 export default function CalendrierPage({ pendingMatches, doneMatches, showMF, setShowMF, matchForm, setMatchForm, onSaveMatch, blankMatch }: CalendrierPageProps) {
   return (
-    <div className="fu" style={{ maxWidth: 800, margin: '0 auto', padding: '0 20px 60px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--navy)' }}>📅 Calendrier des matchs</h2>
-        <button className="btn-p" style={{ padding: '10px 20px', fontSize: 12 }} onClick={() => { setMatchForm(blankMatch()); setShowMF(true); }}>+ Programmer un match</button>
+    <div className="fu max-w-[800px] mx-auto px-5 pb-[60px]">
+      <div className="flex justify-between items-center mb-5">
+        <h2 className="m-0 text-xl font-extrabold text-[#0c2340]">📅 Calendrier des matchs</h2>
+        <button className="btn-p px-5 py-2.5 text-xs" onClick={() => { setMatchForm(blankMatch()); setShowMF(true); }}>+ Programmer un match</button>
       </div>
 
-      <div className="lbl" style={{ marginBottom: 10 }}>Mes rendez-vous ({pendingMatches.length})</div>
+      <div className="lbl mb-2.5">Mes rendez-vous ({pendingMatches.length})</div>
       {pendingMatches.length === 0
-        ? <p style={{ color: 'var(--t3)', fontSize: 13, marginBottom: 24 }}>Aucun match programmé.</p>
+        ? <p className="text-[#94a3b8] text-[13px] mb-6">Aucun match programmé.</p>
         : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 28 }}>
+          <div className="flex flex-col gap-1.5 mb-7">
             {pendingMatches.map(m => (
-              <div key={m.id} className="card" style={{ padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div key={m.id} className="card px-[18px] py-3.5 flex justify-between items-center">
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--navy)' }}>{m.equipe1} vs {m.equipe2}</div>
-                  <div style={{ display: 'flex', gap: 5, marginTop: 4 }}>
+                  <div className="text-sm font-bold text-[#0c2340]">{m.equipe1} vs {m.equipe2}</div>
+                  <div className="flex gap-1.5 mt-1">
                     <Tag>{m.date}</Tag><Tag>{m.lieu}</Tag>
                     <Tag>{m.hour} H</Tag>
                     <Tag color="#2563eb" bg="#eff6ff">{m.competition}</Tag>
@@ -44,17 +44,17 @@ export default function CalendrierPage({ pendingMatches, doneMatches, showMF, se
         )
       }
 
-      <div className="lbl" style={{ marginBottom: 10 }}>Matchs terminés ({doneMatches.length})</div>
+      <div className="lbl mb-2.5">Matchs terminés ({doneMatches.length})</div>
       {doneMatches.length === 0
-        ? <p style={{ color: 'var(--t3)', fontSize: 13 }}>Aucun match terminé.</p>
+        ? <p className="text-[#94a3b8] text-[13px]">Aucun match terminé.</p>
         : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="flex flex-col gap-1.5">
             {doneMatches.map(m => (
-              <div key={m.id} className="card" style={{ padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: .7 }}>
+              <div key={m.id} className="card px-[18px] py-3.5 flex justify-between items-center opacity-70">
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--t2)' }}>{m.equipe1} vs {m.equipe2}</div>
-                  <div style={{ display: 'flex', gap: 5, marginTop: 4 }}><Tag>{m.date}</Tag><Tag>{m.lieu}</Tag></div>
-                  <div style={{ display: 'flex', gap: 5, marginTop: 4 }}><Tag>{m.hour}</Tag></div>
+                  <div className="text-sm font-semibold text-[#475569]">{m.equipe1} vs {m.equipe2}</div>
+                  <div className="flex gap-1.5 mt-1"><Tag>{m.date}</Tag><Tag>{m.lieu}</Tag></div>
+                  <div className="flex gap-1.5 mt-1"><Tag>{m.hour}</Tag></div>
                 </div>
                 <Tag color="#16a34a" bg="#f0fdf4">✓ Terminé</Tag>
               </div>

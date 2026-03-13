@@ -59,16 +59,15 @@ export default function ScoutShadowTeamPage() {
   };
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 20px 60px' }}>
-      <h2 style={{ margin: '0 0 16px', fontSize: 20, fontWeight: 800, color: 'var(--navy)' }}>Shadow Team</h2>
+    <div className="max-w-[960px] mx-auto px-5 pb-[60px]">
+      <h2 className="m-0 mb-4 text-xl font-extrabold text-[#0c2340]">Shadow Team</h2>
 
       {/* Sélection formation */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
+      <div className="flex gap-1.5 mb-5 flex-wrap">
         {Object.keys(FORMATIONS).map(f => (
           <button
             key={f}
-            className={formation === f ? 'glow-btn' : 'ghost-btn'}
-            style={{ padding: '8px 16px', fontSize: 12 }}
+            className={formation === f ? 'btn-p px-4 py-2 text-xs' : 'btn-g px-4 py-2 text-xs'}
             onClick={() => handleSetFormation(f)}
           >
             {FORMATIONS[f].label}
@@ -85,7 +84,7 @@ export default function ScoutShadowTeamPage() {
       />
 
       {/* Compteur */}
-      <div style={{ marginTop: 12, fontSize: 11, color: 'var(--text-3)', fontWeight: 600, textAlign: 'right' }}>
+      <div className="mt-3 text-[11px] text-[#94a3b8] font-semibold text-right">
         {assignedCount}/{slots.length} postes assignés · Cliquer sur un poste pour gérer les joueurs
       </div>
 

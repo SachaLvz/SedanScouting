@@ -2,6 +2,38 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
+const PageShell = ({ children }: { children: React.ReactNode }) => (
+  <div className="min-h-screen flex flex-col items-center justify-center p-5"
+    style={{ background: 'linear-gradient(160deg, #0c2340 0%, #1a3a5c 45%, #0f2d4a 100%)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+
+    {/* Branding */}
+    <div className="fu text-center mb-9">
+      <div className="text-[56px] mb-2.5" style={{ filter: 'drop-shadow(0 0 20px rgba(125,184,232,0.4))' }}>🦁</div>
+      <h1
+        className="m-0 text-[32px] font-extrabold tracking-[5px] uppercase"
+        style={{ background: 'linear-gradient(135deg, #7db8e8, #b8ddf8, #ffffff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+      >
+        MBARODI FC
+      </h1>
+      <div className="text-[11px] text-white/40 uppercase tracking-[4px] mt-1.5 font-mono">
+        Scouting · Détection · Recrutement
+      </div>
+    </div>
+
+    {/* Card */}
+    <div
+      className="fu w-full max-w-[420px] bg-white/[0.97] rounded-3xl overflow-hidden"
+      style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.35)', animationDelay: '0.1s' }}
+    >
+      {children}
+    </div>
+
+    <div className="mt-6 text-[10px] text-white/25 text-center font-mono tracking-[1px]">
+      v1.0 · Mbarodi FC · {new Date().getFullYear()}
+    </div>
+  </div>
+);
+
 function SetPasswordForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token') ?? '';
@@ -50,80 +82,122 @@ function SetPasswordForm() {
   };
 
   if (loading) return (
-    <div style={{ textAlign: 'center', padding: '80px 20px', color: '#64748b' }}>Vérification du lien...</div>
+    <PageShell>
+      <div className="px-7 py-12 text-center text-[#94a3b8] text-sm">
+        Vérification du lien…
+      </div>
+    </PageShell>
   );
 
   if (tokenError) return (
-    <div style={{ maxWidth: 400, margin: '80px auto', padding: '32px', background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,.08)', textAlign: 'center' }}>
-      <div style={{ fontSize: 40, marginBottom: 16 }}>⚠️</div>
-      <h2 style={{ color: '#dc2626', margin: '0 0 8px' }}>Lien invalide</h2>
-      <p style={{ color: '#64748b', fontSize: 14 }}>{tokenError}</p>
-    </div>
+    <PageShell>
+      <div className="px-7 py-10 text-center">
+        <div className="text-[44px] mb-4">⚠️</div>
+        <div className="text-[17px] font-extrabold text-[#0c2340] mb-2">Lien invalide</div>
+        <div className="text-[13px] text-[#64748b] leading-relaxed">{tokenError}</div>
+      </div>
+    </PageShell>
   );
 
   if (done) return (
-    <div style={{ maxWidth: 400, margin: '80px auto', padding: '32px', background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,.08)', textAlign: 'center' }}>
-      <div style={{ fontSize: 40, marginBottom: 16 }}>✅</div>
-      <h2 style={{ color: '#16a34a', margin: '0 0 8px' }}>Mot de passe créé !</h2>
-      <p style={{ color: '#64748b', fontSize: 14 }}>Vous pouvez maintenant vous connecter à l&apos;application.</p>
-    </div>
+    <PageShell>
+      <div className="px-7 py-10 text-center">
+        <div className="text-[44px] mb-4">✅</div>
+        <div className="text-[17px] font-extrabold text-[#0c2340] mb-2">Mot de passe créé !</div>
+        <div className="text-[13px] text-[#64748b] leading-relaxed">
+          Vous pouvez maintenant vous connecter à l&apos;application avec vos identifiants.
+        </div>
+      </div>
+    </PageShell>
   );
 
+  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(' ');
+
   return (
-    <div style={{ maxWidth: 400, margin: '80px auto', padding: '32px', background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,.08)' }}>
-      <h2 style={{ margin: '0 0 4px', color: '#1e3a5f', fontSize: 22, fontWeight: 800 }}>Créer votre mot de passe</h2>
-      <p style={{ margin: '0 0 24px', color: '#64748b', fontSize: 14 }}>
-        Bienvenue, <strong>{[user?.firstName, user?.lastName].filter(Boolean).join(' ')}</strong>
-      </p>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <PageShell>
+      {/* Header card */}
+      <div className="px-7 pt-7">
+        <div className="text-[13px] font-bold text-[#1e6cb6] mb-1">
+          🔑 Activation du compte
+        </div>
+        <div className="text-[20px] font-extrabold text-[#0c2340] mb-1">
+          Bonjour, {fullName} 👋
+        </div>
+        <div className="text-[13px] text-[#64748b] mb-6 leading-[1.5]">
+          Choisissez un mot de passe pour accéder à la plateforme.
+        </div>
+      </div>
+
+      <div className="h-px bg-[#e2e8f0] mx-7" />
+
+      <form onSubmit={handleSubmit} className="px-7 pt-6 pb-7 flex flex-col gap-4">
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 4 }}>
-            Mot de passe <span style={{ color: '#dc2626' }}>*</span>
-          </label>
+          <div className="lbl">Mot de passe</div>
           <input
+            className="w-full px-4 py-[13px] bg-[#f0f4f9] border-[1.5px] border-[#e2e8f0] rounded-xl text-[#0f172a] text-sm outline-none transition-all duration-200 focus:border-[#4a9de8] focus:shadow-[0_0_0_3px_rgba(74,157,232,0.12)] placeholder:text-[#94a3b8]"
             type="password"
-            className="inp"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={e => { setPassword(e.target.value); setError(''); }}
             placeholder="6 caractères minimum"
             required
             autoFocus
           />
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 4 }}>
-            Confirmer le mot de passe <span style={{ color: '#dc2626' }}>*</span>
-          </label>
+          <div className="lbl">Confirmer le mot de passe</div>
           <input
+            className="w-full px-4 py-[13px] bg-[#f0f4f9] border-[1.5px] border-[#e2e8f0] rounded-xl text-[#0f172a] text-sm outline-none transition-all duration-200 focus:border-[#4a9de8] focus:shadow-[0_0_0_3px_rgba(74,157,232,0.12)] placeholder:text-[#94a3b8]"
             type="password"
-            className="inp"
             value={confirm}
-            onChange={e => setConfirm(e.target.value)}
+            onChange={e => { setConfirm(e.target.value); setError(''); }}
             placeholder="Répétez le mot de passe"
             required
           />
         </div>
+
+        {/* Strength hint */}
+        {password.length > 0 && (
+          <div className="flex gap-1">
+            {[1, 2, 3].map(i => (
+              <div
+                key={i}
+                className="flex-1 h-1 rounded transition-colors duration-200"
+                style={{
+                  background: password.length >= i * 4 ? (password.length >= 10 ? '#16a34a' : '#f59e0b') : '#e2e8f0',
+                }}
+              />
+            ))}
+          </div>
+        )}
+
         {error && (
-          <div style={{ padding: '10px 14px', background: '#fef2f2', borderRadius: 8, fontSize: 13, color: '#dc2626', fontWeight: 600 }}>
+          <div className="px-3.5 py-2.5 bg-[#fef2f2] rounded-[10px] text-xs text-[#dc2626]">
             {error}
           </div>
         )}
+
         <button
+          className="w-full py-3.5 border-none rounded-xl text-sm font-bold bg-gradient-to-br from-[#0c2340] to-[#1a3a5c] text-white cursor-pointer shadow-[0_4px_16px_rgba(12,35,64,0.25)] transition-all duration-200 hover:shadow-[0_6px_24px_rgba(12,35,64,0.35)] hover:-translate-y-px disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
           type="submit"
-          className="btn-p"
-          style={{ padding: '12px', fontSize: 15, fontWeight: 700, opacity: submitting ? 0.6 : 1 }}
-          disabled={submitting}
+          disabled={submitting || !password || !confirm}
         >
-          {submitting ? 'Enregistrement...' : 'Créer mon mot de passe'}
+          {submitting ? 'Enregistrement…' : 'Créer mon mot de passe'}
         </button>
       </form>
-    </div>
+    </PageShell>
   );
 }
 
 export default function SetPasswordPage() {
   return (
-    <Suspense fallback={<div style={{ textAlign: 'center', padding: '80px 20px', color: '#64748b' }}>Chargement...</div>}>
+    <Suspense fallback={
+      <div
+        className="min-h-screen flex items-center justify-center text-white/50 text-sm"
+        style={{ background: 'linear-gradient(160deg, #0c2340 0%, #1a3a5c 45%, #0f2d4a 100%)' }}
+      >
+        Chargement…
+      </div>
+    }>
       <SetPasswordForm />
     </Suspense>
   );

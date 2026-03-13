@@ -98,48 +98,47 @@ export default function ScoutsPage({ scouts, setScouts, curScout, setCurScout }:
   };
 
   return (
-    <div className="fu" style={{ maxWidth: 600, margin: '0 auto', padding: '0 20px 60px' }}>
-      <h2 style={{ margin: '0 0 16px', fontSize: 20, fontWeight: 800, color: 'var(--navy)' }}>Gestion des scouts</h2>
+    <div className="fu max-w-[600px] mx-auto px-5 pb-[60px]">
+      <h2 className="m-0 mb-4 text-xl font-extrabold text-[#0c2340]">Gestion des scouts</h2>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 20 }}>
+      <div className="flex flex-col gap-1.5 mb-5">
         {scouts.map(s => (
-          <div key={s.id} className="card" style={{ padding: '14px 18px', borderColor: s.id === curScout ? 'var(--blueL)' : undefined }}>
+          <div key={s.id} className="card px-[18px] py-3.5" style={{ borderColor: s.id === curScout ? '#4a9de8' : undefined }}>
             {editId === s.id ? (
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div className="flex gap-2 items-center">
                 <input
-                  className="inp"
-                  style={{ flex: 1 }}
+                  className="inp flex-1"
                   value={editForm.lastName}
                   onChange={e => setEditForm(p => ({ ...p, lastName: e.target.value }))}
                   onKeyDown={e => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') setEditId(null); }}
                   autoFocus
                   disabled={loading}
                 />
-                <select className="inp" style={{ width: 'auto' }} value={editForm.role} onChange={e => setEditForm(p => ({ ...p, role: e.target.value }))} disabled={loading}>
+                <select className="inp w-auto" value={editForm.role} onChange={e => setEditForm(p => ({ ...p, role: e.target.value }))} disabled={loading}>
                   <option value="scout">Scout</option>
                   <option value="admin">Admin</option>
                 </select>
-                <button className="btn-p" style={{ padding: '8px 14px', fontSize: 12 }} onClick={saveEdit} disabled={loading}>✓</button>
-                <button onClick={() => setEditId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--t3)', fontSize: 18, lineHeight: 1 }}>✕</button>
+                <button className="btn-p px-3.5 py-2 text-xs" onClick={saveEdit} disabled={loading}>✓</button>
+                <button onClick={() => setEditId(null)} className="bg-transparent border-none cursor-pointer text-[#94a3b8] text-lg leading-none">✕</button>
               </div>
             ) : deleteConfirm === s.id ? (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 13, color: '#dc2626' }}>Supprimer <strong>{[s.firstName, s.lastName].filter(Boolean).join(' ')}</strong> ?</span>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={() => deleteScout(s.id)} disabled={loading} style={{ background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Supprimer</button>
-                  <button onClick={() => setDeleteConfirm(null)} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 14px', fontSize: 12, cursor: 'pointer', color: 'var(--t2)' }}>Annuler</button>
+              <div className="flex justify-between items-center">
+                <span className="text-[13px] text-[#dc2626]">Supprimer <strong>{[s.firstName, s.lastName].filter(Boolean).join(' ')}</strong> ?</span>
+                <div className="flex gap-2">
+                  <button onClick={() => deleteScout(s.id)} disabled={loading} className="bg-[#dc2626] text-white border-none rounded-lg px-3.5 py-1.5 text-xs font-bold cursor-pointer">Supprimer</button>
+                  <button onClick={() => setDeleteConfirm(null)} className="bg-transparent border border-[#e2e8f0] rounded-lg px-3.5 py-1.5 text-xs cursor-pointer text-[#475569]">Annuler</button>
                 </div>
               </div>
             ) : (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="flex justify-between items-center">
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--navy)' }}>{[s.firstName, s.lastName].filter(Boolean).join(' ')}</div>
-                  <div style={{ fontSize: 11, color: 'var(--t3)' }}>{s.role === 'admin' ? 'Admin — voit tous les rapports' : 'Scout — voit ses rapports uniquement'}</div>
+                  <div className="text-sm font-bold text-[#0c2340]">{[s.firstName, s.lastName].filter(Boolean).join(' ')}</div>
+                  <div className="text-[11px] text-[#94a3b8]">{s.role === 'admin' ? 'Admin — voit tous les rapports' : 'Scout — voit ses rapports uniquement'}</div>
                 </div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <Tag color={s.role === 'admin' ? '#9333ea' : 'var(--blue)'} bg={s.role === 'admin' ? '#faf5ff' : 'var(--blueG)'}>{s.role}</Tag>
-                  <button onClick={() => startEdit(s)} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '5px 10px', fontSize: 12, cursor: 'pointer', color: 'var(--t2)' }}>Éditer</button>
-                  <button onClick={() => { setDeleteConfirm(s.id); setEditId(null); }} style={{ background: 'none', border: '1px solid #fecaca', borderRadius: 8, padding: '5px 10px', fontSize: 12, cursor: 'pointer', color: '#dc2626' }}>Suppr.</button>
+                <div className="flex gap-2 items-center">
+                  <Tag color={s.role === 'admin' ? '#9333ea' : '#1e6cb6'} bg={s.role === 'admin' ? '#faf5ff' : '#eef5fd'}>{s.role}</Tag>
+                  <button onClick={() => startEdit(s)} className="bg-transparent border border-[#e2e8f0] rounded-lg px-2.5 py-[5px] text-xs cursor-pointer text-[#475569]">Éditer</button>
+                  <button onClick={() => { setDeleteConfirm(s.id); setEditId(null); }} className="bg-transparent border border-[#fecaca] rounded-lg px-2.5 py-[5px] text-xs cursor-pointer text-[#dc2626]">Suppr.</button>
                 </div>
               </div>
             )}
@@ -147,11 +146,11 @@ export default function ScoutsPage({ scouts, setScouts, curScout, setCurScout }:
         ))}
       </div>
 
-      <div className="card" style={{ padding: 18 }}>
-        <div className="lbl" style={{ marginBottom: 12 }}>Inviter un scout</div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+      <div className="card p-[18px]">
+        <div className="lbl mb-3">Inviter un scout</div>
+        <div className="grid grid-cols-2 gap-2.5 mb-2.5">
           <div>
-            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: fieldError('firstName') ? '#dc2626' : 'var(--t3)', marginBottom: 4 }}>Prénom *</label>
+            <label className="block text-[11px] font-bold mb-1" style={{ color: fieldError('firstName') ? '#dc2626' : '#94a3b8' }}>Prénom *</label>
             <input
               className="inp"
               style={{ borderColor: fieldError('firstName') ? '#dc2626' : undefined }}
@@ -160,10 +159,10 @@ export default function ScoutsPage({ scouts, setScouts, curScout, setCurScout }:
               placeholder="Prénom"
               disabled={loading}
             />
-            {fieldError('firstName') && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Obligatoire</div>}
+            {fieldError('firstName') && <div className="text-[10px] text-[#dc2626] mt-[3px]">Obligatoire</div>}
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: fieldError('lastName') ? '#dc2626' : 'var(--t3)', marginBottom: 4 }}>Nom *</label>
+            <label className="block text-[11px] font-bold mb-1" style={{ color: fieldError('lastName') ? '#dc2626' : '#94a3b8' }}>Nom *</label>
             <input
               className="inp"
               style={{ borderColor: fieldError('lastName') ? '#dc2626' : undefined }}
@@ -172,11 +171,11 @@ export default function ScoutsPage({ scouts, setScouts, curScout, setCurScout }:
               placeholder="Nom de famille"
               disabled={loading}
             />
-            {fieldError('lastName') && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Obligatoire</div>}
+            {fieldError('lastName') && <div className="text-[10px] text-[#dc2626] mt-[3px]">Obligatoire</div>}
           </div>
         </div>
-        <div style={{ marginBottom: 10 }}>
-          <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: fieldError('email') ? '#dc2626' : 'var(--t3)', marginBottom: 4 }}>Email *</label>
+        <div className="mb-2.5">
+          <label className="block text-[11px] font-bold mb-1" style={{ color: fieldError('email') ? '#dc2626' : '#94a3b8' }}>Email *</label>
           <input
             type="email"
             className="inp"
@@ -186,35 +185,35 @@ export default function ScoutsPage({ scouts, setScouts, curScout, setCurScout }:
             placeholder="scout@exemple.com"
             disabled={loading}
           />
-          {fieldError('email') && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Email valide obligatoire</div>}
+          {fieldError('email') && <div className="text-[10px] text-[#dc2626] mt-[3px]">Email valide obligatoire</div>}
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <select className="inp" style={{ width: 'auto' }} value={form.role} onChange={e => setForm(p => ({ ...p, role: e.target.value }))} disabled={loading}>
+        <div className="flex gap-2">
+          <select className="inp w-auto" value={form.role} onChange={e => setForm(p => ({ ...p, role: e.target.value }))} disabled={loading}>
             <option value="scout">Scout</option>
             <option value="admin">Admin</option>
           </select>
           <button
-            className="btn-p"
-            style={{ flex: 1, padding: '10px 18px', fontSize: 13, fontWeight: 700, opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
+            className="btn-p flex-1 px-[18px] py-2.5 text-[13px] font-bold"
+            style={{ opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
             onClick={addScout}
             disabled={loading}
           >
-            {loading ? '…' : 'Envoyer l\'invitation'}
+            {loading ? '…' : "Envoyer l'invitation"}
           </button>
         </div>
         {error && (
-          <div style={{ marginTop: 10, padding: '8px 12px', background: '#fef2f2', borderRadius: 8, fontSize: 12, color: '#dc2626' }}>
+          <div className="mt-2.5 px-3 py-2 bg-[#fef2f2] rounded-lg text-xs text-[#dc2626]">
             {error}
           </div>
         )}
         {success && (
-          <div style={{ marginTop: 10, padding: '8px 12px', background: '#f0fdf4', borderRadius: 8, fontSize: 12, color: '#16a34a', fontWeight: 600 }}>
+          <div className="mt-2.5 px-3 py-2 bg-[#f0fdf4] rounded-lg text-xs text-[#16a34a] font-semibold">
             ✓ {success}
           </div>
         )}
       </div>
 
-      <div style={{ marginTop: 16, padding: '12px 16px', background: '#eff6ff', borderRadius: 10, fontSize: 12, color: '#1e40af' }}>
+      <div className="mt-4 px-4 py-3 bg-[#eff6ff] rounded-[10px] text-xs text-[#1e40af]">
         En mode <strong>Admin</strong>, vous voyez tous les rapports de tous les scouts.<br />
         En mode <strong>Scout</strong>, vous ne voyez que vos propres rapports (objectivité).
       </div>

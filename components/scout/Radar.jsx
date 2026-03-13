@@ -49,7 +49,7 @@ export default function Radar({ ratings, size = 200 }) {
         const [x, y] = pt(i, 8.2);
         return (
           <text key={c.key + "t"} x={x} y={y} textAnchor="middle" dominantBaseline="middle"
-            fill="#94a3b8" fontSize="14" fontFamily="var(--font)">{c.icon}</text>
+            fill="#94a3b8" fontSize="14" fontFamily="'Inter', sans-serif">{c.icon}</text>
         );
       })}
 

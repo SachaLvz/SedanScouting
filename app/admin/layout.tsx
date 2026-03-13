@@ -3,27 +3,33 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminDataProvider } from '@/components/admin/context';
 import Nav from '@/components/admin/pages/Nav';
-import CSS from '@/components/admin/styles';
 
 interface User { id: string; firstName: string; lastName: string; role: 'admin' | 'scout'; }
 
 function AdminHeader({ user, onLogout }: { user: User; onLogout: () => void }) {
   return (
-    <div style={{ background: 'linear-gradient(135deg,#0c2340,#1a3a5c)', padding: '20px 20px 16px', borderBottom: '3px solid var(--blueL)', boxShadow: '0 4px 24px rgba(12,35,64,.15)', marginBottom: 0 }}>
-      <div style={{ maxWidth: 960, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ textAlign: 'center', flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 2 }}>
-            <span style={{ fontSize: 26, filter: 'drop-shadow(0 0 8px rgba(255,255,255,.2))' }}>🦁</span>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: 4, textTransform: 'uppercase', background: 'linear-gradient(135deg,#7db8e8,#b8ddf8,#fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>MBARODI FC</h1>
+    <div className="bg-gradient-to-br from-[#0c2340] to-[#1a3a5c] px-5 pt-5 pb-4 border-b-[3px] border-[#4a9de8] shadow-[0_4px_24px_rgba(12,35,64,0.15)]">
+      <div className="max-w-[960px] mx-auto flex items-center justify-between">
+        <div className="text-center flex-1">
+          <div className="flex items-center justify-center gap-3 mb-0.5">
+            <span className="text-[26px]" style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,.2))' }}>🦁</span>
+            <h1
+              className="m-0 text-[clamp(18px,4vw,24px)] font-extrabold uppercase tracking-[clamp(2px,1vw,4px)]"
+              style={{ background: 'linear-gradient(135deg,#7db8e8,#b8ddf8,#fff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+            >
+              MBARODI FC
+            </h1>
           </div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: 4, fontFamily: 'var(--m)' }}>Scouting · Détection · Recrutement</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,.3)', marginTop: 4 }}>Admin : <strong style={{ color: 'rgba(255,255,255,.6)' }}>{[user.firstName, user.lastName].filter(Boolean).join(' ')}</strong></div>
+          <div className="header-sub text-[9px] text-white/40 uppercase tracking-[4px] font-mono">
+            Scouting · Détection · Recrutement
+          </div>
+          <div className="text-[10px] text-white/30 mt-1">
+            Admin : <strong className="text-white/60">{[user.firstName, user.lastName].filter(Boolean).join(' ')}</strong>
+          </div>
         </div>
         <button
           onClick={onLogout}
-          style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,.2)', background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.7)', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--f)', flexShrink: 0 }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,.15)'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,.08)'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,.7)'; }}
+          className="px-3.5 py-2 rounded-[10px] border border-white/20 bg-white/[0.08] text-white/70 text-[11px] font-semibold cursor-pointer shrink-0 transition-all duration-150 hover:bg-white/[0.15] hover:text-white"
         >
           Déconnexion
         </button>
@@ -56,10 +62,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AdminDataProvider initialUser={user}>
-      <style>{CSS}</style>
-      <div style={{ minHeight: '100vh', fontFamily: 'var(--f)', color: 'var(--t1)', background: 'var(--bg)' }}>
+      <div className="min-h-screen text-[#0f172a] bg-[#f4f7fb]">
         <AdminHeader user={user} onLogout={handleLogout} />
-        <div style={{ paddingTop: 24 }}>
+        <div className="pt-6">
           <Nav />
           {children}
         </div>

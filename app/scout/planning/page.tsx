@@ -69,38 +69,41 @@ export default function ScoutPlanningPage() {
   const renderMatch = (m: Match) => {
     const isPast = m.statut === 'termine';
     return (
-      <div key={m.id} style={{
-        display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px',
-        borderRadius: 14, background: isPast ? '#fff' : 'var(--blue-ghost)',
-        border: `1.5px solid ${isPast ? 'var(--border)' : 'var(--blue-light)'}`,
-        opacity: isPast ? 0.7 : 1,
-      }}>
+      <div
+        key={m.id}
+        className="flex items-center gap-3.5 px-[18px] py-3.5 rounded-2xl border-[1.5px]"
+        style={{
+          background: isPast ? '#fff' : '#eef5fd',
+          borderColor: isPast ? '#e2e8f0' : '#4a9de8',
+          opacity: isPast ? 0.7 : 1,
+        }}
+      >
         {/* Date/heure */}
-        <div style={{ flexShrink: 0, textAlign: 'center', minWidth: 52 }}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--navy)', fontFamily: 'var(--mono)' }}>
+        <div className="shrink-0 text-center min-w-[52px]">
+          <div className="text-[13px] font-extrabold text-[#0c2340] font-mono">
             {m.date ? m.date.split('-').slice(1).reverse().join('/') : '—'}
           </div>
           {m.hour && (
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--blue)', marginTop: 1 }}>{m.hour}</div>
+            <div className="text-[11px] font-semibold text-[#1e6cb6] mt-px">{m.hour}</div>
           )}
         </div>
 
-        <div style={{ width: 1, height: 36, background: 'var(--border)', flexShrink: 0 }} />
+        <div className="w-px h-9 bg-[#e2e8f0] shrink-0" />
 
         {/* Match info */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--navy)', marginBottom: 3 }}>
-            {m.equipe1} <span style={{ color: 'var(--text-3)', fontWeight: 500 }}>vs</span> {m.equipe2}
+        <div className="flex-1 min-w-0">
+          <div className="text-[13px] font-bold text-[#0c2340] mb-[3px]">
+            {m.equipe1} <span className="text-[#94a3b8] font-medium">vs</span> {m.equipe2}
           </div>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {m.lieu && <span style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 500 }}>📍 {m.lieu}</span>}
-            {m.competition && <span style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 500 }}>🏆 {m.competition}</span>}
-            {m.type && <span style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 500 }}>· {m.type === 'live' ? '🏟 Live' : '📹 Vidéo'}</span>}
+          <div className="flex gap-1.5 flex-wrap">
+            {m.lieu && <span className="text-[10px] text-[#94a3b8] font-medium">📍 {m.lieu}</span>}
+            {m.competition && <span className="text-[10px] text-[#94a3b8] font-medium">🏆 {m.competition}</span>}
+            {m.type && <span className="text-[10px] text-[#94a3b8] font-medium">· {m.type === 'live' ? '🏟 Live' : '📹 Vidéo'}</span>}
           </div>
         </div>
 
         {isPast && (
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#16a34a', background: '#f0fdf4', borderRadius: 6, padding: '3px 8px', flexShrink: 0 }}>
+          <span className="text-[10px] font-bold text-[#16a34a] bg-[#f0fdf4] rounded-[6px] px-2 py-[3px] shrink-0">
             ✓ Vu
           </span>
         )}
@@ -109,18 +112,17 @@ export default function ScoutPlanningPage() {
   };
 
   if (loading) return (
-    <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 20px', textAlign: 'center', color: 'var(--text-3)' }}>
+    <div className="max-w-[760px] mx-auto px-5 py-10 text-center text-[#94a3b8]">
       Chargement...
     </div>
   );
 
   return (
-    <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 20px 60px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--navy)' }}>Mon planning</h2>
+    <div className="max-w-[760px] mx-auto px-5 pb-[60px]">
+      <div className="flex justify-between items-center mb-5">
+        <h2 className="m-0 text-xl font-extrabold text-[#0c2340]">Mon planning</h2>
         <button
-          className="glow-btn"
-          style={{ padding: '8px 16px', fontSize: 12 }}
+          className="btn-p px-4 py-2 text-xs"
           onClick={() => { setMatchForm(blankMatch(scoutId)); setShowForm(true); }}
         >
           + Ajouter un match
@@ -128,16 +130,16 @@ export default function ScoutPlanningPage() {
       </div>
 
       {/* À venir */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 10 }}>
+      <div className="mb-8">
+        <div className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-[1.5px] mb-2.5">
           À venir · {upcoming.length}
         </div>
         {upcoming.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-3)', fontSize: 13 }}>
-            Aucun match planifié. Cliquez sur "+ Ajouter un match" pour en programmer un.
+          <div className="text-center py-10 px-5 text-[#94a3b8] text-[13px]">
+            Aucun match planifié. Cliquez sur &quot;+ Ajouter un match&quot; pour en programmer un.
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="flex flex-col gap-1.5">
             {upcoming.map(renderMatch)}
           </div>
         )}
@@ -146,10 +148,10 @@ export default function ScoutPlanningPage() {
       {/* Passés */}
       {done.length > 0 && (
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 10 }}>
+          <div className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-[1.5px] mb-2.5">
             Matchs passés · {done.length}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="flex flex-col gap-1.5">
             {done.map(renderMatch)}
           </div>
         </div>
