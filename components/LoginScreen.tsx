@@ -46,15 +46,15 @@ interface Props {
   onLogin: (user: LoginUser) => void;
 }
 
-const ADMIN_PASSWORD = "mbarodi2026";
-
 export default function LoginScreen({ onLogin }: Props) {
   const [mode, setMode] = useState<'admin' | 'scout'>('admin');
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [scoutName, setScoutName] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [scouts, setScouts] = useState<LoginUser[]>([]);
   const [selectedScout, setSelectedScout] = useState<LoginUser | null>(null);
+  const [scoutPassword, setScoutPassword] = useState("");
 
   useEffect(() => {
     fetch('/api/scouts')
@@ -63,22 +63,49 @@ export default function LoginScreen({ onLogin }: Props) {
       .catch(() => {});
   }, []);
 
-  const handleAdmin = () => {
-    if (password === ADMIN_PASSWORD) {
-      onLogin({ id: "admin-1", firstName: '', lastName: "Admin", role: "admin" });
-    } else {
-      setError("Mot de passe incorrect.");
+  const handleAdmin = async () => {
+    if (!email || !password) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Erreur de connexion.");
+      } else {
+        onLogin(data);
+      }
+    } catch {
+      setError("Erreur réseau.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleScout = () => {
-    if (selectedScout) {
-      onLogin(selectedScout);
-    } else {
-      const name = scoutName.trim();
-      if (!name) { setError("Sélectionnez ou entrez votre nom."); return; }
-      const id = "scout-" + Math.random().toString(36).substr(2, 8);
-      onLogin({ id, firstName: '', lastName: name, role: "scout" });
+  const handleScout = async () => {
+    if (!selectedScout || !scoutPassword) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: selectedScout.id, password: scoutPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Erreur de connexion.");
+      } else {
+        onLogin(data);
+      }
+    } catch {
+      setError("Erreur réseau.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,10 +147,10 @@ export default function LoginScreen({ onLogin }: Props) {
       }}>
         {/* Tabs */}
         <div style={{ display: "flex", borderBottom: "1px solid #e2e8f0" }}>
-          <button className={`tab-login ${mode === "admin" ? "on" : ""}`} onClick={() => { setMode("admin"); setError(""); }}>
+          <button className={`tab-login ${mode === "admin" ? "on" : ""}`} onClick={() => { setMode("admin"); setError(""); setEmail(""); setPassword(""); }}>
             🔐 Admin
           </button>
-          <button className={`tab-login ${mode === "scout" ? "on" : ""}`} onClick={() => { setMode("scout"); setError(""); }}>
+          <button className={`tab-login ${mode === "scout" ? "on" : ""}`} onClick={() => { setMode("scout"); setError(""); setEmail(""); setPassword(""); }}>
             👤 Scout
           </button>
         </div>
@@ -131,9 +158,23 @@ export default function LoginScreen({ onLogin }: Props) {
         <div style={{ padding: "32px 28px 28px" }}>
           {mode === "admin" ? (
             <div key="admin" className="fu">
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
+                  Email
+                </div>
+                <input
+                  className="login-inp"
+                  type="email"
+                  placeholder="admin@exemple.fr"
+                  value={email}
+                  onChange={e => { setEmail(e.target.value); setError(""); }}
+                  onKeyDown={handleKey}
+                  autoFocus
+                />
+              </div>
               <div style={{ marginBottom: 20 }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
-                  Mot de passe Admin
+                  Mot de passe
                 </div>
                 <input
                   className="login-inp"
@@ -142,7 +183,6 @@ export default function LoginScreen({ onLogin }: Props) {
                   value={password}
                   onChange={e => { setPassword(e.target.value); setError(""); }}
                   onKeyDown={handleKey}
-                  autoFocus
                 />
               </div>
               {error && (
@@ -150,8 +190,8 @@ export default function LoginScreen({ onLogin }: Props) {
                   {error}
                 </div>
               )}
-              <button className="login-btn-p" onClick={handleAdmin} disabled={!password}>
-                Connexion Admin
+              <button className="login-btn-p" onClick={handleAdmin} disabled={!email || !password || loading}>
+                {loading ? "Connexion…" : "Connexion Admin"}
               </button>
               <div style={{ marginTop: 16, padding: "10px 14px", background: "#eff6ff", borderRadius: 10, fontSize: 11, color: "#1e40af", lineHeight: 1.6 }}>
                 ℹ️ L'admin accède à <strong>tous les rapports</strong> de tous les scouts et peut gérer l'équipe complète.
@@ -159,49 +199,53 @@ export default function LoginScreen({ onLogin }: Props) {
             </div>
           ) : (
             <div key="scout" className="fu">
-              <div style={{ marginBottom: 20 }}>
+              <div style={{ marginBottom: 16 }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
-                  {scouts.length > 0 ? "Sélectionnez votre profil" : "Votre nom"}
+                  Sélectionnez votre profil
                 </div>
-                {scouts.length > 0 ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {scouts.map(s => (
-                      <button
-                        key={s.id}
-                        onClick={() => { setSelectedScout(s); setScoutName(""); setError(""); }}
-                        style={{
-                          width: "100%", padding: "12px 16px", borderRadius: 12, cursor: "pointer",
-                          border: selectedScout?.id === s.id ? "2px solid #1e6cb6" : "1.5px solid #e2e8f0",
-                          background: selectedScout?.id === s.id ? "#eff6ff" : "#f8fafc",
-                          color: selectedScout?.id === s.id ? "#0c2340" : "#475569",
-                          fontWeight: selectedScout?.id === s.id ? 700 : 500,
-                          fontSize: 14, fontFamily: "inherit", textAlign: "left",
-                          transition: "all 0.15s",
-                        }}
-                      >
-                        👤 {[s.firstName, s.lastName].filter(Boolean).join(' ')}
-                      </button>
-                    ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {scouts.map(s => (
+                    <button
+                      key={s.id}
+                      onClick={() => { setSelectedScout(s); setScoutPassword(""); setError(""); }}
+                      style={{
+                        width: "100%", padding: "12px 16px", borderRadius: 12, cursor: "pointer",
+                        border: selectedScout?.id === s.id ? "2px solid #1e6cb6" : "1.5px solid #e2e8f0",
+                        background: selectedScout?.id === s.id ? "#eff6ff" : "#f8fafc",
+                        color: selectedScout?.id === s.id ? "#0c2340" : "#475569",
+                        fontWeight: selectedScout?.id === s.id ? 700 : 500,
+                        fontSize: 14, fontFamily: "inherit", textAlign: "left",
+                        transition: "all 0.15s",
+                      }}
+                    >
+                      👤 {[s.firstName, s.lastName].filter(Boolean).join(' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {selectedScout && (
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
+                    Mot de passe
                   </div>
-                ) : (
                   <input
                     className="login-inp"
-                    type="text"
-                    placeholder="Ex: Mamadou Diallo"
-                    value={scoutName}
-                    onChange={e => { setScoutName(e.target.value); setError(""); }}
+                    type="password"
+                    placeholder="••••••••••••"
+                    value={scoutPassword}
+                    onChange={e => { setScoutPassword(e.target.value); setError(""); }}
                     onKeyDown={handleKey}
                     autoFocus
                   />
-                )}
-              </div>
+                </div>
+              )}
               {error && (
                 <div style={{ padding: "10px 14px", background: "#fef2f2", borderRadius: 10, fontSize: 12, color: "#dc2626", marginBottom: 16 }}>
                   {error}
                 </div>
               )}
-              <button className="login-btn-p" onClick={handleScout} disabled={scouts.length > 0 ? !selectedScout : !scoutName.trim()}>
-                Accéder au scouting
+              <button className="login-btn-p" onClick={handleScout} disabled={!selectedScout || !scoutPassword || loading}>
+                {loading ? "Connexion…" : "Accéder au scouting"}
               </button>
               <div style={{ marginTop: 16, padding: "10px 14px", background: "#f0fdf4", borderRadius: 10, fontSize: 11, color: "#166534", lineHeight: 1.6 }}>
                 ℹ️ En mode Scout, vous accédez à une interface <strong>simplifiée</strong> et ne voyez que vos propres rapports.

@@ -1,17 +1,12 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createHash } from 'crypto';
 import { prisma } from '../../../../lib/prisma';
+import { hashPassword } from '../../../../lib/auth';
 
 const SetPasswordSchema = z.object({
   token: z.string().min(1),
   password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
 });
-
-// Simple SHA-256 hash (no bcrypt dependency needed for this use case)
-function hashPassword(password: string): string {
-  return createHash('sha256').update(password + (process.env.PASSWORD_SALT ?? 'sedan-salt')).digest('hex');
-}
 
 export async function POST(req: Request) {
   try {
