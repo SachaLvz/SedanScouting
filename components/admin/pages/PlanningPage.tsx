@@ -48,42 +48,41 @@ export default function PlanningPage() {
     const isPast = m.statut === 'termine';
 
     return (
-      <div key={m.id} style={{
-        display: 'flex', alignItems: 'center', gap: 14, padding: '16px 18px',
-        borderRadius: 14, background: '#fff',
-        border: `1.5px solid ${isPast ? 'var(--border)' : attendees.length > 0 ? '#bfdbfe' : 'var(--border)'}`,
-        opacity: isPast ? 0.65 : 1,
-      }}>
+      <div
+        key={m.id}
+        className="flex items-center gap-3.5 px-[18px] py-4 rounded-2xl bg-white border-[1.5px]"
+        style={{ borderColor: isPast ? '#e2e8f0' : attendees.length > 0 ? '#bfdbfe' : '#e2e8f0', opacity: isPast ? 0.65 : 1 }}
+      >
         {/* Date/heure */}
-        <div style={{ flexShrink: 0, textAlign: 'center', minWidth: 48 }}>
-          <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--navy)', fontFamily: 'var(--mono)', lineHeight: 1 }}>
+        <div className="shrink-0 text-center min-w-[48px]">
+          <div className="text-sm font-extrabold text-[#0c2340] font-mono leading-none">
             {m.date ? m.date.split('-').slice(1).reverse().join('/') : '—'}
           </div>
           {m.hour && (
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--blue)', marginTop: 3 }}>{m.hour}</div>
+            <div className="text-[11px] font-semibold text-[#1e6cb6] mt-[3px]">{m.hour}</div>
           )}
         </div>
 
-        <div style={{ width: 1, height: 40, background: 'var(--border)', flexShrink: 0 }} />
+        <div className="w-px h-10 bg-[#e2e8f0] shrink-0" />
 
         {/* Match info */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--navy)', marginBottom: 4 }}>
-            {m.equipe1} <span style={{ color: 'var(--text-3)', fontWeight: 400, fontSize: 11 }}>vs</span> {m.equipe2}
+        <div className="flex-1 min-w-0">
+          <div className="text-[13px] font-bold text-[#0c2340] mb-1">
+            {m.equipe1} <span className="text-[#94a3b8] font-normal text-[11px]">vs</span> {m.equipe2}
           </div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            {m.lieu && <span style={{ fontSize: 10, color: 'var(--text-3)' }}>📍 {m.lieu}</span>}
-            {m.competition && <span style={{ fontSize: 10, color: 'var(--text-3)' }}>🏆 {m.competition}</span>}
-            {m.type && <span style={{ fontSize: 10, color: 'var(--text-3)' }}>{m.type === 'live' ? '🏟 Live' : '📹 Vidéo'}</span>}
+          <div className="flex gap-2 flex-wrap items-center">
+            {m.lieu && <span className="text-[10px] text-[#94a3b8]">📍 {m.lieu}</span>}
+            {m.competition && <span className="text-[10px] text-[#94a3b8]">🏆 {m.competition}</span>}
+            {m.type && <span className="text-[10px] text-[#94a3b8]">{m.type === 'live' ? '🏟 Live' : '📹 Vidéo'}</span>}
           </div>
         </div>
 
         {/* Scouts — avatars */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+        <div className="flex items-center gap-1.5 shrink-0">
           {attendees.length === 0 ? (
-            <span style={{ fontSize: 11, color: '#cbd5e1', fontStyle: 'italic', paddingRight: 4 }}>—</span>
+            <span className="text-[11px] text-[#cbd5e1] italic pr-1">—</span>
           ) : (
-            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 240 }}>
+            <div className="flex gap-1 flex-wrap justify-end max-w-[240px]">
               {attendees.map(id => {
                 const c = colorOf(id);
                 const scout = scoutList.find(s => s.id === id);
@@ -93,25 +92,22 @@ export default function PlanningPage() {
                     key={id}
                     title={[scout?.firstName, scout?.lastName].filter(Boolean).join(' ')}
                     onClick={() => setFilterScout(filterScout === id ? 'all' : id)}
+                    className="flex items-center gap-[5px] cursor-pointer px-2.5 py-1 rounded-[20px] border-[1.5px] transition-all duration-150"
                     style={{
-                      display: 'flex', alignItems: 'center', gap: 5, cursor: 'pointer',
-                      padding: '4px 10px 4px 5px', borderRadius: 20,
                       background: isFiltered ? c.color : c.bg,
-                      border: `1.5px solid ${isFiltered ? c.color : c.border}`,
-                      transition: 'all .15s',
+                      borderColor: isFiltered ? c.color : c.border,
                     }}
                   >
-                    <div style={{
-                      width: 20, height: 20, borderRadius: '50%',
-                      background: isFiltered ? 'rgba(255,255,255,0.25)' : c.border,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 9, fontWeight: 800,
-                      color: isFiltered ? '#fff' : c.color,
-                      flexShrink: 0,
-                    }}>
+                    <div
+                      className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-extrabold shrink-0"
+                      style={{
+                        background: isFiltered ? 'rgba(255,255,255,0.25)' : c.border,
+                        color: isFiltered ? '#fff' : c.color,
+                      }}
+                    >
                       {scout ? initials(scout.lastName, scout.firstName) : '?'}
                     </div>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: isFiltered ? '#fff' : c.color, whiteSpace: 'nowrap' }}>
+                    <span className="text-[11px] font-bold whitespace-nowrap" style={{ color: isFiltered ? '#fff' : c.color }}>
                       {[scout?.firstName, scout?.lastName].filter(Boolean).join(' ')}
                     </span>
                   </div>
@@ -124,9 +120,8 @@ export default function PlanningPage() {
         {/* Statut toggle */}
         <button
           onClick={() => toggleStatut(m)}
+          className="shrink-0 px-[11px] py-[5px] rounded-lg text-[10px] font-bold border-none cursor-pointer"
           style={{
-            flexShrink: 0, padding: '5px 11px', borderRadius: 8, fontSize: 10, fontWeight: 700,
-            border: 'none', cursor: 'pointer',
             background: isPast ? '#f0fdf4' : '#fffbeb',
             color: isPast ? '#16a34a' : '#d97706',
           }}
@@ -138,34 +133,35 @@ export default function PlanningPage() {
   };
 
   return (
-    <div className="fu" style={{ maxWidth: 960, margin: '0 auto', padding: '0 20px 60px' }}>
+    <div className="fu max-w-[960px] mx-auto px-5 pb-[60px]">
 
       {/* En-tête */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, gap: 12, flexWrap: 'wrap' }}>
-        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--navy)' }}>Planning</h2>
+      <div className="flex justify-between items-start mb-6 gap-3 flex-wrap">
+        <h2 className="m-0 text-xl font-extrabold text-[#0c2340]">Planning</h2>
         <button
-          className="btn-p"
-          style={{ padding: '8px 18px', fontSize: 12 }}
+          className="btn-p px-[18px] py-2 text-xs"
           onClick={() => { setMatchForm(blankMatch()); setShowForm(true); }}
         >
           + Programmer un match
         </button>
       </div>
 
-      {/* Filtre scouts — cartes avec compteur */}
+      {/* Filtre scouts */}
       {scoutList.length > 0 && (
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+        <div className="flex gap-2 mb-6 flex-wrap">
           <button
             onClick={() => setFilterScout('all')}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl border-[1.5px] cursor-pointer transition-all duration-150"
             style={{
-              display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px',
-              borderRadius: 12, border: `1.5px solid ${filterScout === 'all' ? 'var(--blue)' : 'var(--border)'}`,
-              background: filterScout === 'all' ? 'var(--blue-ghost)' : '#fff',
-              cursor: 'pointer', transition: 'all .15s',
+              borderColor: filterScout === 'all' ? '#1e6cb6' : '#e2e8f0',
+              background: filterScout === 'all' ? '#eef5fd' : '#fff',
             }}
           >
-            <span style={{ fontSize: 12, fontWeight: 700, color: filterScout === 'all' ? 'var(--blue)' : 'var(--navy)' }}>Tous</span>
-            <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 6, background: filterScout === 'all' ? 'var(--blue)' : '#f1f5f9', color: filterScout === 'all' ? '#fff' : 'var(--text-3)' }}>
+            <span className="text-xs font-bold" style={{ color: filterScout === 'all' ? '#1e6cb6' : '#0c2340' }}>Tous</span>
+            <span
+              className="text-[10px] font-bold px-1.5 py-px rounded-[6px]"
+              style={{ background: filterScout === 'all' ? '#1e6cb6' : '#f1f5f9', color: filterScout === 'all' ? '#fff' : '#94a3b8' }}
+            >
               {matches.filter(m => m.statut === 'planifie').length}
             </span>
           </button>
@@ -177,23 +173,20 @@ export default function PlanningPage() {
               <button
                 key={s.id}
                 onClick={() => setFilterScout(active ? 'all' : s.id)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px',
-                  borderRadius: 12, border: `1.5px solid ${active ? c.color : c.border}`,
-                  background: active ? c.bg : '#fff',
-                  cursor: 'pointer', transition: 'all .15s',
-                }}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl border-[1.5px] cursor-pointer transition-all duration-150"
+                style={{ borderColor: active ? c.color : c.border, background: active ? c.bg : '#fff' }}
               >
-                <div style={{
-                  width: 22, height: 22, borderRadius: '50%',
-                  background: active ? c.color : c.border,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 9, fontWeight: 800, color: active ? '#fff' : c.color,
-                }}>
+                <div
+                  className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[9px] font-extrabold"
+                  style={{ background: active ? c.color : c.border, color: active ? '#fff' : c.color }}
+                >
                   {initials(s.lastName, s.firstName)}
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: active ? c.color : 'var(--navy)' }}>{[s.firstName, s.lastName].filter(Boolean).join(' ')}</span>
-                <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 6, background: active ? c.color : '#f1f5f9', color: active ? '#fff' : 'var(--text-3)' }}>
+                <span className="text-xs font-bold" style={{ color: active ? c.color : '#0c2340' }}>{[s.firstName, s.lastName].filter(Boolean).join(' ')}</span>
+                <span
+                  className="text-[10px] font-bold px-1.5 py-px rounded-[6px]"
+                  style={{ background: active ? c.color : '#f1f5f9', color: active ? '#fff' : '#94a3b8' }}
+                >
                   {count}
                 </span>
               </button>
@@ -203,16 +196,16 @@ export default function PlanningPage() {
       )}
 
       {/* À venir */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 10 }}>
+      <div className="mb-8">
+        <div className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-[1.5px] mb-2.5">
           À venir · {upcoming.length}
         </div>
         {upcoming.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-3)', fontSize: 13 }}>
+          <div className="text-center py-10 px-5 text-[#94a3b8] text-[13px]">
             {filterScout !== 'all' ? `${[scoutList.find(s => s.id === filterScout)?.firstName, scoutList.find(s => s.id === filterScout)?.lastName].filter(Boolean).join(' ')} n'a aucun match planifié.` : 'Aucun match à venir.'}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="flex flex-col gap-1.5">
             {upcoming.map(renderMatch)}
           </div>
         )}
@@ -221,10 +214,10 @@ export default function PlanningPage() {
       {/* Passés */}
       {done.length > 0 && (
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 10 }}>
+          <div className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-[1.5px] mb-2.5">
             Matchs passés · {done.length}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="flex flex-col gap-1.5">
             {done.map(renderMatch)}
           </div>
         </div>

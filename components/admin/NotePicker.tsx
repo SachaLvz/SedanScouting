@@ -21,7 +21,7 @@ export default function NotePicker({ value, onChange }: NotePickerProps) {
             alignItems: 'center', gap: 2,
           }}
         >
-          <span style={{ fontSize: 15, fontWeight: 800, color: value === s.v ? s.c : '#cbd5e1', fontFamily: 'var(--m)' }}>{s.v}</span>
+          <span style={{ fontSize: 15, fontWeight: 800, color: value === s.v ? s.c : '#cbd5e1', fontFamily: "'JetBrains Mono', monospace" }}>{s.v}</span>
           <span style={{ fontSize: 7, fontWeight: 700, color: value === s.v ? s.c : '#cbd5e1', textTransform: 'uppercase' }}>{s.l}</span>
         </button>
       ))}

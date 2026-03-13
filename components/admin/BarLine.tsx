@@ -14,7 +14,7 @@ export default function BarLine({ v }: BarLineProps) {
           background: `linear-gradient(90deg,${s.c}88,${s.c})`, transition: 'width .4s',
         }} />
       </div>
-      <span style={{ fontSize: 14, fontWeight: 800, fontFamily: 'var(--m)', color: s.c, minWidth: 16, textAlign: 'right' }}>{v}</span>
+      <span style={{ fontSize: 14, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", color: s.c, minWidth: 16, textAlign: 'right' }}>{v}</span>
     </div>
   );
 }

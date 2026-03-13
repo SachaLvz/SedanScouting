@@ -35,50 +35,48 @@ export default function MatchFormModal({ matchForm, setMatchForm, onSave, onClos
     onSave();
   };
 
-  const field = (key: keyof Match) => ({
-    borderColor: errors[key] ? '#dc2626' : undefined,
-  });
+  const errBorder = (key: keyof Match) => errors[key] ? '#dc2626' : undefined;
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', padding: '40px 16px', backdropFilter: 'blur(4px)' }}
+      className="fixed inset-0 bg-[rgba(15,23,42,0.5)] z-[1000] flex justify-center px-4 py-10 backdrop-blur-[4px]"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="card fu" style={{ maxWidth: 480, width: '100%', padding: 28, alignSelf: 'flex-start', boxShadow: 'var(--shL)' }}>
-        <h3 style={{ margin: '0 0 20px', fontSize: 18, fontWeight: 800, color: 'var(--navy)' }}>Programmer un match</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+      <div className="card fu max-w-[480px] w-full p-7 self-start shadow-[0_12px_40px_rgba(15,23,42,0.1)]">
+        <h3 className="m-0 mb-5 text-lg font-extrabold text-[#0c2340]">Programmer un match</h3>
+        <div className="grid grid-cols-2 gap-2.5 mb-3.5">
           <div>
             <label className="lbl">Équipe 1 *</label>
-            <input className="inp" style={field('equipe1')} value={matchForm.equipe1} onChange={e => setMatchForm(p => p ? { ...p, equipe1: e.target.value } : p)} placeholder="Dakar FC" />
-            {errors.equipe1 && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>{errors.equipe1}</div>}
+            <input className="inp" style={{ borderColor: errBorder('equipe1') }} value={matchForm.equipe1} onChange={e => setMatchForm(p => p ? { ...p, equipe1: e.target.value } : p)} placeholder="Dakar FC" />
+            {errors.equipe1 && <div className="text-[10px] text-[#dc2626] mt-[3px]">{errors.equipe1}</div>}
           </div>
           <div>
             <label className="lbl">Équipe 2 *</label>
-            <input className="inp" style={field('equipe2')} value={matchForm.equipe2} onChange={e => setMatchForm(p => p ? { ...p, equipe2: e.target.value } : p)} placeholder="Thiès United" />
-            {errors.equipe2 && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>{errors.equipe2}</div>}
+            <input className="inp" style={{ borderColor: errBorder('equipe2') }} value={matchForm.equipe2} onChange={e => setMatchForm(p => p ? { ...p, equipe2: e.target.value } : p)} placeholder="Thiès United" />
+            {errors.equipe2 && <div className="text-[10px] text-[#dc2626] mt-[3px]">{errors.equipe2}</div>}
           </div>
           <div>
             <label className="lbl">Date *</label>
-            <input type="date" className="inp" style={field('date')} value={matchForm.date} onChange={e => setMatchForm(p => p ? { ...p, date: e.target.value } : p)} />
-            {errors.date && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>{errors.date}</div>}
+            <input type="date" className="inp" style={{ borderColor: errBorder('date') }} value={matchForm.date} onChange={e => setMatchForm(p => p ? { ...p, date: e.target.value } : p)} />
+            {errors.date && <div className="text-[10px] text-[#dc2626] mt-[3px]">{errors.date}</div>}
           </div>
           <div>
             <label className="lbl">Lieu *</label>
-            <select className="inp" style={field('lieu')} value={matchForm.lieu} onChange={e => setMatchForm(p => p ? { ...p, lieu: e.target.value } : p)}>
+            <select className="inp" style={{ borderColor: errBorder('lieu') }} value={matchForm.lieu} onChange={e => setMatchForm(p => p ? { ...p, lieu: e.target.value } : p)}>
               <option value="">— Choisir —</option>
               {VILLES.map(v => <option key={v}>{v}</option>)}
             </select>
-            {errors.lieu && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>{errors.lieu}</div>}
+            {errors.lieu && <div className="text-[10px] text-[#dc2626] mt-[3px]">{errors.lieu}</div>}
           </div>
           <div>
             <label className="lbl">Horaire *</label>
-            <input type="time" className="inp" style={field('hour')} value={matchForm.hour} onChange={e => setMatchForm(p => p ? { ...p, hour: e.target.value } : p)} />
-            {errors.hour && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>{errors.hour}</div>}
+            <input type="time" className="inp" style={{ borderColor: errBorder('hour') }} value={matchForm.hour} onChange={e => setMatchForm(p => p ? { ...p, hour: e.target.value } : p)} />
+            {errors.hour && <div className="text-[10px] text-[#dc2626] mt-[3px]">{errors.hour}</div>}
           </div>
           <div>
             <label className="lbl">Compétition *</label>
-            <input className="inp" style={field('competition')} value={matchForm.competition} onChange={e => setMatchForm(p => p ? { ...p, competition: e.target.value } : p)} placeholder="Détection, Championnat..." />
-            {errors.competition && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>{errors.competition}</div>}
+            <input className="inp" style={{ borderColor: errBorder('competition') }} value={matchForm.competition} onChange={e => setMatchForm(p => p ? { ...p, competition: e.target.value } : p)} placeholder="Détection, Championnat..." />
+            {errors.competition && <div className="text-[10px] text-[#dc2626] mt-[3px]">{errors.competition}</div>}
           </div>
           <div>
             <label className="lbl">Type</label>
@@ -88,9 +86,9 @@ export default function MatchFormModal({ matchForm, setMatchForm, onSave, onClos
             </select>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button className="ghost-btn" style={{ flex: 1, padding: 12, fontSize: 13 }} onClick={onClose}>Annuler</button>
-          <button className="glow-btn" style={{ flex: 1, padding: 12, fontSize: 13 }} onClick={handleSave}>Programmer</button>
+        <div className="flex gap-2.5">
+          <button className="btn-g flex-1 py-3 text-[13px]" onClick={onClose}>Annuler</button>
+          <button className="btn-p flex-1 py-3 text-[13px]" onClick={handleSave}>Programmer</button>
         </div>
       </div>
     </div>

@@ -38,20 +38,20 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', padding: '20px 16px', overflowY: 'auto', backdropFilter: 'blur(4px)' }}
+      className="fixed inset-0 bg-[rgba(15,23,42,0.5)] z-[1000] flex justify-center px-4 py-5 overflow-y-auto backdrop-blur-[4px]"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="card fu" style={{ maxWidth: 620, width: '100%', padding: 28, alignSelf: 'flex-start', boxShadow: 'var(--shL)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 22 }}>
+      <div className="card fu max-w-[620px] w-full p-7 self-start shadow-[0_12px_40px_rgba(15,23,42,0.1)]">
+        <div className="flex justify-between mb-[22px]">
           <div>
-            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--navy)' }}>Rapport de match</h3>
-            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--t3)' }}>{sel.lastName.toUpperCase()} {sel.firstName} · {sel.poste} · Scout: {[scout?.firstName, scout?.lastName].filter(Boolean).join(' ')}</p>
+            <h3 className="m-0 text-xl font-extrabold text-[#0c2340]">Rapport de match</h3>
+            <p className="mt-1 mb-0 text-xs text-[#94a3b8]">{sel.lastName.toUpperCase()} {sel.firstName} · {sel.poste} · Scout: {[scout?.firstName, scout?.lastName].filter(Boolean).join(' ')}</p>
           </div>
-          <button className="btn-g" style={{ padding: '6px 10px', fontSize: 14 }} onClick={onClose}>✕</button>
+          <button className="btn-g px-2.5 py-1.5 text-sm" onClick={onClose}>✕</button>
         </div>
 
         {pendingMatches.length > 0 && (
-          <div style={{ marginBottom: 16 }}>
+          <div className="mb-4">
             <label className="lbl">Rattacher à un match (optionnel)</label>
             <select className="inp" value={rForm.matchId} onChange={e => setRForm(p => p ? { ...p, matchId: e.target.value } : p)}>
               <option value="">— Rapport libre —</option>
@@ -60,76 +60,75 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+        <div className="grid grid-cols-2 gap-2.5 mb-3.5">
           <div>
             <label className="lbl" style={{ color: errors.date ? '#dc2626' : undefined }}>Date *</label>
             <input type="date" className="inp" style={{ borderColor: errors.date ? '#dc2626' : undefined }} value={rForm.date} onChange={e => setRForm(p => p ? { ...p, date: e.target.value } : p)} />
-            {errors.date && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Date obligatoire</div>}
+            {errors.date && <div className="text-[10px] text-[#dc2626] mt-[3px]">Date obligatoire</div>}
           </div>
           <div><label className="lbl">Lieu</label><select className="inp" value={rForm.lieu} onChange={e => setRForm(p => p ? { ...p, lieu: e.target.value } : p)}>{VILLES.map(v => <option key={v}>{v}</option>)}</select></div>
           <div>
             <label className="lbl" style={{ color: errors.minutesJouees ? '#dc2626' : undefined }}>Minutes jouées *</label>
             <input type="number" className="inp" style={{ borderColor: errors.minutesJouees ? '#dc2626' : undefined }} value={rForm.minutesJouees} onChange={e => setRForm(p => p ? { ...p, minutesJouees: e.target.value } : p)} placeholder="90" />
-            {errors.minutesJouees && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Champ obligatoire</div>}
+            {errors.minutesJouees && <div className="text-[10px] text-[#dc2626] mt-[3px]">Champ obligatoire</div>}
           </div>
           <div>
             <label className="lbl" style={{ color: errors.contexte ? '#dc2626' : undefined }}>Contexte *</label>
             <input className="inp" style={{ borderColor: errors.contexte ? '#dc2626' : undefined }} value={rForm.contexte} onChange={e => setRForm(p => p ? { ...p, contexte: e.target.value } : p)} placeholder="Match amical, détection..." />
-            {errors.contexte && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Champ obligatoire</div>}
+            {errors.contexte && <div className="text-[10px] text-[#dc2626] mt-[3px]">Champ obligatoire</div>}
           </div>
         </div>
 
         {CATS.map(cat => (
-          <div key={cat.key} style={{ background: '#f8fafc', borderRadius: 14, padding: 16, marginBottom: 10, border: '1px solid #f1f5f9' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--navy)' }}>{cat.icon} {cat.label}</span>
-              <span style={{ fontSize: 9, color: 'var(--t3)', maxWidth: 180, textAlign: 'right' }}>{cat.hint}</span>
+          <div key={cat.key} className="bg-[#f8fafc] rounded-2xl p-4 mb-2.5 border border-[#f1f5f9]">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-bold text-[#0c2340]">{cat.icon} {cat.label}</span>
+              <span className="text-[9px] text-[#94a3b8] max-w-[180px] text-right">{cat.hint}</span>
             </div>
             <NotePicker
               value={rForm.ratings[cat.key]}
               onChange={v => setRForm(p => p ? { ...p, ratings: { ...p.ratings, [cat.key]: v } } : p)}
             />
             <textarea
-              className="inp"
-              style={{ marginTop: 8, height: 52, resize: 'vertical', background: '#fff', borderColor: missingComments.includes(cat.key) ? '#dc2626' : undefined }}
+              className="inp mt-2 resize-y bg-white"
+              style={{ height: 52, borderColor: missingComments.includes(cat.key) ? '#dc2626' : undefined }}
               value={rForm.commentaires[cat.key]}
               onChange={e => setRForm(p => p ? { ...p, commentaires: { ...p.commentaires, [cat.key]: e.target.value } } : p)}
               placeholder={`Analyse ${cat.label.toLowerCase()}... *`}
             />
-            {missingComments.includes(cat.key) && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Commentaire obligatoire</div>}
+            {missingComments.includes(cat.key) && <div className="text-[10px] text-[#dc2626] mt-[3px]">Commentaire obligatoire</div>}
           </div>
         ))}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14, marginTop: 4 }}>
+        <div className="grid grid-cols-2 gap-2.5 mb-3.5 mt-1">
           <div><label className="lbl">Niveau actuel</label><select className="inp" value={rForm.niveauActuel} onChange={e => setRForm(p => p ? { ...p, niveauActuel: e.target.value } : p)}>{NIVEAUX.map(n => <option key={n}>{n}</option>)}</select></div>
           <div><label className="lbl">Potentiel</label><select className="inp" value={rForm.potentiel} onChange={e => setRForm(p => p ? { ...p, potentiel: e.target.value } : p)}>{NIVEAUX.map(n => <option key={n}>{n}</option>)}</select></div>
         </div>
 
-        <div style={{ marginBottom: 14 }}>
+        <div className="mb-3.5">
           <label className="lbl" style={{ color: errors.conclusion ? '#dc2626' : undefined }}>Conclusion *</label>
           <textarea
-            className="inp"
-            style={{ height: 80, resize: 'vertical', borderColor: errors.conclusion ? '#dc2626' : undefined }}
+            className="inp resize-y"
+            style={{ height: 80, borderColor: errors.conclusion ? '#dc2626' : undefined }}
             value={rForm.conclusion}
             onChange={e => setRForm(p => p ? { ...p, conclusion: e.target.value } : p)}
             placeholder="Profil complet du joueur..."
           />
-          {errors.conclusion && <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3 }}>Conclusion obligatoire</div>}
+          {errors.conclusion && <div className="text-[10px] text-[#dc2626] mt-[3px]">Conclusion obligatoire</div>}
         </div>
 
-        <div style={{ marginBottom: 20 }}>
-          <label className="lbl" style={{ color: '#dc2626' }}>Décision *</label>
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+        <div className="mb-5">
+          <label className="lbl text-[#dc2626]">Décision *</label>
+          <div className="flex gap-1 flex-wrap">
             {DECISIONS.map(d => (
               <button
                 key={d.v}
                 onClick={() => setRForm(p => p ? { ...p, decision: d.v } : p)}
+                className="px-3 py-2 rounded-[10px] border-2 cursor-pointer text-[11px] font-bold transition-all duration-150"
                 style={{
-                  padding: '8px 12px', borderRadius: 10,
-                  border: rForm.decision === d.v ? `2px solid ${d.c}` : '2px solid transparent',
-                  cursor: 'pointer', background: rForm.decision === d.v ? d.bg : '#f8fafc',
+                  borderColor: rForm.decision === d.v ? d.c : 'transparent',
+                  background: rForm.decision === d.v ? d.bg : '#f8fafc',
                   color: rForm.decision === d.v ? d.c : '#94a3b8',
-                  fontSize: 11, fontWeight: 700, transition: 'all .15s',
                 }}
               >
                 {d.i} {d.l}
@@ -138,20 +137,19 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
           </div>
         </div>
 
-        <div style={{ background: '#fffbeb', padding: '10px 14px', borderRadius: 10, fontSize: 11, color: '#92400e', marginBottom: 16 }}>
+        <div className="bg-[#fffbeb] px-3.5 py-2.5 rounded-[10px] text-[11px] text-[#92400e] mb-4">
           🔒 Une fois validé, le rapport sera verrouillé définitivement.
         </div>
 
         {submitted && hasError && (
-          <div style={{ marginBottom: 12, padding: '10px 14px', background: '#fef2f2', borderRadius: 10, fontSize: 12, color: '#dc2626', fontWeight: 600 }}>
+          <div className="mb-3 px-3.5 py-2.5 bg-[#fef2f2] rounded-[10px] text-xs text-[#dc2626] font-semibold">
             Veuillez remplir tous les champs obligatoires (*) avant de valider.
           </div>
         )}
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button className="btn-g" style={{ flex: 1, padding: 14, fontSize: 14, fontWeight: 600 }} onClick={onClose}>Annuler</button>
+        <div className="flex gap-2.5">
+          <button className="btn-g flex-1 py-3.5 text-sm font-semibold" onClick={onClose}>Annuler</button>
           <button
-            className="btn-p"
-            style={{ flex: 1, padding: 14, fontSize: 14, fontWeight: 700 }}
+            className="btn-p flex-1 py-3.5 text-sm font-bold"
             onClick={handleSave}
           >
             🔒 Valider et verrouiller

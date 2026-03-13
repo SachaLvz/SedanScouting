@@ -3,27 +3,33 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { ScoutDataProvider } from '@/components/scout/context';
-import CSS from '@/components/scout/styles';
 
 interface User { id: string; firstName: string; lastName: string; role: 'admin' | 'scout'; }
 
 function ScoutHeader({ nom, onLogout }: { nom: string; onLogout: () => void }) {
   return (
-    <div style={{ background: 'linear-gradient(135deg, #0c2340, #1a3a5c)', padding: '20px 20px 16px', borderBottom: '3px solid var(--blue-light)', boxShadow: '0 4px 24px rgba(12,35,64,0.15)', marginBottom: 28 }}>
-      <div style={{ maxWidth: 960, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ textAlign: 'center', flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 4 }}>
-            <span style={{ fontSize: 28, filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.2))' }}>🦁</span>
-            <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: 4, textTransform: 'uppercase', background: 'linear-gradient(135deg, #7db8e8, #b8ddf8, #ffffff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>MBARODI FC</h1>
+    <div className="bg-gradient-to-br from-[#0c2340] to-[#1a3a5c] px-5 pt-5 pb-4 border-b-[3px] border-[#4a9de8] shadow-[0_4px_24px_rgba(12,35,64,0.15)] mb-7">
+      <div className="max-w-[960px] mx-auto flex items-center justify-between">
+        <div className="text-center flex-1">
+          <div className="flex items-center justify-center gap-3.5 mb-1">
+            <span className="text-[28px]" style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.2))' }}>🦁</span>
+            <h1
+              className="m-0 text-[clamp(18px,4vw,26px)] font-extrabold uppercase tracking-[clamp(2px,1vw,4px)]"
+              style={{ background: 'linear-gradient(135deg, #7db8e8, #b8ddf8, #ffffff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+            >
+              MBARODI FC
+            </h1>
           </div>
-          <div style={{ fontSize: 10, fontWeight: 500, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: 4, fontFamily: 'var(--mono)' }}>Scouting · Détection · Recrutement</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>Scout : <strong style={{ color: 'rgba(255,255,255,0.65)' }}>{nom}</strong></div>
+          <div className="header-sub text-[10px] font-medium text-white/45 uppercase tracking-[4px] font-mono">
+            Scouting · Détection · Recrutement
+          </div>
+          <div className="text-[10px] text-white/35 mt-1">
+            Scout : <strong className="text-white/65">{nom}</strong>
+          </div>
         </div>
         <button
           onClick={onLogout}
-          style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font)', flexShrink: 0 }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.15)'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.7)'; }}
+          className="px-3.5 py-2 rounded-[10px] border border-white/20 bg-white/[0.08] text-white/70 text-[11px] font-semibold cursor-pointer shrink-0 transition-all duration-150 hover:bg-white/[0.15] hover:text-white"
         >
           Déconnexion
         </button>
@@ -40,15 +46,18 @@ function ScoutNav() {
     { href: '/scout/shadow-team', label: '⚽ Shadow Team' },
   ];
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 20px 20px', display: 'flex', gap: 6 }}>
+    <div className="nav-scroll max-w-[960px] mx-auto px-5 pb-5">
       {NAV.map(n => (
-        <Link key={n.href} href={n.href} style={{
-          padding: '8px 18px', borderRadius: 10, fontSize: 13, fontWeight: 600,
-          background: pathname === n.href ? 'var(--blue)' : 'transparent',
-          color: pathname === n.href ? '#fff' : 'var(--text-2)',
-          border: `1.5px solid ${pathname === n.href ? 'var(--blue)' : 'var(--border)'}`,
-          textDecoration: 'none', transition: 'all .15s',
-        }}>
+        <Link
+          key={n.href}
+          href={n.href}
+          className="px-[18px] py-2 rounded-[10px] text-[13px] font-semibold no-underline transition-all duration-150"
+          style={{
+            background: pathname === n.href ? '#1e6cb6' : 'transparent',
+            color: pathname === n.href ? '#fff' : '#475569',
+            border: `1.5px solid ${pathname === n.href ? '#1e6cb6' : '#e2e8f0'}`,
+          }}
+        >
           {n.label}
         </Link>
       ))}
@@ -80,8 +89,7 @@ export default function ScoutLayout({ children }: { children: React.ReactNode })
 
   return (
     <ScoutDataProvider initialUser={user}>
-      <style>{CSS}</style>
-      <div style={{ minHeight: '100vh', fontFamily: 'var(--font)', color: 'var(--text-1)', background: 'var(--bg)' }}>
+      <div className="min-h-screen text-[#0f172a] bg-[#f4f7fb]">
         <ScoutHeader nom={[user.firstName, user.lastName].filter(Boolean).join(' ')} onLogout={handleLogout} />
         <ScoutNav />
         {children}
