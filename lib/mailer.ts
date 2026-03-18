@@ -20,12 +20,12 @@ export async function sendInviteEmail(to: string, firstName: string, token: stri
   await transporter.sendMail({
     from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
     to,
-    subject: 'Invitation — Créez votre mot de passe Sedan Scouting',
+    subject: 'Invitation — Créez votre mot de passe Mbarodi FC',
     html: `
       <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px;background:#f8fafc;border-radius:12px">
         <h2 style="color:#1e3a5f;margin-bottom:8px">Bonjour ${firstName},</h2>
         <p style="color:#475569;font-size:15px;line-height:1.6">
-          Vous avez été invité(e) à rejoindre la plateforme <strong>Sedan Scouting</strong>.
+          Vous avez été invité(e) à rejoindre la plateforme <strong>Mbarodi FC</strong>.
         </p>
         <p style="color:#475569;font-size:15px;line-height:1.6">
           Cliquez sur le bouton ci-dessous pour créer votre mot de passe. Ce lien est valable <strong>48h</strong>.
