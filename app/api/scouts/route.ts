@@ -14,10 +14,9 @@ const CreateScoutSchema = z.object({
 export async function GET() {
   try {
     const users = await prisma.user.findMany({
-      where: { role: 'SCOUT' },
       orderBy: { lastName: 'asc' },
     });
-    return NextResponse.json(users.map(u => ({ id: u.id, firstName: u.firstName, lastName: u.lastName, email: u.email, role: 'scout' })));
+    return NextResponse.json(users.map(u => ({ id: u.id, firstName: u.firstName, lastName: u.lastName, email: u.email, role: u.role.toLowerCase() })));
   } catch (err) {
     console.error('[GET /api/scouts]', err);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
