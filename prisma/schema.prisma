@@ -75,13 +75,24 @@ model Match {
   @@map("matches")
 }
 
+model ShadowCategory {
+  id      String       @id @default(cuid())
+  ownerId String       @default("main")
+  name    String
+  teams   ShadowTeam[]
+
+  @@map("shadow_categories")
+}
+
 model ShadowTeam {
-  id        String   @id @default(cuid())
-  ownerId   String   @default("main")
-  name      String   @default("Shadow Team")
-  formation String   @default("4-3-3")
-  slots     Json     @default("{}")
-  updatedAt DateTime @updatedAt
+  id         String          @id @default(cuid())
+  ownerId    String          @default("main")
+  name       String          @default("Shadow Team")
+  formation  String          @default("4-3-3")
+  slots      Json            @default("{}")
+  categoryId String?
+  category   ShadowCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  updatedAt  DateTime        @updatedAt
 
   @@map("shadow_team")
 }

@@ -26,13 +26,14 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { ownerId, name, formation } = await req.json();
+    const { ownerId, name, formation, categoryId } = await req.json();
     const record = await prisma.shadowTeam.create({
       data: {
         ownerId: ownerId ?? 'main',
         name: name ?? 'Shadow Team',
         formation: formation ?? '4-3-3',
         slots: {},
+        ...(categoryId !== undefined ? { categoryId } : {}),
       },
     });
     return NextResponse.json(record);
@@ -51,6 +52,7 @@ export async function PUT(req: Request) {
     if (body.formation !== undefined) updateData.formation = body.formation;
     if (body.slots !== undefined) updateData.slots = body.slots;
     if (body.name !== undefined) updateData.name = body.name;
+    if (body.categoryId !== undefined) updateData.categoryId = body.categoryId;
     await prisma.shadowTeam.upsert({
       where: { id },
       update: updateData,
