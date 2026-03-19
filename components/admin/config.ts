@@ -41,6 +41,13 @@ export interface ShadowTeamItem {
   name: string;
   formation: string;
   slots: Record<number, string[]>;
+  categoryId?: string | null;
+}
+
+export interface ShadowCategory {
+  id: string;
+  name: string;
+  ownerId: string;
 }
 
 export type Ratings = Record<CategoryKey, number>;
