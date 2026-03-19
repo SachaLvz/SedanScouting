@@ -17,10 +17,11 @@ const SCOUT_COLORS = [
 const initials = (lastName: string, firstName?: string) => [firstName?.[0], lastName?.[0]].filter(Boolean).join('').toUpperCase();
 
 export default function PlanningPage() {
-  const { matches, scouts, blankMatch, createMatch, updateMatch } = useAdminData();
+  const { matches, scouts, blankMatch, createMatch, updateMatch, deleteMatch } = useAdminData();
   const [filterScout, setFilterScout] = useState<string>('all');
   const [showForm, setShowForm] = useState(false);
   const [matchForm, setMatchForm] = useState<Match | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const scoutList = scouts.filter(s => s.role === 'scout');
   const colorOf = (id: string) => SCOUT_COLORS[scoutList.findIndex(s => s.id === id) % SCOUT_COLORS.length] ?? SCOUT_COLORS[0];
@@ -128,6 +129,31 @@ export default function PlanningPage() {
         >
           {isPast ? '✓ Terminé' : '⏳ Planifié'}
         </button>
+
+        {/* Supprimer */}
+        {confirmDelete === m.id ? (
+          <div className="flex gap-1 items-center shrink-0">
+            <button
+              onClick={() => { deleteMatch(m.id); setConfirmDelete(null); }}
+              className="px-2.5 py-[5px] rounded-lg bg-[#dc2626] text-white text-[10px] font-bold border-none cursor-pointer"
+            >
+              Confirmer
+            </button>
+            <button
+              onClick={() => setConfirmDelete(null)}
+              className="px-2 py-[5px] rounded-lg border border-[#e2e8f0] bg-white text-[#94a3b8] text-[10px] border-none cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirmDelete(m.id)}
+            className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center border border-[#e2e8f0] bg-white text-[#cbd5e1] text-sm cursor-pointer hover:border-[#fca5a5] hover:text-[#dc2626] hover:bg-[#fef2f2] transition-colors"
+          >
+            🗑
+          </button>
+        )}
       </div>
     );
   };

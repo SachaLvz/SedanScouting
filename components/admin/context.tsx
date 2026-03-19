@@ -23,6 +23,7 @@ export interface AdminContextValue {
   restorePlayer: (id: string, player: Player) => Promise<void>;
   updateMatch: (match: Match) => Promise<void>;
   createMatch: (match: Match) => Promise<void>;
+  deleteMatch: (id: string) => Promise<void>;
   /* Helpers */
   lr: (p: Player) => Rapport | undefined;
   avg: (r: Ratings) => number;
@@ -90,6 +91,10 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
     await fetch('/api/matches', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(match) }).catch(console.error);
     setMatches(prev => [...prev, match]);
   };
+  const deleteMatch = async (id: string) => {
+    await fetch(`/api/matches/${id}`, { method: 'DELETE' }).catch(console.error);
+    setMatches(prev => prev.filter(m => m.id !== id));
+  };
 
   const lr = (p: Player): Rapport | undefined => (p.rapports ?? [])[0];
   const avg = (r: Ratings): number => CATS.reduce((s, c) => s + (r[c.key] ?? 1), 0) / CATS.length;
@@ -124,7 +129,7 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
     <AdminContext.Provider value={{
       players, setPlayers, matches, setMatches, scouts, setScouts,
       curScout, setCurScout, scout, isAdmin,
-      updatePlayer, createPlayer, deletePlayer, restorePlayer, updateMatch, createMatch,
+      updatePlayer, createPlayer, deletePlayer, restorePlayer, updateMatch, createMatch, deleteMatch,
       lr, avg, getDec, reportsForPlayer, allReports, reportCount,
       blank, blankR, blankMatch,
     }}>
