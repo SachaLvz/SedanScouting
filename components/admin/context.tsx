@@ -56,8 +56,8 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
     fetch('/api/matches').then(r => r.json()).then(d => { if (Array.isArray(d)) setMatches(d); }).catch(() => {});
     fetch('/api/scouts').then(r => r.json()).then(d => {
       if (Array.isArray(d)) {
-        const fetched = d.map((u: { id: string; firstName: string; lastName: string; role: string }) => ({ id: u.id, firstName: u.firstName, lastName: u.lastName, role: u.role, color: '#2563eb' }));
-        const adminEntry = { id: initialUser.id, firstName: initialUser.firstName, lastName: initialUser.lastName, role: initialUser.role, color: '#2563eb' };
+        const fetched = d.map((u: { id: string; firstName: string; lastName: string; email?: string; role: string; hasPassword?: boolean }) => ({ id: u.id, firstName: u.firstName, lastName: u.lastName, email: u.email, role: u.role, color: '#2563eb', hasPassword: u.hasPassword }));
+        const adminEntry = { id: initialUser.id, firstName: initialUser.firstName, lastName: initialUser.lastName, role: initialUser.role, color: '#2563eb', hasPassword: true };
         setScouts([adminEntry, ...fetched.filter((u: { id: string }) => u.id !== initialUser.id)]);
       }
     }).catch(() => {});

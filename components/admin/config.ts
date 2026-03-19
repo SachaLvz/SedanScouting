@@ -115,6 +115,7 @@ export interface Scout {
   email?: string | null;
   role: string;
   color: string;
+  hasPassword?: boolean;
 }
 
 /* ═══════════════════════════════════════════════════

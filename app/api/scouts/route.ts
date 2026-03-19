@@ -5,8 +5,6 @@ import { prisma } from '../../../lib/prisma';
 import { sendInviteEmail } from '../../../lib/mailer';
 
 const CreateScoutSchema = z.object({
-  firstName: z.string().min(1, 'Le prénom est obligatoire').max(100),
-  lastName: z.string().min(1, 'Le nom est obligatoire').max(100),
   email: z.string().email('Email invalide'),
   role: z.enum(['admin', 'scout']),
 });
@@ -16,7 +14,14 @@ export async function GET() {
     const users = await prisma.user.findMany({
       orderBy: { lastName: 'asc' },
     });
-    return NextResponse.json(users.map(u => ({ id: u.id, firstName: u.firstName, lastName: u.lastName, email: u.email, role: u.role.toLowerCase() })));
+    return NextResponse.json(users.map(u => ({
+      id: u.id,
+      firstName: u.firstName,
+      lastName: u.lastName,
+      email: u.email,
+      role: u.role.toLowerCase(),
+      hasPassword: !!u.passwordHash,
+    })));
   } catch (err) {
     console.error('[GET /api/scouts]', err);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
@@ -26,15 +31,15 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { firstName, lastName, email, role } = CreateScoutSchema.parse(body);
+    const { email, role } = CreateScoutSchema.parse(body);
 
     const inviteToken = randomBytes(32).toString('hex');
     const inviteExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48h
 
     const user = await prisma.user.create({
       data: {
-        firstName,
-        lastName,
+        firstName: '',
+        lastName: '',
         email,
         role: role === 'admin' ? 'ADMIN' : 'SCOUT',
         inviteToken,
@@ -43,11 +48,12 @@ export async function POST(req: Request) {
     });
 
     try {
-      await sendInviteEmail(email, firstName, inviteToken);
+      await sendInviteEmail(email, email, inviteToken);
     } catch (mailErr) {
       console.error('[POST /api/scouts] Email send failed:', mailErr);
     }
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
     return NextResponse.json({
       id: user.id,
       firstName: user.firstName,
@@ -55,6 +61,8 @@ export async function POST(req: Request) {
       email: user.email,
       role: user.role.toLowerCase() as 'admin' | 'scout',
       color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+      hasPassword: false,
+      inviteLink: `${baseUrl}/set-password?token=${inviteToken}`,
     }, { status: 201 });
 
   } catch (err) {
