@@ -5,12 +5,13 @@ import { useAdminData } from '@/components/admin/context';
 import ListPage from '@/components/admin/pages/ListPage';
 import DetailPage from '@/components/admin/pages/DetailPage';
 import FormPage from '@/components/admin/pages/FormPage';
+import TrashPage from '@/components/admin/pages/TrashPage';
 import type { Player, Rapport } from '@/components/admin/config';
 
 export default function JoueursPage() {
   const {
     players, matches, scout, isAdmin,
-    updatePlayer, createPlayer, deletePlayer, updateMatch,
+    updatePlayer, createPlayer, deletePlayer, restorePlayer, updateMatch,
     lr, avg, getDec, reportsForPlayer, allReports, reportCount,
     blank, blankR,
   } = useAdminData();
@@ -79,6 +80,11 @@ export default function JoueursPage() {
     setSelId(null); setView('list');
   };
 
+  const handleRestore = async (id: string, player: Player) => {
+    await restorePlayer(id, player);
+    setView('list');
+  };
+
   const saveReport = async () => {
     if (!rForm?.conclusion) return;
     const player = players.find(p => p.id === selId);
@@ -119,6 +125,14 @@ export default function JoueursPage() {
           setSelId={setSelId} setView={setView} setTab={setTab}
           setForm={setForm}
           lr={lr} getDec={getDec} avg={avg} reportCount={reportCount} blank={blank}
+          onOpenTrash={() => setView('trash')}
+        />
+      )}
+
+      {view === 'trash' && (
+        <TrashPage
+          onBack={() => setView('list')}
+          onRestored={handleRestore}
         />
       )}
 

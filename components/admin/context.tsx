@@ -20,6 +20,7 @@ export interface AdminContextValue {
   updatePlayer: (player: Player) => Promise<void>;
   createPlayer: (player: Player) => Promise<void>;
   deletePlayer: (id: string) => Promise<void>;
+  restorePlayer: (id: string, player: Player) => Promise<void>;
   updateMatch: (match: Match) => Promise<void>;
   createMatch: (match: Match) => Promise<void>;
   /* Helpers */
@@ -77,6 +78,10 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
     await fetch(`/api/players/${id}`, { method: 'DELETE' }).catch(console.error);
     setPlayers(prev => prev.filter(p => p.id !== id));
   };
+  const restorePlayer = async (id: string, player: Player) => {
+    await fetch(`/api/players/${id}/restore`, { method: 'PUT' }).catch(console.error);
+    setPlayers(prev => [...prev, player]);
+  };
   const updateMatch = async (match: Match) => {
     await fetch(`/api/matches/${match.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(match) }).catch(console.error);
     setMatches(prev => prev.map(m => m.id === match.id ? match : m));
@@ -119,7 +124,7 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
     <AdminContext.Provider value={{
       players, setPlayers, matches, setMatches, scouts, setScouts,
       curScout, setCurScout, scout, isAdmin,
-      updatePlayer, createPlayer, deletePlayer, updateMatch, createMatch,
+      updatePlayer, createPlayer, deletePlayer, restorePlayer, updateMatch, createMatch,
       lr, avg, getDec, reportsForPlayer, allReports, reportCount,
       blank, blankR, blankMatch,
     }}>

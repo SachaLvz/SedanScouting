@@ -54,6 +54,7 @@ model Player {
   listes          Json     @default("[]")
   createdAt       String   @default("")
   updatedAt       DateTime @updatedAt
+  deletedAt       DateTime?
 
   @@map("players")
 }

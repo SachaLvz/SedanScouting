@@ -3,7 +3,7 @@ import { prisma } from '../../../lib/prisma';
 
 export async function GET() {
   try {
-    const players = await prisma.player.findMany({ orderBy: { createdAt: 'asc' } });
+    const players = await prisma.player.findMany({ where: { deletedAt: null }, orderBy: { createdAt: 'asc' } });
     return NextResponse.json(players);
   } catch (err) {
     console.error('[GET /api/players]', err);

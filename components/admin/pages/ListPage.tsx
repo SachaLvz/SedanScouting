@@ -26,11 +26,12 @@ interface ListPageProps {
   avg: (r: Ratings) => number;
   reportCount: (p: Player) => number;
   blank: () => Player;
+  onOpenTrash: () => void;
 }
 
 export default function ListPage({
   players, matches, search, setSearch, fVille, setFVille, fPoste, setFPoste, fDec, setFDec,
-  filtered, setSelId, setView, setTab, setForm, lr, getDec, avg, reportCount, blank,
+  filtered, setSelId, setView, setTab, setForm, lr, getDec, avg, reportCount, blank, onOpenTrash,
 }: ListPageProps) {
   const [page, setPage] = useState(1);
 
@@ -56,6 +57,13 @@ export default function ListPage({
           </svg>
         </div>
         <button className="btn-p px-6 py-3 text-[13px]" onClick={() => { setForm(blank()); setView('form'); }}>+ Nouveau joueur</button>
+        <button
+          className="px-3.5 py-3 rounded-xl border-[1.5px] border-[#e2e8f0] bg-white text-[#94a3b8] text-[13px] hover:text-[#dc2626] hover:border-[#fca5a5] hover:bg-[#fef2f2] transition-colors cursor-pointer"
+          onClick={onOpenTrash}
+          title="Corbeille"
+        >
+          🗑
+        </button>
       </div>
 
       <div className="flex gap-1.5 flex-wrap mb-[22px]">
