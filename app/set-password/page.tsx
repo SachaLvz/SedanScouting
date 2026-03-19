@@ -2,7 +2,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 
 const PageShell = ({ children }: { children: React.ReactNode }) => (
   <div className="min-h-screen flex flex-col items-center justify-center p-5"
