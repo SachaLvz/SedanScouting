@@ -16,13 +16,13 @@ export async function POST(req: Request) {
     let user;
 
     if ('email' in data) {
-      // Admin login: find by email with ADMIN role
+      // Login par email (admin ou scout)
       user = await prisma.user.findFirst({
-        where: { email: data.email, role: 'ADMIN', actif: true },
+        where: { email: data.email, actif: true },
         select: { id: true, firstName: true, lastName: true, role: true, passwordHash: true },
       });
     } else {
-      // Scout login: find by ID
+      // Login par userId (rétrocompatibilité)
       user = await prisma.user.findUnique({
         where: { id: data.userId },
         select: { id: true, firstName: true, lastName: true, role: true, passwordHash: true, actif: true },

@@ -6,12 +6,14 @@ import { hashPassword } from '../../../../lib/auth';
 const SetPasswordSchema = z.object({
   token: z.string().min(1),
   password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
+  firstName: z.string().min(1, 'Le prénom est obligatoire').max(100),
+  lastName: z.string().min(1, 'Le nom est obligatoire').max(100),
 });
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { token, password } = SetPasswordSchema.parse(body);
+    const { token, password, firstName, lastName } = SetPasswordSchema.parse(body);
 
     const user = await prisma.user.findFirst({
       where: { inviteToken: token },
@@ -28,13 +30,15 @@ export async function POST(req: Request) {
     await prisma.user.update({
       where: { id: user.id },
       data: {
+        firstName,
+        lastName,
         passwordHash: hashPassword(password),
         inviteToken: null,
         inviteExpiry: null,
       },
     });
 
-    return NextResponse.json({ ok: true, lastName: user.lastName, firstName: user.firstName });
+    return NextResponse.json({ ok: true, lastName, firstName });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.issues[0].message }, { status: 400 });
