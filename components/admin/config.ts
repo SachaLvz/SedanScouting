@@ -36,6 +36,13 @@ export interface Formation {
   slots: FormationSlot[];
 }
 
+export interface ShadowTeamItem {
+  id: string;
+  name: string;
+  formation: string;
+  slots: Record<number, string[]>;
+}
+
 export type Ratings = Record<CategoryKey, number>;
 export type Commentaires = Record<CategoryKey, string>;
 
@@ -174,7 +181,13 @@ export const FORMATIONS: Record<string, Formation> = {
   '3-5-2': { label:'3-5-2', slots:[
     {pos:'Gardien',x:50,y:92},{pos:'Déf. Central',x:25,y:74},{pos:'Déf. Central',x:50,y:76},{pos:'Déf. Central',x:75,y:74},
     {pos:'Latéral Gauche',x:8,y:50},{pos:'Milieu Central',x:32,y:52},{pos:'Milieu Défensif',x:50,y:55},{pos:'Milieu Central',x:68,y:52},{pos:'Latéral Droit',x:92,y:50},
-    {pos:'Attaquant',x:36,y:22},{pos:'Avant-Centre',x:64,y:22},
+    {pos:'Avant-Centre',x:36,y:22},{pos:'Avant-Centre',x:64,y:22},
+  ]},
+  '5-4-1': { label:'5-4-1', slots:[
+    {pos:'Gardien',x:50,y:92},
+    {pos:'Latéral Gauche',x:8,y:72},{pos:'Déf. Central',x:28,y:74},{pos:'Déf. Central',x:50,y:76},{pos:'Déf. Central',x:72,y:74},{pos:'Latéral Droit',x:92,y:72},
+    {pos:'Ailier Gauche',x:12,y:50},{pos:'Milieu Central',x:36,y:52},{pos:'Milieu Central',x:64,y:52},{pos:'Ailier Droit',x:88,y:50},
+    {pos:'Avant-Centre',x:50,y:20},
   ]},
 };
 

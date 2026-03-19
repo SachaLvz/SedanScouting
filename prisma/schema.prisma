@@ -75,7 +75,9 @@ model Match {
 }
 
 model ShadowTeam {
-  id        String   @id @default("main")
+  id        String   @id @default(cuid())
+  ownerId   String   @default("main")
+  name      String   @default("Shadow Team")
   formation String   @default("4-3-3")
   slots     Json     @default("{}")
   updatedAt DateTime @updatedAt
