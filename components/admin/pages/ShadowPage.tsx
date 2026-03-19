@@ -40,6 +40,15 @@ export default function ShadowPage({
   const slots = FORMATIONS[formation]?.slots ?? [];
   const assignedCount = Object.values(shadowTeam).filter(ids => ids.length > 0).length;
 
+  // Détection mobile pour orientation portrait du terrain
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   // Tab de catégorie sélectionné
   const [selectedCat, setSelectedCat] = useState<string>(
     categories.length > 0 ? categories[0].id : NONE
@@ -362,6 +371,7 @@ export default function ShadowPage({
             players={players}
             shadowTeam={shadowTeam}
             onSlotClick={(idx, pos) => setSlotPick({ idx, pos })}
+            portrait={isMobile}
           />
 
           <div className="mt-3 text-[11px] text-[#94a3b8] font-semibold text-right">
