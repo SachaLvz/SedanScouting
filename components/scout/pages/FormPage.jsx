@@ -22,7 +22,7 @@ export default function FormPage({ form, setForm, players, onSave, onBack, uploa
             : uploadError
               ? <div className="text-center text-[11px] text-[#dc2626]">❌<br />Erreur</div>
               : form.photo
-                ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
+                ? <img src={form.photo} alt="" className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
                 : <div className="text-center text-[11px] text-[#94a3b8] leading-[1.5]">📷<br />Photo</div>}
         </div>
         <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, "photo")} className="hidden" />

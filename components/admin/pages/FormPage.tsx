@@ -36,7 +36,7 @@ export default function FormPage({ form, setForm, players, onSave, onCancel, upl
             : uploadError
               ? <div className="text-center text-[11px] text-[#dc2626]">❌<br />Erreur</div>
               : form.photo
-                ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
+                ? <img src={form.photo} alt="" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                 : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
           }
         </div>

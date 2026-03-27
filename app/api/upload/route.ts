@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     await mkdir(uploadDir, { recursive: true });
     await writeFile(path.join(uploadDir, filename), buffer);
 
-    return NextResponse.json({ url: `/uploads/${filename}` });
+    return NextResponse.json({ url: `/api/uploads/${filename}` });
   } catch (err) {
     console.error('[POST /api/upload]', err);
     return NextResponse.json({ error: 'Upload échoué' }, { status: 500 });
