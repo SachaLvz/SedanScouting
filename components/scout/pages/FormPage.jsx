@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { POSITIONS, VILLES } from '../config';
 
-export default function FormPage({ form, setForm, players, onSave, onBack, readFile }) {
+export default function FormPage({ form, setForm, players, onSave, onBack, uploading, readFile }) {
   const photoRef = useRef(null);
   const idRef = useRef(null);
   const isEdit = players.some(p => p.id === form.id);
@@ -17,9 +17,11 @@ export default function FormPage({ form, setForm, players, onSave, onBack, readF
           className="w-[92px] h-[92px] rounded-[20px] overflow-hidden cursor-pointer flex items-center justify-center shrink-0 border-2 border-dashed border-[#e2e8f0]"
           style={{ background: "linear-gradient(145deg, #dbeafe, #f8fafc)" }}
         >
-          {form.photo
-            ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
-            : <div className="text-center text-[11px] text-[#94a3b8] leading-[1.5]">📷<br />Photo</div>}
+          {uploading
+            ? <div className="text-center text-[11px] text-[#94a3b8]">⏳</div>
+            : form.photo
+              ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
+              : <div className="text-center text-[11px] text-[#94a3b8] leading-[1.5]">📷<br />Photo</div>}
         </div>
         <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, "photo")} className="hidden" />
         <div className="text-xs text-[#94a3b8]">Cliquez pour ajouter</div>
@@ -53,8 +55,8 @@ export default function FormPage({ form, setForm, players, onSave, onBack, readF
         <input ref={idRef} type="file" accept="image/*,.pdf" onChange={e => readFile(e, "pieceIdentite")} className="hidden" />
       </div>
 
-      <button className="btn-p w-full py-4 text-[15px]" onClick={onSave}>
-        {isEdit ? "Enregistrer" : "Ajouter le joueur"} 🦁
+      <button className="btn-p w-full py-4 text-[15px]" onClick={onSave} disabled={uploading} style={{ opacity: uploading ? 0.5 : 1 }}>
+        {uploading ? 'Upload en cours...' : isEdit ? 'Enregistrer' : 'Ajouter le joueur 🦁'}
       </button>
     </div>
   );

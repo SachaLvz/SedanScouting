@@ -24,6 +24,7 @@ export default function JoueursPage() {
   const [fPoste, setFPoste] = useState('');
   const [fDec, setFDec] = useState('');
   const [form, setForm] = useState<Player | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [rForm, setRForm] = useState<Rapport | null>(null);
   const [showR, setShowR] = useState(false);
   const [openR, setOpenR] = useState<string | null>(null);
@@ -80,14 +81,19 @@ export default function JoueursPage() {
 
   const readFile = async (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => {
     const f = e.target.files?.[0]; if (!f) return;
-    const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
-    const { blob, name } = isPdf ? { blob: f, name: f.name } : await compressImage(f);
-    const data = new FormData();
-    data.append('file', blob, name);
-    const res = await fetch('/api/upload', { method: 'POST', body: data });
-    if (!res.ok) return;
-    const json = await res.json();
-    if (json.url) setForm(p => p ? { ...p, [field]: json.url } : p);
+    setUploading(true);
+    try {
+      const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
+      const { blob, name } = isPdf ? { blob: f, name: f.name } : await compressImage(f);
+      const data = new FormData();
+      data.append('file', blob, name);
+      const res = await fetch('/api/upload', { method: 'POST', body: data });
+      if (!res.ok) return;
+      const json = await res.json();
+      if (json.url) setForm(p => p ? { ...p, [field]: json.url } : p);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const save = async () => {
@@ -180,7 +186,7 @@ export default function JoueursPage() {
       {view === 'form' && form && (
         <FormPage
           form={form} setForm={setForm} players={players}
-          onSave={save}
+          onSave={save} uploading={uploading}
           onCancel={() => setView(players.some(p => p.id === form.id) ? 'detail' : 'list')}
           readFile={readFile}
         />
