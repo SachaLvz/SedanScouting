@@ -72,6 +72,7 @@ export default function DetailPage({
               {sel.dateNaissance && <Tag>🎂 {sel.dateNaissance}</Tag>}
               {sel.taille && <Tag>📏 {sel.taille}cm</Tag>}
               {sel.poids && <Tag>⚖️ {sel.poids}kg</Tag>}
+              {sel.nationalite && <Tag>🌍 {sel.nationalite}</Tag>}
             </div>
             {(sel.agent || sel.finContrat || sel.valeur || sel.clubActuel) && (
               <div className="flex gap-1.5 mt-1.5 flex-wrap">

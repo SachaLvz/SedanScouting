@@ -208,6 +208,6 @@ export const LISTES: string[] = [
 /* ═══════════════════════════════════════════════════
    HELPERS
    ═══════════════════════════════════════════════════ */
-export const uid = (): string => Math.random().toString(36).substr(2, 9);
+export const uid = (): string => crypto.randomUUID();
 export const today = (): string => new Date().toISOString().split('T')[0];
 export const getSc = (v: number): ScaleItem => SCALE.find(s => s.v === v) ?? SCALE[0];
