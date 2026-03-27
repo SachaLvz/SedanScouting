@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const file = formData.get('file') as File;
     if (!file) return NextResponse.json({ error: 'Aucun fichier' }, { status: 400 });
 
-    const ALLOWED: Record<string, string> = {
+    const MIME_MAP: Record<string, string> = {
       'image/jpeg': 'jpg',
       'image/jpg': 'jpg',
       'image/png': 'png',
@@ -18,7 +18,12 @@ export async function POST(req: Request) {
       'image/webp': 'jpg',
       'application/pdf': 'pdf',
     };
-    const ext = ALLOWED[file.type];
+    const EXT_MAP: Record<string, string> = {
+      jpg: 'jpg', jpeg: 'jpg', png: 'png',
+      heic: 'jpg', heif: 'jpg', webp: 'jpg', pdf: 'pdf',
+    };
+    const rawExt = file.name.split('.').pop()?.toLowerCase() || '';
+    const ext = MIME_MAP[file.type] ?? EXT_MAP[rawExt];
     if (!ext) {
       return NextResponse.json({ error: 'Format non supporté. Utilisez une image ou un PDF.' }, { status: 400 });
     }
