@@ -45,6 +45,6 @@ export const LISTES = [
   "Détection Thiès", "Shadow Team 2026", "Prospects Europe",
 ];
 
-export const uid = () => Math.random().toString(36).substr(2, 9);
+export const uid = () => crypto.randomUUID();
 export const today = () => new Date().toISOString().split("T")[0];
 export const getSc = v => SCALE.find(s => s.v === v) || SCALE[0];

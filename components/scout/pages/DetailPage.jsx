@@ -63,6 +63,7 @@ export default function DetailPage({
               {sel.dateNaissance && <Tag>🎂 {sel.dateNaissance}</Tag>}
               {sel.taille && <Tag>📏 {sel.taille}cm</Tag>}
               {sel.poids && <Tag>⚖️ {sel.poids}kg</Tag>}
+              {sel.nationalite && <Tag>🌍 {sel.nationalite}</Tag>}
             </div>
             {sel.pieceIdentite && <div className="mt-2"><a href={sel.pieceIdentite} target="_blank" rel="noreferrer"><Tag color="#16a34a" bg="#f0fdf4">✓ Pièce d&apos;identité</Tag></a></div>}
             {d && <div className="mt-2"><Tag bg={d.bg} color={d.c}>{d.i} {d.l}</Tag></div>}
