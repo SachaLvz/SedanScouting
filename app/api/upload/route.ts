@@ -9,23 +9,20 @@ export async function POST(req: Request) {
     const file = formData.get('file') as File;
     if (!file) return NextResponse.json({ error: 'Aucun fichier' }, { status: 400 });
 
-    const MIME_MAP: Record<string, string> = {
-      'image/jpeg': 'jpg',
-      'image/jpg': 'jpg',
-      'image/png': 'png',
-      'image/heic': 'jpg',
-      'image/heif': 'jpg',
-      'image/webp': 'jpg',
-      'application/pdf': 'pdf',
-    };
+    const rawExt = file.name.split('.').pop()?.toLowerCase() || '';
     const EXT_MAP: Record<string, string> = {
       jpg: 'jpg', jpeg: 'jpg', png: 'png',
       heic: 'jpg', heif: 'jpg', webp: 'jpg', pdf: 'pdf',
     };
-    const rawExt = file.name.split('.').pop()?.toLowerCase() || '';
-    const ext = MIME_MAP[file.type] ?? EXT_MAP[rawExt];
-    if (!ext) {
-      return NextResponse.json({ error: 'Format non supporté. Utilisez une image ou un PDF.' }, { status: 400 });
+    let ext: string;
+    if (file.type === 'application/pdf' || rawExt === 'pdf') {
+      ext = 'pdf';
+    } else if (file.type.startsWith('image/')) {
+      ext = file.type === 'image/png' ? 'png' : 'jpg';
+    } else if (EXT_MAP[rawExt]) {
+      ext = EXT_MAP[rawExt];
+    } else {
+      return NextResponse.json({ error: 'Format non supporté.' }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();

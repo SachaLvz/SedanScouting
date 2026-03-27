@@ -9,10 +9,11 @@ interface FormPageProps {
   onSave: () => void;
   onCancel: () => void;
   uploading?: boolean;
+  uploadError?: boolean;
   readFile: (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => void;
 }
 
-export default function FormPage({ form, setForm, players, onSave, onCancel, uploading, readFile }: FormPageProps) {
+export default function FormPage({ form, setForm, players, onSave, onCancel, uploading, uploadError, readFile }: FormPageProps) {
   const photoRef = useRef<HTMLInputElement>(null);
   const idRef = useRef<HTMLInputElement>(null);
   const isEdit = players.some(p => p.id === form.id);
@@ -32,9 +33,11 @@ export default function FormPage({ form, setForm, players, onSave, onCancel, upl
         >
           {uploading
             ? <div className="text-center text-[11px] text-[#94a3b8]">⏳</div>
-            : form.photo
-              ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
-              : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
+            : uploadError
+              ? <div className="text-center text-[11px] text-[#dc2626]">❌<br />Erreur</div>
+              : form.photo
+                ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
+                : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
           }
         </div>
         <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, 'photo')} className="hidden" />

@@ -20,6 +20,7 @@ export default function ScoutJoueursPage() {
   const [fListe, setFListe] = useState('');
   const [form, setForm] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(false);
   const [rForm, setRForm] = useState<any>(null);
   const [showR, setShowR] = useState(false);
   const [openR, setOpenR] = useState<string | null>(null);
@@ -83,18 +84,19 @@ export default function ScoutJoueursPage() {
   const readFile = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const f = e.target.files?.[0]; if (!f) return;
     setUploading(true);
+    setUploadError(false);
     try {
       const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
       const { blob, name } = isPdf ? { blob: f, name: f.name } : await compressImage(f);
       const data = new FormData();
       data.append('file', blob, name);
       const res = await fetch('/api/upload', { method: 'POST', body: data });
-      if (!res.ok) return;
+      if (!res.ok) { setUploadError(true); return; }
       const json = await res.json();
       if (json.url) setForm((p: any) => ({ ...p, [field]: json.url }));
-    } finally {
-      setUploading(false);
-    }
+      else setUploadError(true);
+    } catch { setUploadError(true); }
+    finally { setUploading(false); }
   };
 
   const save = async () => {
@@ -167,7 +169,7 @@ export default function ScoutJoueursPage() {
       {view === 'form' && form && (
         <FormPage
           form={form} setForm={setForm} players={players}
-          onSave={save} uploading={uploading}
+          onSave={save} uploading={uploading} uploadError={uploadError}
           onBack={() => setView(players.some((p: any) => p.id === form.id) ? 'detail' : 'list')}
           readFile={readFile}
         />
