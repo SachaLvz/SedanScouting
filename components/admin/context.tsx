@@ -106,6 +106,7 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
   const blank = (): Player => ({
     id: uid(), firstName: '', lastName: '', dateNaissance: '', ville: VILLES[0], poste: 'Gardien',
     posteSecondaire: '', pied: 'Droitier', taille: '', poids: '', photo: '', pieceIdentite: '',
+    nationalite: '',
     agent: '', finContrat: '', valeur: '', clubActuel: '', historique: '',
     rapports: [], notes: [], listes: [], createdAt: today(),
   });

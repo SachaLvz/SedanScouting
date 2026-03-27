@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CATS, VILLES, NIVEAUX, DECISIONS } from '../config';
 import NotePicker from '../NotePicker';
 import type { Rapport, Player, Scout, Match } from '../config';
@@ -36,7 +37,7 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
     onSave();
   };
 
-  return (
+  const modal = (
     <div
       className="fixed inset-0 bg-[rgba(15,23,42,0.5)] z-[1000] flex justify-center px-4 py-5 overflow-y-auto backdrop-blur-[4px]"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
@@ -158,4 +159,6 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }

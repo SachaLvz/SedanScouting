@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import Tag from '../Tag';
 import Radar from '../Radar';
 import NotePicker from '../NotePicker';
@@ -63,7 +64,7 @@ export default function DetailPage({
               {sel.taille && <Tag>📏 {sel.taille}cm</Tag>}
               {sel.poids && <Tag>⚖️ {sel.poids}kg</Tag>}
             </div>
-            {sel.pieceIdentite && <div className="mt-2"><Tag color="#16a34a" bg="#f0fdf4">✓ Pièce d&apos;identité</Tag></div>}
+            {sel.pieceIdentite && <div className="mt-2"><a href={sel.pieceIdentite} target="_blank" rel="noreferrer"><Tag color="#16a34a" bg="#f0fdf4">✓ Pièce d&apos;identité</Tag></a></div>}
             {d && <div className="mt-2"><Tag bg={d.bg} color={d.c}>{d.i} {d.l}</Tag></div>}
             <div className="flex gap-1.5 mt-3.5 flex-wrap">
               <button className="btn-g px-4 py-2 text-xs" onClick={onEdit}>✏️ Modifier</button>
@@ -267,7 +268,7 @@ export default function DetailPage({
       )}
 
       {/* RAPPORT MODAL */}
-      {showR && rForm && (
+      {showR && rForm && createPortal(
         <div
           className="fixed inset-0 bg-[rgba(15,23,42,0.5)] z-[1000] flex justify-center px-4 py-6 overflow-y-auto backdrop-blur-[6px]"
           onClick={e => { if (e.target === e.currentTarget) { setShowR(false); setRForm(null); } }}
@@ -372,7 +373,8 @@ export default function DetailPage({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
