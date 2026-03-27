@@ -34,7 +34,7 @@ export default function FormPage({ form, setForm, players, onSave, onCancel, rea
             : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
           }
         </div>
-        <input ref={photoRef} type="file" accept=".png,.jpg,.jpeg" onChange={e => readFile(e, 'photo')} className="hidden" />
+        <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, 'photo')} className="hidden" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-5">
@@ -84,7 +84,7 @@ export default function FormPage({ form, setForm, players, onSave, onCancel, rea
             : <><span className="text-[18px] opacity-30">🪪</span><span className="text-xs text-[#94a3b8]">Ajouter la pièce d&apos;identité</span></>
           }
         </div>
-        <input ref={idRef} type="file" accept=".png,.jpg,.jpeg,.pdf" onChange={e => readFile(e, 'pieceIdentite')} className="hidden" />
+        <input ref={idRef} type="file" accept="image/*,.pdf" onChange={e => readFile(e, 'pieceIdentite')} className="hidden" />
       </div>
 
       <button className="btn-p w-full py-4 text-[15px]" onClick={onSave}>

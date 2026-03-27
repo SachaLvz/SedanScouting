@@ -21,7 +21,7 @@ export default function FormPage({ form, setForm, players, onSave, onBack, readF
             ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
             : <div className="text-center text-[11px] text-[#94a3b8] leading-[1.5]">📷<br />Photo</div>}
         </div>
-        <input ref={photoRef} type="file" accept=".png,.jpg,.jpeg" onChange={e => readFile(e, "photo")} className="hidden" />
+        <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, "photo")} className="hidden" />
         <div className="text-xs text-[#94a3b8]">Cliquez pour ajouter</div>
       </div>
 
@@ -50,7 +50,7 @@ export default function FormPage({ form, setForm, players, onSave, onBack, readF
             : <><span className="text-xl opacity-30">🪪</span><span className="text-xs text-[#94a3b8]">Ajouter la pièce d&apos;identité</span></>
           }
         </div>
-        <input ref={idRef} type="file" accept=".png,.jpg,.jpeg,.pdf" onChange={e => readFile(e, "pieceIdentite")} className="hidden" />
+        <input ref={idRef} type="file" accept="image/*,.pdf" onChange={e => readFile(e, "pieceIdentite")} className="hidden" />
       </div>
 
       <button className="btn-p w-full py-4 text-[15px]" onClick={onSave}>
