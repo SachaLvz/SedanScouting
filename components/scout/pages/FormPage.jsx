@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { POSITIONS, VILLES } from '../config';
 
-export default function FormPage({ form, setForm, players, onSave, onBack, uploading, readFile }) {
+export default function FormPage({ form, setForm, players, onSave, onBack, uploading, uploadError, readFile }) {
   const photoRef = useRef(null);
   const idRef = useRef(null);
   const isEdit = players.some(p => p.id === form.id);
@@ -19,9 +19,11 @@ export default function FormPage({ form, setForm, players, onSave, onBack, uploa
         >
           {uploading
             ? <div className="text-center text-[11px] text-[#94a3b8]">⏳</div>
-            : form.photo
-              ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
-              : <div className="text-center text-[11px] text-[#94a3b8] leading-[1.5]">📷<br />Photo</div>}
+            : uploadError
+              ? <div className="text-center text-[11px] text-[#dc2626]">❌<br />Erreur</div>
+              : form.photo
+                ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
+                : <div className="text-center text-[11px] text-[#94a3b8] leading-[1.5]">📷<br />Photo</div>}
         </div>
         <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, "photo")} className="hidden" />
         <div className="text-xs text-[#94a3b8]">Cliquez pour ajouter</div>
