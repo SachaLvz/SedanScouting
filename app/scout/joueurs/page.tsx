@@ -8,7 +8,7 @@ import FormPage from '@/components/scout/pages/FormPage';
 import { Match } from '@/components/admin/config';
 
 export default function ScoutJoueursPage() {
-  const { players, setPlayers, scoutNom, updatePlayer, createPlayer, deletePlayer, lr, avg, getDec, blank, blankR } = useScoutData();
+  const { players, scoutNom, updatePlayer, createPlayer, deletePlayer, lr, avg, getDec, blank, blankR } = useScoutData();
 
   const [view, setView] = useState('list');
   const [selId, setSelId] = useState<string | null>(null);
@@ -56,11 +56,14 @@ export default function ScoutJoueursPage() {
       && (!fListe || (p.listes || []).includes(fListe));
   });
 
-  const compressImage = (file: File): Promise<Blob> =>
+  const compressImage = (file: File): Promise<{ blob: Blob; name: string }> =>
     new Promise((resolve) => {
+      const isPng = file.type === 'image/png';
+      const mimeOut = isPng ? 'image/png' : 'image/jpeg';
+      const nameOut = isPng ? 'photo.png' : 'photo.jpg';
       const img = new Image();
       const url = URL.createObjectURL(file);
-      img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+      img.onerror = () => { URL.revokeObjectURL(url); resolve({ blob: file, name: file.name }); };
       img.onload = () => {
         URL.revokeObjectURL(url);
         try {
@@ -70,8 +73,8 @@ export default function ScoutJoueursPage() {
           canvas.width = Math.round(img.width * scale);
           canvas.height = Math.round(img.height * scale);
           canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
-          canvas.toBlob(blob => resolve(blob ?? file), 'image/jpeg', 0.82);
-        } catch { resolve(file); }
+          canvas.toBlob(blob => resolve({ blob: blob ?? file, name: nameOut }), mimeOut, isPng ? undefined : 0.82);
+        } catch { resolve({ blob: file, name: file.name }); }
       };
       img.src = url;
     });
@@ -79,9 +82,9 @@ export default function ScoutJoueursPage() {
   const readFile = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const f = e.target.files?.[0]; if (!f) return;
     const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
-    const blob = isPdf ? f : await compressImage(f);
+    const { blob, name } = isPdf ? { blob: f, name: f.name } : await compressImage(f);
     const data = new FormData();
-    data.append('file', blob, isPdf ? f.name : 'photo.jpg');
+    data.append('file', blob, name);
     const res = await fetch('/api/upload', { method: 'POST', body: data });
     if (!res.ok) return;
     const json = await res.json();
