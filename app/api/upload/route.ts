@@ -9,16 +9,24 @@ export async function POST(req: Request) {
     const file = formData.get('file') as File;
     if (!file) return NextResponse.json({ error: 'Aucun fichier' }, { status: 400 });
 
-    const ext = file.name.split('.').pop()?.toLowerCase() || '';
-    if (!['jpg', 'jpeg', 'png', 'pdf'].includes(ext)) {
-      return NextResponse.json({ error: 'Format non supporté. Utilisez PNG, JPG ou PDF.' }, { status: 400 });
+    const ALLOWED: Record<string, string> = {
+      'image/jpeg': 'jpg',
+      'image/jpg': 'jpg',
+      'image/png': 'png',
+      'image/heic': 'jpg',
+      'image/heif': 'jpg',
+      'image/webp': 'jpg',
+      'application/pdf': 'pdf',
+    };
+    const ext = ALLOWED[file.type];
+    if (!ext) {
+      return NextResponse.json({ error: 'Format non supporté. Utilisez une image ou un PDF.' }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const sanitizedExt = ext.replace(/[^a-z0-9]/g, '');
-    const filename = `${randomUUID()}.${sanitizedExt}`;
+    const filename = `${randomUUID()}.${ext}`;
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
 
     await mkdir(uploadDir, { recursive: true });

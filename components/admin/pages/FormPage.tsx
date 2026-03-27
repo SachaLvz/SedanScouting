@@ -7,17 +7,21 @@ interface FormPageProps {
   setForm: React.Dispatch<React.SetStateAction<Player | null>>;
   players: Player[];
   onSave: () => void;
+  onCancel: () => void;
   readFile: (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => void;
 }
 
-export default function FormPage({ form, setForm, players, onSave, readFile }: FormPageProps) {
+export default function FormPage({ form, setForm, players, onSave, onCancel, readFile }: FormPageProps) {
   const photoRef = useRef<HTMLInputElement>(null);
   const idRef = useRef<HTMLInputElement>(null);
   const isEdit = players.some(p => p.id === form.id);
 
   return (
     <div className="fu max-w-[700px] mx-auto px-5 pb-[60px]">
-      <h2 className="text-[22px] font-extrabold text-[#0c2340] mb-6">{isEdit ? 'Modifier' : 'Nouveau joueur'}</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-[22px] font-extrabold text-[#0c2340] m-0">{isEdit ? 'Modifier' : 'Nouveau joueur'}</h2>
+        <button className="btn-g px-3.5 py-2 text-xs" onClick={onCancel}>← Retour</button>
+      </div>
 
       <div className="flex gap-[18px] items-center mb-6">
         <div
@@ -30,7 +34,7 @@ export default function FormPage({ form, setForm, players, onSave, readFile }: F
             : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
           }
         </div>
-        <input ref={photoRef} type="file" accept=".png,.jpg,.jpeg" onChange={e => readFile(e, 'photo')} className="hidden" />
+        <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, 'photo')} className="hidden" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-5">
@@ -80,7 +84,7 @@ export default function FormPage({ form, setForm, players, onSave, readFile }: F
             : <><span className="text-[18px] opacity-30">🪪</span><span className="text-xs text-[#94a3b8]">Ajouter la pièce d&apos;identité</span></>
           }
         </div>
-        <input ref={idRef} type="file" accept=".png,.jpg,.jpeg,.pdf" onChange={e => readFile(e, 'pieceIdentite')} className="hidden" />
+        <input ref={idRef} type="file" accept="image/*,.pdf" onChange={e => readFile(e, 'pieceIdentite')} className="hidden" />
       </div>
 
       <button className="btn-p w-full py-4 text-[15px]" onClick={onSave}>
