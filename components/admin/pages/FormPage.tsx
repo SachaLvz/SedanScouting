@@ -7,17 +7,21 @@ interface FormPageProps {
   setForm: React.Dispatch<React.SetStateAction<Player | null>>;
   players: Player[];
   onSave: () => void;
+  onCancel: () => void;
   readFile: (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => void;
 }
 
-export default function FormPage({ form, setForm, players, onSave, readFile }: FormPageProps) {
+export default function FormPage({ form, setForm, players, onSave, onCancel, readFile }: FormPageProps) {
   const photoRef = useRef<HTMLInputElement>(null);
   const idRef = useRef<HTMLInputElement>(null);
   const isEdit = players.some(p => p.id === form.id);
 
   return (
     <div className="fu max-w-[700px] mx-auto px-5 pb-[60px]">
-      <h2 className="text-[22px] font-extrabold text-[#0c2340] mb-6">{isEdit ? 'Modifier' : 'Nouveau joueur'}</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-[22px] font-extrabold text-[#0c2340] m-0">{isEdit ? 'Modifier' : 'Nouveau joueur'}</h2>
+        <button className="btn-g px-3.5 py-2 text-xs" onClick={onCancel}>← Retour</button>
+      </div>
 
       <div className="flex gap-[18px] items-center mb-6">
         <div

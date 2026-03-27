@@ -155,6 +155,7 @@ export default function JoueursPage() {
         <FormPage
           form={form} setForm={setForm} players={players}
           onSave={save}
+          onCancel={() => setView(players.some(p => p.id === form.id) ? 'detail' : 'list')}
           readFile={readFile}
         />
       )}
