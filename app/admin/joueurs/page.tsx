@@ -55,10 +55,29 @@ export default function JoueursPage() {
     );
   });
 
+  const compressImage = (file: File): Promise<Blob> =>
+    new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const MAX = 1200;
+        const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => resolve(blob!), 'image/jpeg', 0.82);
+      };
+      img.src = url;
+    });
+
   const readFile = async (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => {
     const f = e.target.files?.[0]; if (!f) return;
+    const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
+    const blob = isPdf ? f : await compressImage(f);
     const data = new FormData();
-    data.append('file', f);
+    data.append('file', blob, isPdf ? f.name : 'photo.jpg');
     const res = await fetch('/api/upload', { method: 'POST', body: data });
     const json = await res.json();
     if (json.url) setForm(p => p ? { ...p, [field]: json.url } : p);
