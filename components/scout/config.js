@@ -27,7 +27,7 @@ export const CATS = [
 ];
 
 export const NIVEAUX = [
-  "Sans intérêt", "National / Régional", "Ligue 2 remplaçant", "Ligue 2 titulaire",
+  "Sans intérêt", "National / Régional", "U17 nationaux", "U19 nationaux", "N2/N3", "Ligue 2 remplaçant", "Ligue 2 titulaire",
   "Ligue 1 remplaçant", "Ligue 1 titulaire", "Top 5 européen", "Classe internationale", "Champions League",
 ];
 

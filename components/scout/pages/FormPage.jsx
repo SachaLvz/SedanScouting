@@ -21,7 +21,7 @@ export default function FormPage({ form, setForm, players, onSave, onBack, readF
             ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
             : <div className="text-center text-[11px] text-[#94a3b8] leading-[1.5]">📷<br />Photo</div>}
         </div>
-        <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, "photo")} className="hidden" />
+        <input ref={photoRef} type="file" accept=".png,.jpg,.jpeg" onChange={e => readFile(e, "photo")} className="hidden" />
         <div className="text-xs text-[#94a3b8]">Cliquez pour ajouter</div>
       </div>
 
@@ -29,6 +29,7 @@ export default function FormPage({ form, setForm, players, onSave, onBack, readF
         <div><label className="lbl">Nom *</label><input className="inp" value={form.lastName} onChange={e => setForm(p => ({ ...p, lastName: e.target.value }))} placeholder="Nom" /></div>
         <div><label className="lbl">Prénom</label><input className="inp" value={form.firstName} onChange={e => setForm(p => ({ ...p, firstName: e.target.value }))} placeholder="Prénom" /></div>
         <div><label className="lbl">Date de naissance</label><input type="date" className="inp" value={form.dateNaissance} onChange={e => setForm(p => ({ ...p, dateNaissance: e.target.value }))} /></div>
+        <div><label className="lbl">Nationalité</label><input className="inp" value={form.nationalite} onChange={e => setForm(p => ({ ...p, nationalite: e.target.value }))} placeholder="Ex: Sénégalais" /></div>
         <div><label className="lbl">Ville</label><select className="inp" value={form.ville} onChange={e => setForm(p => ({ ...p, ville: e.target.value }))}>{VILLES.map(v => <option key={v}>{v}</option>)}</select></div>
         <div><label className="lbl">Poste principal</label><select className="inp" value={form.poste} onChange={e => setForm(p => ({ ...p, poste: e.target.value }))}>{POSITIONS.map(p => <option key={p}>{p}</option>)}</select></div>
         <div><label className="lbl">Poste secondaire</label><select className="inp" value={form.posteSecondaire} onChange={e => setForm(p => ({ ...p, posteSecondaire: e.target.value }))}><option value="">—</option>{POSITIONS.map(p => <option key={p}>{p}</option>)}</select></div>
@@ -45,11 +46,11 @@ export default function FormPage({ form, setForm, players, onSave, onBack, readF
           style={{ borderStyle: form.pieceIdentite ? "solid" : "dashed" }}
         >
           {form.pieceIdentite
-            ? <><img src={form.pieceIdentite} alt="" className="w-14 h-9 object-cover rounded-[6px]" /><span className="text-xs text-[#16a34a] font-semibold">✓ Document ajouté</span></>
+            ? <>{form.pieceIdentite.endsWith('.pdf') ? <span className="text-[22px]">📄</span> : <img src={form.pieceIdentite} alt="" className="w-14 h-9 object-cover rounded-[6px]" />}<span className="text-xs text-[#16a34a] font-semibold">✓ Document ajouté</span></>
             : <><span className="text-xl opacity-30">🪪</span><span className="text-xs text-[#94a3b8]">Ajouter la pièce d&apos;identité</span></>
           }
         </div>
-        <input ref={idRef} type="file" accept="image/*" onChange={e => readFile(e, "pieceIdentite")} className="hidden" />
+        <input ref={idRef} type="file" accept=".png,.jpg,.jpeg,.pdf" onChange={e => readFile(e, "pieceIdentite")} className="hidden" />
       </div>
 
       <button className="btn-p w-full py-4 text-[15px]" onClick={onSave}>

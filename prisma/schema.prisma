@@ -43,6 +43,7 @@ model Player {
   taille          String   @default("")
   poids           String   @default("")
   photo           String   @default("")
+  nationalite     String   @default("")
   pieceIdentite   String   @default("")
   agent           String   @default("")
   finContrat      String   @default("")

@@ -90,6 +90,7 @@ export interface Player {
   taille: string;
   poids: string;
   photo: string;
+  nationalite: string;
   pieceIdentite: string;
   agent: string;
   finContrat: string;
@@ -156,7 +157,7 @@ export const CATS: Category[] = [
 ];
 
 export const NIVEAUX: string[] = [
-  'Sans intérêt','Régional','National','Ligue 2 remplaçant','Ligue 2 titulaire',
+  'Sans intérêt','Régional','U17 nationaux','U19 nationaux','N2/N3','National','Ligue 2 remplaçant','Ligue 2 titulaire',
   'Ligue 1 remplaçant','Ligue 1 titulaire','Top 5 européen','Champions League',
 ];
 

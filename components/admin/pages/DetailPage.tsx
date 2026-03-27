@@ -81,7 +81,7 @@ export default function DetailPage({
                 {sel.valeur && <Tag color="#16a34a" bg="#f0fdf4">💰 {sel.valeur}</Tag>}
               </div>
             )}
-            {sel.pieceIdentite && <div className="mt-2"><Tag color="#16a34a" bg="#f0fdf4">✓ Pièce d&apos;identité</Tag></div>}
+            {sel.pieceIdentite && <div className="mt-2"><a href={sel.pieceIdentite} target="_blank" rel="noreferrer"><Tag color="#16a34a" bg="#f0fdf4">✓ Pièce d&apos;identité</Tag></a></div>}
             {d && <div className="mt-2"><Tag bg={d.bg} color={d.c}>{d.i} {d.l}</Tag></div>}
             <div className="flex gap-1.5 mt-3.5 flex-wrap">
               <button className="btn-g px-4 py-2 text-xs" onClick={() => { setForm({ ...sel }); setView('form'); }}>✏️ Modifier</button>

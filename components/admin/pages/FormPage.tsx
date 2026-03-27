@@ -30,13 +30,14 @@ export default function FormPage({ form, setForm, players, onSave, readFile }: F
             : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
           }
         </div>
-        <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, 'photo')} className="hidden" />
+        <input ref={photoRef} type="file" accept=".png,.jpg,.jpeg" onChange={e => readFile(e, 'photo')} className="hidden" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-5">
         <div><label className="lbl">Nom *</label><input className="inp" value={form.lastName} onChange={e => setForm(p => p ? { ...p, lastName: e.target.value } : p)} placeholder="Nom" /></div>
         <div><label className="lbl">Prénom</label><input className="inp" value={form.firstName} onChange={e => setForm(p => p ? { ...p, firstName: e.target.value } : p)} placeholder="Prénom" /></div>
         <div><label className="lbl">Date de naissance</label><input type="date" className="inp" value={form.dateNaissance} onChange={e => setForm(p => p ? { ...p, dateNaissance: e.target.value } : p)} /></div>
+        <div><label className="lbl">Nationalité</label><input className="inp" value={form.nationalite} onChange={e => setForm(p => p ? { ...p, nationalite: e.target.value } : p)} placeholder="Ex: Sénégalais" /></div>
         <div><label className="lbl">Ville</label><select className="inp" value={form.ville} onChange={e => setForm(p => p ? { ...p, ville: e.target.value } : p)}>{VILLES.map(v => <option key={v}>{v}</option>)}</select></div>
         <div><label className="lbl">Poste</label><select className="inp" value={form.poste} onChange={e => setForm(p => p ? { ...p, poste: e.target.value } : p)}>{POSITIONS.map(pos => <option key={pos}>{pos}</option>)}</select></div>
         <div><label className="lbl">Poste secondaire</label>
@@ -75,11 +76,11 @@ export default function FormPage({ form, setForm, players, onSave, readFile }: F
           style={{ borderStyle: form.pieceIdentite ? 'solid' : 'dashed' }}
         >
           {form.pieceIdentite
-            ? <><img src={form.pieceIdentite} alt="" className="w-14 h-9 object-cover rounded-[6px]" /><span className="text-xs text-[#16a34a] font-semibold">✓ Ajouté</span></>
+            ? <>{form.pieceIdentite.endsWith('.pdf') ? <span className="text-[22px]">📄</span> : <img src={form.pieceIdentite} alt="" className="w-14 h-9 object-cover rounded-[6px]" />}<span className="text-xs text-[#16a34a] font-semibold">✓ Ajouté</span></>
             : <><span className="text-[18px] opacity-30">🪪</span><span className="text-xs text-[#94a3b8]">Ajouter la pièce d&apos;identité</span></>
           }
         </div>
-        <input ref={idRef} type="file" accept="image/*" onChange={e => readFile(e, 'pieceIdentite')} className="hidden" />
+        <input ref={idRef} type="file" accept=".png,.jpg,.jpeg,.pdf" onChange={e => readFile(e, 'pieceIdentite')} className="hidden" />
       </div>
 
       <button className="btn-p w-full py-4 text-[15px]" onClick={onSave}>
