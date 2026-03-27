@@ -8,10 +8,11 @@ interface FormPageProps {
   players: Player[];
   onSave: () => void;
   onCancel: () => void;
+  uploading?: boolean;
   readFile: (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => void;
 }
 
-export default function FormPage({ form, setForm, players, onSave, onCancel, readFile }: FormPageProps) {
+export default function FormPage({ form, setForm, players, onSave, onCancel, uploading, readFile }: FormPageProps) {
   const photoRef = useRef<HTMLInputElement>(null);
   const idRef = useRef<HTMLInputElement>(null);
   const isEdit = players.some(p => p.id === form.id);
@@ -29,9 +30,11 @@ export default function FormPage({ form, setForm, players, onSave, onCancel, rea
           className="w-[88px] h-[88px] rounded-[18px] overflow-hidden cursor-pointer flex items-center justify-center shrink-0 border-2 border-dashed border-[#e2e8f0]"
           style={{ background: 'linear-gradient(145deg,#dbeafe,#f8fafc)' }}
         >
-          {form.photo
-            ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
-            : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
+          {uploading
+            ? <div className="text-center text-[11px] text-[#94a3b8]">⏳</div>
+            : form.photo
+              ? <img src={form.photo} alt="" className="w-full h-full object-cover" />
+              : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
           }
         </div>
         <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, 'photo')} className="hidden" />
@@ -87,8 +90,8 @@ export default function FormPage({ form, setForm, players, onSave, onCancel, rea
         <input ref={idRef} type="file" accept="image/*,.pdf" onChange={e => readFile(e, 'pieceIdentite')} className="hidden" />
       </div>
 
-      <button className="btn-p w-full py-4 text-[15px]" onClick={onSave}>
-        {isEdit ? 'Enregistrer' : 'Ajouter le joueur'} 🦁
+      <button className="btn-p w-full py-4 text-[15px]" onClick={onSave} disabled={uploading} style={{ opacity: uploading ? 0.5 : 1 }}>
+        {uploading ? 'Upload en cours...' : isEdit ? 'Enregistrer' : 'Ajouter le joueur 🦁'}
       </button>
     </div>
   );
