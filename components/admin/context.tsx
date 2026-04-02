@@ -127,7 +127,7 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
   };
   const blankMatch = (): Match => ({
     id: uid(), date: today(), hour: '', equipe1: '', equipe2: '', lieu: VILLES[0],
-    competition: 'Détection', type: 'live', statut: 'planifie', scouts: [],
+    competition: 'Détection', type: 'live', statut: 'planifie', scouts: curScout ? [curScout] : [],
   });
 
   return (

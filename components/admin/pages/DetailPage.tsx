@@ -113,12 +113,14 @@ export default function DetailPage({
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[#e2e8f0] mb-5">
-        {['profil', 'rapports', 'notes', 'listes', 'contact'].map(t => (
-          <button key={t} className={`tab ${tab === t ? 'on' : ''}`} onClick={() => setTab(t)}>
-            {t === 'profil' ? 'Profil' : t === 'rapports' ? `Rapports (${visibleReports.length})` : t === 'notes' ? 'Notes' : t === 'listes' ? 'Listes' : 'Contact'}
-          </button>
-        ))}
+      <div className="mb-5 -mx-1 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+        <div className="flex min-w-max border-b border-[#e2e8f0]">
+          {['profil', 'rapports', 'notes', 'listes', 'contact'].map(t => (
+            <button key={t} className={`tab px-3 sm:px-[18px] text-[11px] sm:text-xs ${tab === t ? 'on' : ''}`} onClick={() => setTab(t)}>
+              {t === 'profil' ? 'Profil' : t === 'rapports' ? `Rapports (${visibleReports.length})` : t === 'notes' ? 'Notes' : t === 'listes' ? 'Listes' : 'Contact'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* PROFIL */}
