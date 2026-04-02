@@ -157,6 +157,12 @@ export default function ScoutJoueursPage() {
     await updatePlayer({ ...player, listes: has ? player.listes.filter((l: string) => l !== liste) : [...(player.listes || []), liste] });
   };
 
+  const updatePhone = async (phone: string) => {
+    const player = players.find((p: any) => p.id === selId);
+    if (!player) return;
+    await updatePlayer({ ...player, phone });
+  };
+
   return (
     <div>
       {view === 'list' && (
@@ -186,6 +192,7 @@ export default function ScoutJoueursPage() {
           onSaveReport={saveReport}
           onAddNote={addNote}
           onToggleListe={toggleListe}
+          onUpdatePhone={updatePhone}
         />
       )}
 

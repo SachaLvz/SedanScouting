@@ -178,6 +178,12 @@ export default function JoueursPage() {
     await updatePlayer({ ...player, listes: has ? player.listes.filter(l => l !== liste) : [...(player.listes ?? []), liste] });
   };
 
+  const updatePhone = async (phone: string) => {
+    const player = players.find(p => p.id === selId);
+    if (!player) return;
+    await updatePlayer({ ...player, phone });
+  };
+
   return (
     <div>
       {view === 'list' && (
@@ -213,7 +219,7 @@ export default function JoueursPage() {
           addNote={addNote} toggleListe={toggleListe}
           allReports={allReports} reportsForPlayer={reportsForPlayer} reportCount={reportCount}
           lr={lr} avg={avg} getDec={getDec} blankR={(matchId?: string) => blankR(selId, matchId)}
-          onSaveReport={saveReport} onDelete={del}
+          onSaveReport={saveReport} onDelete={del} onUpdatePhone={updatePhone}
         />
       )}
 

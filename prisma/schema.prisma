@@ -45,6 +45,7 @@ model Player {
   photo           String   @default("")
   profilePhoto    String   @default("")
   photos          Json     @default("[]")
+  phone           String   @default("")
   nationalite     String   @default("")
   pieceIdentite   String   @default("")
   agent           String   @default("")
