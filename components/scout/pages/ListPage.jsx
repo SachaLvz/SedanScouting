@@ -1,5 +1,5 @@
 import Tag from '../Tag';
-import { POSITIONS, VILLES, DECISIONS, LISTES } from '../config';
+import { POSITIONS, VILLES, DECISIONS, LISTES, getProfilePhoto } from '../config';
 
 export default function ListPage({
   players, filtered,
@@ -80,7 +80,7 @@ export default function ListPage({
                   className="w-[50px] h-[50px] rounded-[14px] overflow-hidden shrink-0 flex items-center justify-center border-2 border-[#e2e8f0]"
                   style={{ background: "linear-gradient(145deg, #dbeafe, #f1f5f9)" }}
                 >
-                  {p.photo ? <img src={p.photo} alt="" className="w-full h-full object-cover" />
+                  {getProfilePhoto(p) ? <img src={getProfilePhoto(p)} alt="" className="w-full h-full object-cover" />
                     : <span className="text-xl opacity-30">👤</span>}
                 </div>
                 <div className="flex-1 min-w-0">

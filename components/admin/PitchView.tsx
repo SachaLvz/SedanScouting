@@ -1,4 +1,4 @@
-import { FORMATIONS } from './config';
+import { FORMATIONS, getProfilePhoto } from './config';
 import type { Player } from './config';
 
 interface PitchViewProps {
@@ -88,8 +88,8 @@ export default function PitchView({ formation, players, shadowTeam, onSlotClick,
                 boxShadow: player ? '0 3px 10px rgba(0,0,0,.25)' : 'none',
                 overflow: 'hidden', margin: '0 auto', transition: 'all .15s',
               }}>
-                {player?.photo
-                  ? <img src={player.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                {player && getProfilePhoto(player)
+                  ? <img src={getProfilePhoto(player)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   : <span style={{ fontSize: player ? 10 : 16, color: player ? '#94a3b8' : 'rgba(255,255,255,.6)' }}>{player ? '👤' : '+'}</span>
                 }
               </div>

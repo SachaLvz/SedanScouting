@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getProfilePhoto } from '../config';
 import type { Player, Rapport, Ratings } from '../config';
 
 interface SlotPickModalProps {
@@ -73,6 +74,7 @@ export default function SlotPickModal({ slotPick, players, shadowTeam, setShadow
             <div className="flex flex-col gap-1">
               {slotPlayers.map((p, i) => {
                 const report = lr(p);
+                const photoUrl = getProfilePhoto(p);
                 return (
                   <div
                     key={p.id}
@@ -83,7 +85,7 @@ export default function SlotPickModal({ slotPick, players, shadowTeam, setShadow
                       {PRIORITY_LABELS[i] ?? `${i + 1}ème`}
                     </div>
                     <div className="w-7 h-7 rounded-full overflow-hidden bg-[#f1f5f9] border border-[#e2e8f0] shrink-0 flex items-center justify-center">
-                      {p.photo ? <img src={p.photo} alt="" className="w-full h-full object-cover" /> : <span className="text-[10px] opacity-30">👤</span>}
+                      {photoUrl ? <img src={photoUrl} alt="" className="w-full h-full object-cover" /> : <span className="text-[10px] opacity-30">👤</span>}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div
@@ -143,6 +145,7 @@ export default function SlotPickModal({ slotPick, players, shadowTeam, setShadow
             : <div className="flex flex-col gap-1">
               {available.map(p => {
                 const report = lr(p);
+                const photoUrl = getProfilePhoto(p);
                 return (
                   <div
                     key={p.id}
@@ -150,7 +153,7 @@ export default function SlotPickModal({ slotPick, players, shadowTeam, setShadow
                     onClick={() => addPlayer(p.id)}
                   >
                     <div className="w-8 h-8 rounded-lg overflow-hidden bg-[#f1f5f9] flex items-center justify-center border border-[#e2e8f0]">
-                      {p.photo ? <img src={p.photo} alt="" className="w-full h-full object-cover" /> : <span className="text-xs opacity-30">👤</span>}
+                      {photoUrl ? <img src={photoUrl} alt="" className="w-full h-full object-cover" /> : <span className="text-xs opacity-30">👤</span>}
                     </div>
                     <div className="flex-1">
                       <div className="text-xs font-bold text-[#0c2340]">{p.lastName.toUpperCase()} {p.firstName}</div>

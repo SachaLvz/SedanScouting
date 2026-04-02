@@ -68,7 +68,7 @@ export function ScoutDataProvider({ initialUser, children }: { initialUser: Scou
     id: uid(), firstName: '', lastName: '', dateNaissance: '',
     ville: VILLES[0], poste: 'Gardien', posteSecondaire: '',
     pied: 'Droitier', taille: '', poids: '',
-    photo: '', nationalite: '', pieceIdentite: '',
+    photo: '', photos: [], profilePhoto: '', nationalite: '', pieceIdentite: '',
     rapports: [], notes: [], listes: [], createdAt: today(),
   });
   const blankR = (sel: any) => ({

@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { getProfilePhoto } from '../config';
 import type { Player } from '../config';
 
 interface TrashedPlayer extends Player {
@@ -106,13 +107,14 @@ export default function TrashPage({ onBack, onRestored }: TrashPageProps) {
           {players.map(p => {
             const jours = daysLeft(p.deletedAt);
             const urgent = jours <= 3;
+            const photoUrl = getProfilePhoto(p);
             return (
               <div key={p.id} className="card px-4 py-3 flex items-center gap-3">
                 <div
                   className="w-[46px] h-[46px] rounded-[13px] overflow-hidden shrink-0 flex items-center justify-center border-2 border-[#e2e8f0] opacity-60"
                   style={{ background: 'linear-gradient(145deg,#f1f5f9,#e2e8f0)' }}
                 >
-                  {p.photo ? <img src={p.photo} alt="" className="w-full h-full object-cover" /> : <span className="text-[18px] opacity-30">👤</span>}
+                  {photoUrl ? <img src={photoUrl} alt="" className="w-full h-full object-cover" /> : <span className="text-[18px] opacity-30">👤</span>}
                 </div>
 
                 <div className="flex-1 min-w-0">

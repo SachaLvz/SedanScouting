@@ -48,3 +48,4 @@ export const LISTES = [
 export const uid = () => crypto.randomUUID();
 export const today = () => new Date().toISOString().split("T")[0];
 export const getSc = v => SCALE.find(s => s.v === v) || SCALE[0];
+export const getProfilePhoto = (p) => p?.profilePhoto || p?.photo || ((Array.isArray(p?.photos) && p.photos.length > 0) ? p.photos[0] : "");
