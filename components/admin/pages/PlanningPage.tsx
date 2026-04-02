@@ -51,39 +51,41 @@ export default function PlanningPage() {
     return (
       <div
         key={m.id}
-        className="flex items-center gap-3.5 px-[18px] py-4 rounded-2xl bg-white border-[1.5px]"
+        className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-[18px] rounded-2xl bg-white border-[1.5px]"
         style={{ borderColor: isPast ? '#e2e8f0' : attendees.length > 0 ? '#bfdbfe' : '#e2e8f0', opacity: isPast ? 0.65 : 1 }}
       >
-        {/* Date/heure */}
-        <div className="shrink-0 text-center min-w-[48px]">
-          <div className="text-sm font-extrabold text-[#0c2340] font-mono leading-none">
-            {m.date ? m.date.split('-').slice(1).reverse().join('/') : '—'}
+        <div className="flex items-start gap-3.5 min-w-0 flex-1">
+          {/* Date/heure */}
+          <div className="shrink-0 text-center min-w-[52px]">
+            <div className="text-sm font-extrabold text-[#0c2340] font-mono leading-none">
+              {m.date ? m.date.split('-').slice(1).reverse().join('/') : '—'}
+            </div>
+            {m.hour && (
+              <div className="text-[11px] font-semibold text-[#1e6cb6] mt-[3px]">{m.hour}</div>
+            )}
           </div>
-          {m.hour && (
-            <div className="text-[11px] font-semibold text-[#1e6cb6] mt-[3px]">{m.hour}</div>
-          )}
-        </div>
 
-        <div className="w-px h-10 bg-[#e2e8f0] shrink-0" />
+          <div className="hidden sm:block w-px h-10 bg-[#e2e8f0] shrink-0" />
 
-        {/* Match info */}
-        <div className="flex-1 min-w-0">
-          <div className="text-[13px] font-bold text-[#0c2340] mb-1">
-            {m.equipe1} <span className="text-[#94a3b8] font-normal text-[11px]">vs</span> {m.equipe2}
-          </div>
-          <div className="flex gap-2 flex-wrap items-center">
-            {m.lieu && <span className="text-[10px] text-[#94a3b8]">📍 {m.lieu}</span>}
-            {m.competition && <span className="text-[10px] text-[#94a3b8]">🏆 {m.competition}</span>}
-            {m.type && <span className="text-[10px] text-[#94a3b8]">{m.type === 'live' ? '🏟 Live' : '📹 Vidéo'}</span>}
+          {/* Match info */}
+          <div className="min-w-0 flex-1">
+            <div className="text-[13px] font-bold text-[#0c2340] mb-1">
+              {m.equipe1} <span className="text-[#94a3b8] font-normal text-[11px]">vs</span> {m.equipe2}
+            </div>
+            <div className="flex gap-2 flex-wrap items-center">
+              {m.lieu && <span className="text-[10px] text-[#94a3b8]">📍 {m.lieu}</span>}
+              {m.competition && <span className="text-[10px] text-[#94a3b8]">🏆 {m.competition}</span>}
+              {m.type && <span className="text-[10px] text-[#94a3b8]">{m.type === 'live' ? '🏟 Live' : '📹 Vidéo'}</span>}
+            </div>
           </div>
         </div>
 
         {/* Scouts — avatars */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1.5 w-full sm:w-auto">
           {attendees.length === 0 ? (
             <span className="text-[11px] text-[#cbd5e1] italic pr-1">—</span>
           ) : (
-            <div className="flex gap-1 flex-wrap justify-end max-w-[240px]">
+            <div className="flex gap-1 flex-wrap sm:justify-end max-w-full sm:max-w-[240px]">
               {attendees.map(id => {
                 const c = colorOf(id);
                 const scout = scoutList.find(s => s.id === id);
@@ -108,7 +110,7 @@ export default function PlanningPage() {
                     >
                       {scout ? initials(scout.lastName, scout.firstName) : '?'}
                     </div>
-                    <span className="text-[11px] font-bold whitespace-nowrap" style={{ color: isFiltered ? '#fff' : c.color }}>
+                    <span className="hidden sm:inline text-[11px] font-bold whitespace-nowrap max-w-[132px] truncate" style={{ color: isFiltered ? '#fff' : c.color }}>
                       {[scout?.firstName, scout?.lastName].filter(Boolean).join(' ')}
                     </span>
                   </div>
@@ -118,48 +120,49 @@ export default function PlanningPage() {
           )}
         </div>
 
-        {/* Statut toggle */}
-        <button
-          onClick={() => toggleStatut(m)}
-          className="shrink-0 px-[11px] py-[5px] rounded-lg text-[10px] font-bold border-none cursor-pointer"
-          style={{
-            background: isPast ? '#f0fdf4' : '#fffbeb',
-            color: isPast ? '#16a34a' : '#d97706',
-          }}
-        >
-          {isPast ? '✓ Terminé' : '⏳ Planifié'}
-        </button>
-
-        {/* Supprimer */}
-        {confirmDelete === m.id ? (
-          <div className="flex gap-1 items-center shrink-0">
-            <button
-              onClick={() => { deleteMatch(m.id); setConfirmDelete(null); }}
-              className="px-2.5 py-[5px] rounded-lg bg-[#dc2626] text-white text-[10px] font-bold border-none cursor-pointer"
-            >
-              Confirmer
-            </button>
-            <button
-              onClick={() => setConfirmDelete(null)}
-              className="px-2 py-[5px] rounded-lg border border-[#e2e8f0] bg-white text-[#94a3b8] text-[10px] border-none cursor-pointer"
-            >
-              ✕
-            </button>
-          </div>
-        ) : (
+        {/* Actions */}
+        <div className="w-full sm:w-auto flex items-center justify-end gap-2">
           <button
-            onClick={() => setConfirmDelete(m.id)}
-            className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center border border-[#e2e8f0] bg-white text-[#cbd5e1] text-sm cursor-pointer hover:border-[#fca5a5] hover:text-[#dc2626] hover:bg-[#fef2f2] transition-colors"
+            onClick={() => toggleStatut(m)}
+            className="shrink-0 px-[11px] py-[5px] rounded-lg text-[10px] font-bold border-none cursor-pointer"
+            style={{
+              background: isPast ? '#f0fdf4' : '#fffbeb',
+              color: isPast ? '#16a34a' : '#d97706',
+            }}
           >
-            🗑
+            {isPast ? '✓ Terminé' : '⏳ Planifié'}
           </button>
-        )}
+
+          {confirmDelete === m.id ? (
+            <div className="flex gap-1 items-center shrink-0">
+              <button
+                onClick={() => { deleteMatch(m.id); setConfirmDelete(null); }}
+                className="px-2.5 py-[5px] rounded-lg bg-[#dc2626] text-white text-[10px] font-bold border-none cursor-pointer"
+              >
+                Confirmer
+              </button>
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="px-2 py-[5px] rounded-lg border border-[#e2e8f0] bg-white text-[#94a3b8] text-[10px] border-none cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmDelete(m.id)}
+              className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center border border-[#e2e8f0] bg-white text-[#cbd5e1] text-sm cursor-pointer hover:border-[#fca5a5] hover:text-[#dc2626] hover:bg-[#fef2f2] transition-colors"
+            >
+              🗑
+            </button>
+          )}
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="fu max-w-[960px] mx-auto px-5 pb-[60px]">
+    <div className="fu max-w-[960px] mx-auto px-4 sm:px-5 pb-[60px]">
 
       {/* En-tête */}
       <div className="flex justify-between items-start mb-6 gap-3 flex-wrap">

@@ -71,39 +71,41 @@ export default function ScoutPlanningPage() {
     return (
       <div
         key={m.id}
-        className="flex items-center gap-3.5 px-[18px] py-3.5 rounded-2xl border-[1.5px]"
+        className="flex flex-col gap-3 px-4 py-3.5 sm:flex-row sm:items-center sm:gap-3.5 sm:px-[18px] rounded-2xl border-[1.5px]"
         style={{
           background: isPast ? '#fff' : '#eef5fd',
           borderColor: isPast ? '#e2e8f0' : '#4a9de8',
           opacity: isPast ? 0.7 : 1,
         }}
       >
-        {/* Date/heure */}
-        <div className="shrink-0 text-center min-w-[52px]">
-          <div className="text-[13px] font-extrabold text-[#0c2340] font-mono">
-            {m.date ? m.date.split('-').slice(1).reverse().join('/') : '—'}
+        <div className="flex items-start gap-3.5 min-w-0 flex-1">
+          {/* Date/heure */}
+          <div className="shrink-0 text-center min-w-[52px]">
+            <div className="text-[13px] font-extrabold text-[#0c2340] font-mono">
+              {m.date ? m.date.split('-').slice(1).reverse().join('/') : '—'}
+            </div>
+            {m.hour && (
+              <div className="text-[11px] font-semibold text-[#1e6cb6] mt-px">{m.hour}</div>
+            )}
           </div>
-          {m.hour && (
-            <div className="text-[11px] font-semibold text-[#1e6cb6] mt-px">{m.hour}</div>
-          )}
-        </div>
 
-        <div className="w-px h-9 bg-[#e2e8f0] shrink-0" />
+          <div className="hidden sm:block w-px h-9 bg-[#e2e8f0] shrink-0" />
 
-        {/* Match info */}
-        <div className="flex-1 min-w-0">
-          <div className="text-[13px] font-bold text-[#0c2340] mb-[3px]">
-            {m.equipe1} <span className="text-[#94a3b8] font-medium">vs</span> {m.equipe2}
-          </div>
-          <div className="flex gap-1.5 flex-wrap">
-            {m.lieu && <span className="text-[10px] text-[#94a3b8] font-medium">📍 {m.lieu}</span>}
-            {m.competition && <span className="text-[10px] text-[#94a3b8] font-medium">🏆 {m.competition}</span>}
-            {m.type && <span className="text-[10px] text-[#94a3b8] font-medium">· {m.type === 'live' ? '🏟 Live' : '📹 Vidéo'}</span>}
+          {/* Match info */}
+          <div className="min-w-0 flex-1">
+            <div className="text-[13px] font-bold text-[#0c2340] mb-[3px]">
+              {m.equipe1} <span className="text-[#94a3b8] font-medium">vs</span> {m.equipe2}
+            </div>
+            <div className="flex gap-1.5 flex-wrap">
+              {m.lieu && <span className="text-[10px] text-[#94a3b8] font-medium">📍 {m.lieu}</span>}
+              {m.competition && <span className="text-[10px] text-[#94a3b8] font-medium">🏆 {m.competition}</span>}
+              {m.type && <span className="text-[10px] text-[#94a3b8] font-medium">· {m.type === 'live' ? '🏟 Live' : '📹 Vidéo'}</span>}
+            </div>
           </div>
         </div>
 
         {isPast && (
-          <span className="text-[10px] font-bold text-[#16a34a] bg-[#f0fdf4] rounded-[6px] px-2 py-[3px] shrink-0">
+          <span className="text-[10px] font-bold text-[#16a34a] bg-[#f0fdf4] rounded-[6px] px-2 py-[3px] shrink-0 ml-auto">
             ✓ Vu
           </span>
         )}
@@ -112,14 +114,14 @@ export default function ScoutPlanningPage() {
   };
 
   if (loading) return (
-    <div className="max-w-[760px] mx-auto px-5 py-10 text-center text-[#94a3b8]">
+    <div className="max-w-[760px] mx-auto px-4 sm:px-5 py-10 text-center text-[#94a3b8]">
       Chargement...
     </div>
   );
 
   return (
-    <div className="max-w-[760px] mx-auto px-5 pb-[60px]">
-      <div className="flex justify-between items-center mb-5">
+    <div className="max-w-[760px] mx-auto px-4 sm:px-5 pb-[60px]">
+      <div className="flex justify-between items-start sm:items-center mb-5 gap-2.5 flex-wrap">
         <h2 className="m-0 text-xl font-extrabold text-[#0c2340]">Mon planning</h2>
         <button
           className="btn-p px-4 py-2 text-xs"
