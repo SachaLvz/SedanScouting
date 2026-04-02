@@ -68,12 +68,16 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
   const isAdmin = scout?.role === 'admin';
 
   const updatePlayer = async (player: Player) => {
-    await fetch(`/api/players/${player.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(player) }).catch(console.error);
-    setPlayers(prev => prev.map(p => p.id === player.id ? player : p));
+    const res = await fetch(`/api/players/${player.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(player) }).catch(console.error);
+    if (!res?.ok) return;
+    const saved = await res.json();
+    setPlayers(prev => prev.map(p => p.id === player.id ? saved : p));
   };
   const createPlayer = async (player: Player) => {
-    await fetch('/api/players', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(player) }).catch(console.error);
-    setPlayers(prev => [...prev, player]);
+    const res = await fetch('/api/players', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(player) }).catch(console.error);
+    if (!res?.ok) return;
+    const created = await res.json();
+    setPlayers(prev => [...prev, created]);
   };
   const deletePlayer = async (id: string) => {
     await fetch(`/api/players/${id}`, { method: 'DELETE' }).catch(console.error);
