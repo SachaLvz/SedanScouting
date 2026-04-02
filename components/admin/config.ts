@@ -92,6 +92,7 @@ export interface Player {
   photo: string;
   photos?: string[];
   profilePhoto?: string;
+  phone?: string;
   nationalite: string;
   pieceIdentite: string;
   agent: string;

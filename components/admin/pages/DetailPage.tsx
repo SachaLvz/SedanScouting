@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Tag from '../Tag';
 import Radar from '../Radar';
 import BarLine from '../BarLine';
@@ -34,19 +35,26 @@ interface DetailPageProps {
   blankR: (matchId?: string) => Rapport;
   onSaveReport: () => void;
   onDelete: (id: string) => void;
+  onUpdatePhone: (phone: string) => Promise<void>;
 }
 
 export default function DetailPage({
   sel, matches, isAdmin, tab, setTab, setView, setForm,
   showR, setShowR, rForm, setRForm, openR, setOpenR,
   pendingMatches, scout, addNote, toggleListe,
-  allReports, reportsForPlayer, reportCount, lr, avg, getDec, blankR, onSaveReport, onDelete,
+  allReports, reportsForPlayer, reportCount, lr, avg, getDec, blankR, onSaveReport, onDelete, onUpdatePhone,
 }: DetailPageProps) {
   const r = lr(sel);
   const d = r ? DECISIONS.find(x => x.v === r.decision) : null;
   const visibleReports = isAdmin ? allReports(sel) : reportsForPlayer(sel);
   const profilePhoto = getProfilePhoto(sel);
   const photos = Array.from(new Set((sel.photos ?? (sel.photo ? [sel.photo] : [])).filter(Boolean)));
+  const [phone, setPhone] = useState(sel.phone || '');
+  const [savingPhone, setSavingPhone] = useState(false);
+
+  useEffect(() => {
+    setPhone(sel.phone || '');
+  }, [sel.id, sel.phone]);
 
   return (
     <div className="fu max-w-[860px] mx-auto px-5 pb-[60px]">
@@ -106,9 +114,9 @@ export default function DetailPage({
 
       {/* Tabs */}
       <div className="flex border-b border-[#e2e8f0] mb-5">
-        {['profil', 'rapports', 'notes', 'listes'].map(t => (
+        {['profil', 'rapports', 'notes', 'listes', 'contact'].map(t => (
           <button key={t} className={`tab ${tab === t ? 'on' : ''}`} onClick={() => setTab(t)}>
-            {t === 'profil' ? 'Profil' : t === 'rapports' ? `Rapports (${visibleReports.length})` : t === 'notes' ? 'Notes' : 'Listes'}
+            {t === 'profil' ? 'Profil' : t === 'rapports' ? `Rapports (${visibleReports.length})` : t === 'notes' ? 'Notes' : t === 'listes' ? 'Listes' : 'Contact'}
           </button>
         ))}
       </div>
@@ -244,6 +252,37 @@ export default function DetailPage({
               </div>
             );
           })}
+        </div>
+      )}
+
+      {tab === 'contact' && (
+        <div className="card p-5 max-w-[460px]">
+          <label className="lbl">Téléphone du joueur</label>
+          <input
+            className="inp"
+            value={phone}
+            onChange={e => setPhone(e.target.value)}
+            placeholder="+221 77 000 00 00"
+          />
+          <div className="flex gap-2 mt-3">
+            <button
+              className="btn-p px-4 py-2 text-xs font-semibold"
+              disabled={savingPhone}
+              style={{ opacity: savingPhone ? 0.6 : 1 }}
+              onClick={async () => {
+                setSavingPhone(true);
+                await onUpdatePhone(phone.trim());
+                setSavingPhone(false);
+              }}
+            >
+              {savingPhone ? 'Enregistrement...' : 'Enregistrer'}
+            </button>
+            {phone.trim() && (
+              <a className="btn-g px-4 py-2 text-xs font-semibold" href={`tel:${phone.trim()}`}>
+                Appeler
+              </a>
+            )}
+          </div>
         </div>
       )}
 
