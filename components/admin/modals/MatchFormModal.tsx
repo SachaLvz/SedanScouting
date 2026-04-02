@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { VILLES } from '../config';
-import type { Match } from '../config';
+import type { Match, Scout } from '../config';
 
 interface MatchFormModalProps {
   matchForm: Match;
   setMatchForm: React.Dispatch<React.SetStateAction<Match | null>>;
+  people?: Scout[];
+  title?: string;
+  submitLabel?: string;
   onSave: () => void;
   onClose: () => void;
 }
@@ -18,7 +21,7 @@ const REQUIRED_FIELDS: { key: keyof Match; label: string }[] = [
   { key: 'competition', label: 'Compétition' },
 ];
 
-export default function MatchFormModal({ matchForm, setMatchForm, onSave, onClose }: MatchFormModalProps) {
+export default function MatchFormModal({ matchForm, setMatchForm, people = [], title = 'Programmer un match', submitLabel = 'Programmer', onSave, onClose }: MatchFormModalProps) {
   const [submitted, setSubmitted] = useState(false);
 
   const errors: Partial<Record<keyof Match, string>> = {};
@@ -43,7 +46,7 @@ export default function MatchFormModal({ matchForm, setMatchForm, onSave, onClos
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="card fu max-w-[480px] w-full p-7 self-start shadow-[0_12px_40px_rgba(15,23,42,0.1)]">
-        <h3 className="m-0 mb-5 text-lg font-extrabold text-[#0c2340]">Programmer un match</h3>
+        <h3 className="m-0 mb-5 text-lg font-extrabold text-[#0c2340]">{title}</h3>
         <div className="grid grid-cols-2 gap-2.5 mb-3.5">
           <div>
             <label className="lbl">Équipe 1 *</label>
@@ -86,9 +89,44 @@ export default function MatchFormModal({ matchForm, setMatchForm, onSave, onClos
             </select>
           </div>
         </div>
+        {people.length > 0 && (
+          <div className="mb-4">
+            <label className="lbl">Assigner des personnes</label>
+            <div className="flex flex-wrap gap-1.5">
+              {people.map(person => {
+                const fullName = [person.firstName, person.lastName].filter(Boolean).join(' ');
+                const active = (matchForm.scouts ?? []).includes(person.id);
+                return (
+                  <button
+                    key={person.id}
+                    type="button"
+                    onClick={() => setMatchForm(p => {
+                      if (!p) return p;
+                      const has = (p.scouts ?? []).includes(person.id);
+                      return {
+                        ...p,
+                        scouts: has
+                          ? (p.scouts ?? []).filter(id => id !== person.id)
+                          : [...(p.scouts ?? []), person.id],
+                      };
+                    })}
+                    className="px-3 py-1.5 rounded-[999px] border text-[11px] font-semibold cursor-pointer transition-all"
+                    style={{
+                      borderColor: active ? '#1e6cb6' : '#e2e8f0',
+                      background: active ? '#eef5fd' : '#fff',
+                      color: active ? '#1e6cb6' : '#475569',
+                    }}
+                  >
+                    {fullName || person.id}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
         <div className="flex gap-2.5">
           <button className="btn-g flex-1 py-3 text-[13px]" onClick={onClose}>Annuler</button>
-          <button className="btn-p flex-1 py-3 text-[13px]" onClick={handleSave}>Programmer</button>
+          <button className="btn-p flex-1 py-3 text-[13px]" onClick={handleSave}>{submitLabel}</button>
         </div>
       </div>
     </div>
