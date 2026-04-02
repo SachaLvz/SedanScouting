@@ -43,6 +43,8 @@ model Player {
   taille          String   @default("")
   poids           String   @default("")
   photo           String   @default("")
+  profilePhoto    String   @default("")
+  photos          Json     @default("[]")
   nationalite     String   @default("")
   pieceIdentite   String   @default("")
   agent           String   @default("")

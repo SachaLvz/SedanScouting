@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Tag from '../Tag';
 import type { Player, Match, DecisionItem, Rapport, Ratings } from '../config';
-import { POSITIONS, VILLES, DECISIONS } from '../config';
+import { POSITIONS, VILLES, DECISIONS, getProfilePhoto } from '../config';
 
 const PAGE_SIZE = 20;
 
@@ -108,7 +108,7 @@ export default function ListPage({
                 onClick={() => { setSelId(p.id); setView('detail'); setTab('profil'); }}
               >
                 <div className="w-[46px] h-[46px] rounded-[13px] overflow-hidden shrink-0 flex items-center justify-center border-2 border-[#e2e8f0]" style={{ background: 'linear-gradient(145deg,#dbeafe,#f1f5f9)' }}>
-                  {p.photo ? <img src={p.photo} alt="" className="w-full h-full object-cover" /> : <span className="text-[18px] opacity-30">👤</span>}
+                  {getProfilePhoto(p) ? <img src={getProfilePhoto(p)} alt="" className="w-full h-full object-cover" /> : <span className="text-[18px] opacity-30">👤</span>}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

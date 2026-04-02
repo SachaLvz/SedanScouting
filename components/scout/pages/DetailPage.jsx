@@ -3,7 +3,7 @@ import Tag from '../Tag';
 import Radar from '../Radar';
 import NotePicker from '../NotePicker';
 import NotesPanel from '../NotesPanel';
-import { CATS, DECISIONS, NIVEAUX, VILLES, LISTES, getSc } from '../config';
+import { CATS, DECISIONS, NIVEAUX, VILLES, LISTES, getProfilePhoto, getSc } from '../config';
 
 /**
  * @param {Object} props
@@ -36,6 +36,8 @@ export default function DetailPage({
   const lr = (p) => (p.rapports || [])[0];
   const r = lr(sel);
   const d = r ? DECISIONS.find(x => x.v === r.decision) : null;
+  const profilePhoto = getProfilePhoto(sel);
+  const photos = Array.from(new Set((sel.photos || (sel.photo ? [sel.photo] : [])).filter(Boolean)));
 
   return (
     <div className="fu max-w-[860px] mx-auto px-5 pb-[60px]">
@@ -48,7 +50,7 @@ export default function DetailPage({
             className="w-[110px] h-[110px] rounded-[22px] overflow-hidden shrink-0 flex items-center justify-center border-[3px] border-[#e2e8f0]"
             style={{ background: "linear-gradient(145deg, #dbeafe, #f1f5f9)", boxShadow: "0 4px 16px rgba(15,23,42,0.06)" }}
           >
-            {sel.photo ? <img src={sel.photo} alt="" className="w-full h-full object-cover" />
+            {profilePhoto ? <img src={profilePhoto} alt="" className="w-full h-full object-cover" />
               : <span className="text-[44px] opacity-20">👤</span>}
           </div>
           <div className="flex-1">
@@ -66,6 +68,15 @@ export default function DetailPage({
               {sel.nationalite && <Tag>🌍 {sel.nationalite}</Tag>}
             </div>
             {sel.pieceIdentite && <div className="mt-2"><a href={sel.pieceIdentite} target="_blank" rel="noreferrer"><Tag color="#16a34a" bg="#f0fdf4">✓ Pièce d&apos;identité</Tag></a></div>}
+            {photos.length > 1 && (
+              <div className="mt-2.5 flex gap-1.5 flex-wrap">
+                {photos.map(url => (
+                  <a key={url} href={url} target="_blank" rel="noreferrer" className="w-11 h-11 rounded-lg overflow-hidden border border-[#e2e8f0]">
+                    <img src={url} alt="" className="w-full h-full object-cover" />
+                  </a>
+                ))}
+              </div>
+            )}
             {d && <div className="mt-2"><Tag bg={d.bg} color={d.c}>{d.i} {d.l}</Tag></div>}
             <div className="flex gap-1.5 mt-3.5 flex-wrap">
               <button className="btn-g px-4 py-2 text-xs" onClick={onEdit}>✏️ Modifier</button>

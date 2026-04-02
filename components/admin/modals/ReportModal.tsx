@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { CATS, VILLES, NIVEAUX, DECISIONS } from '../config';
 import NotePicker from '../NotePicker';
@@ -16,6 +16,83 @@ interface ReportModalProps {
 
 export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatches, onSave, onClose }: ReportModalProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [scanSuccess, setScanSuccess] = useState(false);
+  const [scanPlayerNumber, setScanPlayerNumber] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleScanNotes = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setScanning(true);
+    setScanError(null);
+    setScanSuccess(false);
+
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const dataUrl = reader.result as string;
+          resolve(dataUrl.split(',')[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const mimeType = file.type || 'image/jpeg';
+
+      const res = await fetch('/api/transcribe-notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          image: base64,
+          mimeType,
+          playerNumber: scanPlayerNumber.trim() || null,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Erreur serveur');
+      }
+
+      const { data } = await res.json();
+
+      setRForm(p => {
+        if (!p) return p;
+        return {
+          ...p,
+          contexte: data.contexte || p.contexte,
+          minutesJouees: data.minutesJouees || p.minutesJouees,
+          lieu: data.lieu || p.lieu,
+          commentaires: {
+            physique: data.commentaires?.physique || p.commentaires.physique,
+            technique: data.commentaires?.technique || p.commentaires.technique,
+            tactique: data.commentaires?.tactique || p.commentaires.tactique,
+            mentalite: data.commentaires?.mentalite || p.commentaires.mentalite,
+          },
+          ratings: {
+            physique: data.ratings?.physique ?? p.ratings.physique,
+            technique: data.ratings?.technique ?? p.ratings.technique,
+            tactique: data.ratings?.tactique ?? p.ratings.tactique,
+            mentalite: data.ratings?.mentalite ?? p.ratings.mentalite,
+          },
+          conclusion: data.conclusion || p.conclusion,
+          niveauActuel: data.niveauActuel || p.niveauActuel,
+          potentiel: data.potentiel || p.potentiel,
+          decision: data.decision || p.decision,
+        };
+      });
+
+      setScanSuccess(true);
+    } catch (err) {
+      setScanError(err instanceof Error ? err.message : 'Erreur inconnue');
+    } finally {
+      setScanning(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const missingComments = submitted
     ? CATS.filter(c => !rForm.commentaires[c.key]?.trim()).map(c => c.key)
@@ -48,8 +125,48 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
             <h3 className="m-0 text-xl font-extrabold text-[#0c2340]">Rapport de match</h3>
             <p className="mt-1 mb-0 text-xs text-[#94a3b8]">{sel.lastName.toUpperCase()} {sel.firstName} · {sel.poste} · Scout: {[scout?.firstName, scout?.lastName].filter(Boolean).join(' ')}</p>
           </div>
-          <button className="btn-g px-2.5 py-1.5 text-sm" onClick={onClose}>✕</button>
+          <div className="flex gap-2 items-start">
+            <input
+              className="inp w-[110px] !py-1.5 text-xs"
+              value={scanPlayerNumber}
+              onChange={e => setScanPlayerNumber(e.target.value.replace(/\D/g, '').slice(0, 3))}
+              placeholder="N° joueur"
+              title="Numéro du joueur à cibler dans les notes (optionnel)"
+              disabled={scanning}
+            />
+            <button
+              className="btn-g px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={scanning}
+              title="Scanner des notes manuscrites, une photo ou un PDF"
+            >
+              {scanning ? (
+                <span className="inline-block w-3.5 h-3.5 border-2 border-[#94a3b8] border-t-transparent rounded-full animate-spin" />
+              ) : '📷'}
+              {scanning ? 'Analyse...' : 'Scanner mes notes'}
+            </button>
+            <button className="btn-g px-2.5 py-1.5 text-sm" onClick={onClose}>✕</button>
+          </div>
         </div>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*,application/pdf"
+          className="hidden"
+          onChange={handleScanNotes}
+        />
+
+        {scanSuccess && (
+          <div className="mb-3.5 px-3.5 py-2.5 bg-[#f0fdf4] rounded-[10px] text-xs text-[#16a34a] font-semibold flex items-center gap-2">
+            ✓ Notes transcrites avec succès — vérifiez et complétez les champs.
+          </div>
+        )}
+        {scanError && (
+          <div className="mb-3.5 px-3.5 py-2.5 bg-[#fef2f2] rounded-[10px] text-xs text-[#dc2626] font-semibold">
+            Erreur : {scanError}
+          </div>
+        )}
 
         {pendingMatches.length > 0 && (
           <div className="mb-4">

@@ -10,13 +10,15 @@ interface FormPageProps {
   onCancel: () => void;
   uploading?: boolean;
   uploadError?: boolean;
-  readFile: (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => void;
+  readFile: (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player, onUploaded?: (url: string) => void) => void;
 }
 
 export default function FormPage({ form, setForm, players, onSave, onCancel, uploading, uploadError, readFile }: FormPageProps) {
   const photoRef = useRef<HTMLInputElement>(null);
   const idRef = useRef<HTMLInputElement>(null);
   const isEdit = players.some(p => p.id === form.id);
+  const photos = Array.from(new Set((form.photos ?? []).filter(Boolean)));
+  const profilePhoto = form.profilePhoto || form.photo || photos[0] || '';
 
   return (
     <div className="fu max-w-[700px] mx-auto px-5 pb-[60px]">
@@ -25,22 +27,79 @@ export default function FormPage({ form, setForm, players, onSave, onCancel, upl
         <button className="btn-g px-3.5 py-2 text-xs" onClick={onCancel}>← Retour</button>
       </div>
 
-      <div className="flex gap-[18px] items-center mb-6">
-        <div
-          onClick={() => photoRef.current?.click()}
-          className="w-[88px] h-[88px] rounded-[18px] overflow-hidden cursor-pointer flex items-center justify-center shrink-0 border-2 border-dashed border-[#e2e8f0]"
-          style={{ background: 'linear-gradient(145deg,#dbeafe,#f8fafc)' }}
-        >
-          {uploading
-            ? <div className="text-center text-[11px] text-[#94a3b8]">⏳</div>
-            : uploadError
-              ? <div className="text-center text-[11px] text-[#dc2626]">❌<br />Erreur</div>
-              : form.photo
-                ? <img src={form.photo} alt="" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
-          }
+      <div className="mb-6">
+        <div className="flex gap-[18px] items-center mb-3.5">
+          <div
+            onClick={() => photoRef.current?.click()}
+            className="w-[88px] h-[88px] rounded-[18px] overflow-hidden cursor-pointer flex items-center justify-center shrink-0 border-2 border-dashed border-[#e2e8f0]"
+            style={{ background: 'linear-gradient(145deg,#dbeafe,#f8fafc)' }}
+          >
+            {uploading
+              ? <div className="text-center text-[11px] text-[#94a3b8]">⏳</div>
+              : uploadError
+                ? <div className="text-center text-[11px] text-[#dc2626]">❌<br />Erreur</div>
+                : profilePhoto
+                  ? <img src={profilePhoto} alt="" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                  : <div className="text-center text-[11px] text-[#94a3b8]">📷<br />Photo</div>
+            }
+          </div>
+          <div className="text-xs text-[#64748b]">
+            <div className="font-semibold">Photo de profil</div>
+            <div>Cliquez pour ajouter une ou plusieurs photos</div>
+          </div>
         </div>
-        <input ref={photoRef} type="file" accept="image/*" onChange={e => readFile(e, 'photo')} className="hidden" />
+        <div
+          className="flex flex-wrap gap-2"
+        >
+          {photos.map(url => (
+            <div key={url} className="relative w-[62px] h-[62px] rounded-xl overflow-hidden border border-[#e2e8f0]">
+              <img src={url} alt="" className="w-full h-full object-cover" />
+              <button
+                type="button"
+                className="absolute top-1 right-1 w-5 h-5 rounded-full bg-[#0f172acc] text-white text-[11px] leading-none"
+                onClick={() => setForm(p => {
+                  if (!p) return p;
+                  const nextPhotos = (p.photos ?? []).filter(photo => photo !== url);
+                  const nextProfile = (p.profilePhoto === url ? (nextPhotos[0] || '') : (p.profilePhoto || p.photo || ''));
+                  return { ...p, photos: nextPhotos, profilePhoto: nextProfile, photo: nextProfile };
+                })}
+                title="Supprimer"
+              >
+                ✕
+              </button>
+              <button
+                type="button"
+                className="absolute left-1 bottom-1 text-[9px] px-1.5 py-0.5 rounded bg-white/90 text-[#0c2340] font-bold"
+                onClick={() => setForm(p => p ? { ...p, profilePhoto: url, photo: url } : p)}
+                title="Définir en photo de profil"
+              >
+                {profilePhoto === url ? 'Profil' : 'Mettre profil'}
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            className="w-[62px] h-[62px] rounded-xl border-2 border-dashed border-[#cbd5e1] text-[#64748b] text-xs font-semibold"
+            onClick={() => photoRef.current?.click()}
+          >
+            + Photo
+          </button>
+        </div>
+        <input
+          ref={photoRef}
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={e => readFile(e, 'photo', (url) => {
+            setForm(p => {
+              if (!p) return p;
+              const nextPhotos = Array.from(new Set([...(p.photos ?? []), url]));
+              const nextProfile = p.profilePhoto || p.photo || url;
+              return { ...p, photos: nextPhotos, profilePhoto: nextProfile, photo: nextProfile };
+            });
+          })}
+          className="hidden"
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-5">

@@ -90,6 +90,8 @@ export interface Player {
   taille: string;
   poids: string;
   photo: string;
+  photos?: string[];
+  profilePhoto?: string;
   nationalite: string;
   pieceIdentite: string;
   agent: string;
@@ -211,3 +213,5 @@ export const LISTES: string[] = [
 export const uid = (): string => crypto.randomUUID();
 export const today = (): string => new Date().toISOString().split('T')[0];
 export const getSc = (v: number): ScaleItem => SCALE.find(s => s.v === v) ?? SCALE[0];
+export const getProfilePhoto = (p: { photo?: string; profilePhoto?: string; photos?: string[] }): string =>
+  p.profilePhoto || p.photo || (Array.isArray(p.photos) && p.photos.length > 0 ? p.photos[0] : '') || '';

@@ -80,33 +80,65 @@ export default function JoueursPage() {
       img.src = url;
     });
 
-  const readFile = async (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player) => {
-    const f = e.target.files?.[0]; if (!f) return;
+  const uploadFile = async (f: File): Promise<string | null> => {
+    const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
+    const { blob, name } = isPdf ? { blob: f, name: f.name } : await compressImage(f);
+    const data = new FormData();
+    data.append('file', blob, name);
+    const res = await fetch('/api/upload', { method: 'POST', body: data });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.url ?? null;
+  };
+
+  const readFile = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: keyof Player,
+    onUploaded?: (url: string) => void,
+  ) => {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
     setUploading(true);
     setUploadError(false);
     try {
-      const isPdf = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
-      const { blob, name } = isPdf ? { blob: f, name: f.name } : await compressImage(f);
-      const data = new FormData();
-      data.append('file', blob, name);
-      const res = await fetch('/api/upload', { method: 'POST', body: data });
-      if (!res.ok) { setUploadError(true); return; }
-      const json = await res.json();
-      if (json.url) setForm(p => p ? { ...p, [field]: json.url } : p);
-      else setUploadError(true);
+      let hasSuccess = false;
+      for (const file of files) {
+        const url = await uploadFile(file);
+        if (!url) continue;
+        hasSuccess = true;
+        if (onUploaded) onUploaded(url);
+        else setForm(p => p ? { ...p, [field]: url } : p);
+      }
+      if (!hasSuccess) setUploadError(true);
     } catch { setUploadError(true); }
-    finally { setUploading(false); }
+    finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const normalizePlayerPhotos = (player: Player): Player => {
+    const photos = Array.from(new Set((player.photos ?? []).filter(Boolean)));
+    const profilePhoto = player.profilePhoto || player.photo || photos[0] || '';
+    const mergedPhotos = profilePhoto && !photos.includes(profilePhoto) ? [profilePhoto, ...photos] : photos;
+    return {
+      ...player,
+      photos: mergedPhotos,
+      profilePhoto,
+      photo: profilePhoto,
+    };
   };
 
   const save = async () => {
     if (!form?.lastName) return;
+    const normalized = normalizePlayerPhotos(form);
     const isEdit = players.some(p => p.id === form.id);
     if (isEdit) {
-      await updatePlayer(form);
+      await updatePlayer(normalized);
     } else {
-      await createPlayer(form);
+      await createPlayer(normalized);
     }
-    setSelId(form.id); setView('detail'); setTab('profil');
+    setSelId(normalized.id); setView('detail'); setTab('profil');
   };
 
   const del = async (id: string) => {
