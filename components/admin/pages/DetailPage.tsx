@@ -33,7 +33,11 @@ interface DetailPageProps {
   avg: (r: Ratings) => number;
   getDec: (p: Player) => DecisionItem | null;
   blankR: (matchId?: string) => Rapport;
+  editingReportId: string | null;
+  onStartNewReport: () => void;
+  onCancelReportEdit: () => void;
   onSaveReport: () => void;
+  onEditReport: (report: Rapport) => void;
   onDelete: (id: string) => void;
   onUpdatePhone: (phone: string) => Promise<void>;
 }
@@ -42,7 +46,8 @@ export default function DetailPage({
   sel, matches, isAdmin, tab, setTab, setView, setForm,
   showR, setShowR, rForm, setRForm, openR, setOpenR,
   pendingMatches, scout, addNote, toggleListe,
-  allReports, reportsForPlayer, reportCount, lr, avg, getDec, blankR, onSaveReport, onDelete, onUpdatePhone,
+  allReports, reportsForPlayer, reportCount, lr, avg, getDec, blankR,
+  editingReportId, onStartNewReport, onCancelReportEdit, onSaveReport, onEditReport, onDelete, onUpdatePhone,
 }: DetailPageProps) {
   const r = lr(sel);
   const d = r ? DECISIONS.find(x => x.v === r.decision) : null;
@@ -56,8 +61,10 @@ export default function DetailPage({
     setPhone(sel.phone || '');
   }, [sel.id, sel.phone]);
 
+  const truncate = (text: string, max = 40) => (text.length > max ? `${text.slice(0, max - 1)}…` : text);
+
   return (
-    <div className="fu max-w-[860px] mx-auto px-5 pb-[60px]">
+    <div className="fu max-w-[860px] mx-auto px-3 sm:px-5 pb-[60px]">
       <button className="btn-g px-3.5 py-2 text-xs mb-4" onClick={() => setView('list')}>← Liste</button>
 
       {/* Header */}
@@ -105,7 +112,7 @@ export default function DetailPage({
             {d && <div className="mt-2"><Tag bg={d.bg} color={d.c}>{d.i} {d.l}</Tag></div>}
             <div className="flex gap-1.5 mt-3.5 flex-wrap">
               <button className="btn-g px-4 py-2 text-xs" onClick={() => { setForm({ ...sel }); setView('form'); }}>✏️ Modifier</button>
-              <button className="btn-p px-[18px] py-2 text-xs" onClick={() => { setRForm(blankR()); setShowR(true); }}>📋 Nouveau rapport</button>
+              <button className="btn-p px-[18px] py-2 text-xs" onClick={() => { onStartNewReport(); setRForm(blankR()); setShowR(true); }}>📋 Nouveau rapport</button>
               <button className="btn-g px-3.5 py-2 text-xs text-[#dc2626]" onClick={() => onDelete(sel.id)}>🗑</button>
             </div>
           </div>
@@ -125,24 +132,24 @@ export default function DetailPage({
 
       {/* PROFIL */}
       {tab === 'profil' && r && (
-        <div className="fu flex gap-3.5 flex-wrap">
-          <div className="card p-[22px] flex flex-col items-center shrink-0">
-            <div className="lbl mb-2.5">Dernier rapport · {r.date} · par {r.scoutName}</div>
-            <Radar ratings={r.ratings} size={190} />
+        <div className="fu flex flex-col lg:flex-row gap-3.5">
+          <div className="card p-4 sm:p-[22px] flex flex-col items-center w-full lg:w-auto lg:shrink-0">
+            <div className="lbl mb-2.5 text-center">Dernier rapport · {r.date} · par {r.scoutName}</div>
+            <Radar ratings={r.ratings} size={170} />
             <div className="mt-1.5">
               <span className="text-[36px] font-extrabold font-mono text-[#0c2340]">{avg(r.ratings).toFixed(1)}</span>
               <span className="text-sm text-[#94a3b8]">/6</span>
             </div>
             {r.locked && <Tag color="#16a34a" bg="#f0fdf4">🔒 Rapport verrouillé</Tag>}
           </div>
-          <div className="flex-1 min-w-[240px] flex flex-col gap-3">
+          <div className="flex-1 min-w-0 flex flex-col gap-3">
             <div className="card p-5">
               {CATS.map(cat => {
                 const v = r.ratings[cat.key];
                 const s = getSc(v);
                 return (
                   <div key={cat.key} className="mb-3.5">
-                    <div className="flex justify-between items-center mb-[5px]">
+                    <div className="flex justify-between items-center gap-2 flex-wrap mb-[5px]">
                       <span className="text-[13px] font-semibold text-[#0f172a]">{cat.icon} {cat.label}</span>
                       <span className="text-[10px] font-bold px-2 py-px rounded-[6px]" style={{ color: s.c, background: s.bg }}>{s.l}</span>
                     </div>
@@ -153,9 +160,10 @@ export default function DetailPage({
               })}
             </div>
             <div className="card p-[18px]">
-              <div className="flex gap-5 mb-3">
+              <div className="flex flex-wrap gap-5 mb-3">
                 <div><div className="lbl">Niveau actuel</div><div className="text-sm font-bold text-[#d97706]">{r.niveauActuel}</div></div>
                 <div><div className="lbl">Potentiel</div><div className="text-sm font-bold text-[#16a34a]">{r.potentiel}</div></div>
+                {d && <div><div className="lbl">Décision</div><div className="text-sm font-bold" style={{ color: d.c }}>{d.i} {d.l}</div></div>}
               </div>
               {r.conclusion && <><div className="lbl">Conclusion</div><p className="m-0 text-[13px] text-[#475569] leading-[1.8] whitespace-pre-wrap">{r.conclusion}</p></>}
             </div>
@@ -181,23 +189,37 @@ export default function DetailPage({
               const a = avg(rp.ratings);
               const open = openR === rp.id;
               const match = rp.matchId ? matches.find(m => m.id === rp.matchId) : null;
+              const matchLabel = match ? `${truncate(match.equipe1, 18)} vs ${truncate(match.equipe2, 18)}` : '';
               return (
-                <div key={rp.id} className="card cursor-pointer" style={{ padding: open ? 20 : 14, borderColor: open ? '#4a9de8' : undefined }} onClick={() => setOpenR(open ? null : rp.id)}>
-                  <div className="flex justify-between items-center gap-2 flex-wrap">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold font-mono text-[#1e6cb6]">{rp.date}</span>
+                <div
+                  key={rp.id}
+                  className="card cursor-pointer"
+                  style={{ padding: open ? 16 : 12, borderColor: open ? '#4a9de8' : undefined }}
+                  onClick={() => setOpenR(open ? null : rp.id)}
+                >
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                    <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                      <span className="text-xs font-bold font-mono text-[#1e6cb6] shrink-0">{rp.date}</span>
                       <Tag>{rp.lieu}</Tag>
                       {rp.scoutName && <Tag color="#9333ea" bg="#faf5ff">✍ {rp.scoutName}</Tag>}
-                      {match && <Tag color="#0f766e" bg="#f0fdfa">{match.equipe1} vs {match.equipe2}</Tag>}
+                      {match && <Tag color="#0f766e" bg="#f0fdfa">{matchLabel}</Tag>}
                       {rp.locked && <Tag color="#16a34a" bg="#f0fdf4">🔒</Tag>}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-full sm:w-auto sm:justify-end">
                       {dec && <Tag bg={dec.bg} color={dec.c}>{dec.i} {dec.l}</Tag>}
-                      <span className="text-base font-extrabold font-mono" style={{ color: a >= 5 ? '#16a34a' : a >= 3.5 ? '#d97706' : '#dc2626' }}>{a.toFixed(1)}</span>
+                      <span className="text-base font-extrabold font-mono shrink-0" style={{ color: a >= 5 ? '#16a34a' : a >= 3.5 ? '#d97706' : '#dc2626' }}>{a.toFixed(1)}</span>
                     </div>
                   </div>
                   {open && (
                     <div className="fu mt-3.5 pt-3.5 border-t border-[#e2e8f0]">
+                      <div className="flex sm:justify-end mb-2">
+                        <button
+                          className="btn-g px-3 py-1.5 text-[11px] font-semibold"
+                          onClick={(e) => { e.stopPropagation(); onEditReport(rp); }}
+                        >
+                          ✏️ Modifier ce rapport
+                        </button>
+                      </div>
                       {rp.contexte && <p className="text-[11px] text-[#94a3b8] m-0 mb-2.5">📍 {rp.contexte}{rp.minutesJouees ? ` · ${rp.minutesJouees} min` : ''}</p>}
                       <div className="rep-grid">
                         {CATS.map(cat => {
@@ -217,9 +239,10 @@ export default function DetailPage({
                           );
                         })}
                       </div>
-                      <div className="flex gap-4 text-[11px] mb-2">
+                      <div className="flex flex-wrap gap-3 text-[11px] mb-2">
                         <span className="font-semibold text-[#d97706]">Niveau: {rp.niveauActuel}</span>
                         <span className="font-semibold text-[#16a34a]">Potentiel: {rp.potentiel}</span>
+                        {dec && <span className="font-semibold" style={{ color: dec.c }}>Décision: {dec.i} {dec.l}</span>}
                       </div>
                       {rp.conclusion && <p className="text-xs text-[#475569] m-0 leading-[1.8] whitespace-pre-wrap">{rp.conclusion}</p>}
                     </div>
@@ -295,8 +318,10 @@ export default function DetailPage({
           sel={sel}
           scout={scout}
           pendingMatches={pendingMatches}
+          title={editingReportId ? 'Modifier le rapport' : 'Rapport de match'}
+          submitLabel={editingReportId ? 'Enregistrer les modifications' : 'Valider'}
           onSave={onSaveReport}
-          onClose={() => { setShowR(false); setRForm(null); }}
+          onClose={() => { onCancelReportEdit(); setShowR(false); setRForm(null); }}
         />
       )}
     </div>
