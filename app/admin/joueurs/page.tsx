@@ -29,6 +29,7 @@ export default function JoueursPage() {
   const [rForm, setRForm] = useState<Rapport | null>(null);
   const [showR, setShowR] = useState(false);
   const [openR, setOpenR] = useState<string | null>(null);
+  const [editingReportId, setEditingReportId] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -155,13 +156,25 @@ export default function JoueursPage() {
     if (!rForm?.conclusion) return;
     const player = players.find(p => p.id === selId);
     if (!player) return;
-    const locked = { ...rForm, locked: true };
-    await updatePlayer({ ...player, rapports: [locked, ...(player.rapports ?? [])] });
+    if (editingReportId) {
+      const updatedReports = (player.rapports ?? []).map(r =>
+        r.id === editingReportId ? { ...rForm, id: r.id, locked: r.locked } : r
+      );
+      await updatePlayer({ ...player, rapports: updatedReports });
+    } else {
+      await updatePlayer({ ...player, rapports: [{ ...rForm, locked: false }, ...(player.rapports ?? [])] });
+    }
     if (rForm.matchId) {
       const m = matches.find(x => x.id === rForm.matchId);
       if (m) await updateMatch({ ...m, statut: 'termine' });
     }
-    setShowR(false); setRForm(null); setTab('rapports');
+    setShowR(false); setRForm(null); setEditingReportId(null); setTab('rapports');
+  };
+
+  const editReport = (report: Rapport) => {
+    setEditingReportId(report.id);
+    setRForm({ ...report, locked: false });
+    setShowR(true);
   };
 
   const addNote = async (text: string) => {
@@ -219,7 +232,10 @@ export default function JoueursPage() {
           addNote={addNote} toggleListe={toggleListe}
           allReports={allReports} reportsForPlayer={reportsForPlayer} reportCount={reportCount}
           lr={lr} avg={avg} getDec={getDec} blankR={(matchId?: string) => blankR(selId, matchId)}
-          onSaveReport={saveReport} onDelete={del} onUpdatePhone={updatePhone}
+          editingReportId={editingReportId}
+          onStartNewReport={() => setEditingReportId(null)}
+          onCancelReportEdit={() => setEditingReportId(null)}
+          onSaveReport={saveReport} onEditReport={editReport} onDelete={del} onUpdatePhone={updatePhone}
         />
       )}
 

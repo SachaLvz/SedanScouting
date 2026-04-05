@@ -10,11 +10,18 @@ interface ReportModalProps {
   sel: Player;
   scout: Scout | undefined;
   pendingMatches: Match[];
+  title?: string;
+  submitLabel?: string;
   onSave: () => void;
   onClose: () => void;
 }
 
-export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatches, onSave, onClose }: ReportModalProps) {
+export default function ReportModal({
+  rForm, setRForm, sel, scout, pendingMatches,
+  title = 'Rapport de match',
+  submitLabel = 'Valider',
+  onSave, onClose,
+}: ReportModalProps) {
   const [submitted, setSubmitted] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
@@ -122,7 +129,7 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
       <div className="card fu max-w-[620px] w-full p-7 self-start shadow-[0_12px_40px_rgba(15,23,42,0.1)]">
         <div className="flex justify-between mb-[22px]">
           <div>
-            <h3 className="m-0 text-xl font-extrabold text-[#0c2340]">Rapport de match</h3>
+            <h3 className="m-0 text-xl font-extrabold text-[#0c2340]">{title}</h3>
             <p className="mt-1 mb-0 text-xs text-[#94a3b8]">{sel.lastName.toUpperCase()} {sel.firstName} · {sel.poste} · Scout: {[scout?.firstName, scout?.lastName].filter(Boolean).join(' ')}</p>
           </div>
           <div className="flex gap-2 items-start">
@@ -256,7 +263,7 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
         </div>
 
         <div className="bg-[#fffbeb] px-3.5 py-2.5 rounded-[10px] text-[11px] text-[#92400e] mb-4">
-          🔒 Une fois validé, le rapport sera verrouillé définitivement.
+          ✍️ Vous pourrez modifier ce rapport ultérieurement si nécessaire.
         </div>
 
         {submitted && hasError && (
@@ -270,7 +277,7 @@ export default function ReportModal({ rForm, setRForm, sel, scout, pendingMatche
             className="btn-p flex-1 py-3.5 text-sm font-bold"
             onClick={handleSave}
           >
-            🔒 Valider et verrouiller
+            {submitLabel}
           </button>
         </div>
       </div>
