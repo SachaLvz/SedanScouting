@@ -38,6 +38,7 @@ interface DetailPageProps {
   onCancelReportEdit: () => void;
   onSaveReport: () => void;
   onEditReport: (report: Rapport) => void;
+  onDeleteReport: (reportId: string) => Promise<void>;
   onDelete: (id: string) => void;
   onUpdatePhone: (phone: string) => Promise<void>;
 }
@@ -47,7 +48,7 @@ export default function DetailPage({
   showR, setShowR, rForm, setRForm, openR, setOpenR,
   pendingMatches, scout, addNote, toggleListe,
   allReports, reportsForPlayer, reportCount, lr, avg, getDec, blankR,
-  editingReportId, onStartNewReport, onCancelReportEdit, onSaveReport, onEditReport, onDelete, onUpdatePhone,
+  editingReportId, onStartNewReport, onCancelReportEdit, onSaveReport, onEditReport, onDeleteReport, onDelete, onUpdatePhone,
 }: DetailPageProps) {
   const r = lr(sel);
   const d = r ? DECISIONS.find(x => x.v === r.decision) : null;
@@ -212,12 +213,22 @@ export default function DetailPage({
                   </div>
                   {open && (
                     <div className="fu mt-3.5 pt-3.5 border-t border-[#e2e8f0]">
-                      <div className="flex sm:justify-end mb-2">
+                      <div className="flex sm:justify-end gap-2 mb-2">
                         <button
                           className="btn-g px-3 py-1.5 text-[11px] font-semibold"
                           onClick={(e) => { e.stopPropagation(); onEditReport(rp); }}
                         >
                           ✏️ Modifier ce rapport
+                        </button>
+                        <button
+                          className="btn-g px-3 py-1.5 text-[11px] font-semibold text-[#dc2626]"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (!window.confirm('Supprimer ce rapport ?')) return;
+                            await onDeleteReport(rp.id);
+                          }}
+                        >
+                          🗑 Supprimer
                         </button>
                       </div>
                       {rp.contexte && <p className="text-[11px] text-[#94a3b8] m-0 mb-2.5">📍 {rp.contexte}{rp.minutesJouees ? ` · ${rp.minutesJouees} min` : ''}</p>}
