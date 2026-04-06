@@ -10,6 +10,7 @@ export default function Nav() {
   const items = [
     { href: '/admin/joueurs',     label: '🦁 Joueurs',    count: players.length },
     { href: '/admin/planning',    label: '📋 Planning',   count: matches.length },
+    { href: '/admin/admin',       label: '🛠 Admin',       count: undefined },
     { href: '/admin/shadow-team', label: '⚽ Shadow Team', count: undefined },
     { href: '/admin/scouts',      label: '👥 Scouts',     count: undefined },
   ];
