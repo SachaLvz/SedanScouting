@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Tag from '../Tag';
 import type { Player, Match, DecisionItem, Rapport, Ratings } from '../config';
-import { POSITIONS, VILLES, DECISIONS, getProfilePhoto } from '../config';
+import { POSITIONS, DECISIONS, getProfilePhoto } from '../config';
 
 const PAGE_SIZE = 20;
 
@@ -16,6 +16,7 @@ interface ListPageProps {
   setFPoste: (v: string) => void;
   fDec: string;
   setFDec: (v: string) => void;
+  cities: string[];
   filtered: Player[];
   setSelId: (id: string) => void;
   setView: (v: string) => void;
@@ -31,7 +32,7 @@ interface ListPageProps {
 
 export default function ListPage({
   players, matches, search, setSearch, fVille, setFVille, fPoste, setFPoste, fDec, setFDec,
-  filtered, setSelId, setView, setTab, setForm, lr, getDec, avg, reportCount, blank, onOpenTrash,
+  cities, filtered, setSelId, setView, setTab, setForm, lr, getDec, avg, reportCount, blank, onOpenTrash,
 }: ListPageProps) {
   const [page, setPage] = useState(1);
 
@@ -71,7 +72,7 @@ export default function ListPage({
           <option value="">Poste</option>{POSITIONS.map(p => <option key={p}>{p}</option>)}
         </select>
         <select className="inp w-auto px-3 py-2 text-[11px]" value={fVille} onChange={e => setFVille(e.target.value)}>
-          <option value="">Ville</option>{VILLES.map(v => <option key={v}>{v}</option>)}
+          <option value="">Ville</option>{cities.map(v => <option key={v}>{v}</option>)}
         </select>
         <select className="inp w-auto px-3 py-2 text-[11px]" value={fDec} onChange={e => setFDec(e.target.value)}>
           <option value="">Décision</option>{DECISIONS.map(d => <option key={d.v} value={d.v}>{d.l}</option>)}

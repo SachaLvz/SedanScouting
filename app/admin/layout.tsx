@@ -14,6 +14,7 @@ function Sidebar({ open, onClose, user, onLogout }: { open: boolean; onClose: ()
   const items = [
     { href: '/admin/joueurs',     label: 'Joueurs',     icon: '🦁', count: players.length },
     { href: '/admin/planning',    label: 'Planning',    icon: '📋', count: matches.length },
+    { href: '/admin/admin',       label: 'Admin',       icon: '🛠', count: undefined },
     { href: '/admin/shadow-team', label: 'Shadow Team', icon: '⚽', count: undefined },
     { href: '/admin/scouts',      label: 'Scouts',      icon: '👥', count: undefined },
   ];

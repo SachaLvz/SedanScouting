@@ -100,3 +100,11 @@ model ShadowTeam {
 
   @@map("shadow_team")
 }
+
+model City {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("cities")
+}

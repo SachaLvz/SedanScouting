@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { POSITIONS, VILLES } from '../config';
+import { POSITIONS } from '../config';
 import type { Player } from '../config';
 
 interface FormPageProps {
@@ -10,10 +10,11 @@ interface FormPageProps {
   onCancel: () => void;
   uploading?: boolean;
   uploadError?: boolean;
+  cities: string[];
   readFile: (e: React.ChangeEvent<HTMLInputElement>, field: keyof Player, onUploaded?: (url: string) => void) => void;
 }
 
-export default function FormPage({ form, setForm, players, onSave, onCancel, uploading, uploadError, readFile }: FormPageProps) {
+export default function FormPage({ form, setForm, players, onSave, onCancel, uploading, uploadError, cities, readFile }: FormPageProps) {
   const photoRef = useRef<HTMLInputElement>(null);
   const idRef = useRef<HTMLInputElement>(null);
   const isEdit = players.some(p => p.id === form.id);
@@ -108,7 +109,7 @@ export default function FormPage({ form, setForm, players, onSave, onCancel, upl
         <div><label className="lbl">Date de naissance</label><input type="date" className="inp" value={form.dateNaissance} onChange={e => setForm(p => p ? { ...p, dateNaissance: e.target.value } : p)} /></div>
         <div><label className="lbl">Nationalité</label><input className="inp" value={form.nationalite} onChange={e => setForm(p => p ? { ...p, nationalite: e.target.value } : p)} placeholder="Ex: Sénégalais" /></div>
         <div><label className="lbl">Téléphone</label><input className="inp" value={form.phone || ''} onChange={e => setForm(p => p ? { ...p, phone: e.target.value } : p)} placeholder="+221 77 000 00 00" /></div>
-        <div><label className="lbl">Ville</label><select className="inp" value={form.ville} onChange={e => setForm(p => p ? { ...p, ville: e.target.value } : p)}>{VILLES.map(v => <option key={v}>{v}</option>)}</select></div>
+        <div><label className="lbl">Ville</label><select className="inp" value={form.ville} onChange={e => setForm(p => p ? { ...p, ville: e.target.value } : p)}>{cities.map(v => <option key={v}>{v}</option>)}</select></div>
         <div><label className="lbl">Poste</label><select className="inp" value={form.poste} onChange={e => setForm(p => p ? { ...p, poste: e.target.value } : p)}>{POSITIONS.map(pos => <option key={pos}>{pos}</option>)}</select></div>
         <div><label className="lbl">Poste secondaire</label>
           <select className="inp" value={form.posteSecondaire} onChange={e => setForm(p => p ? { ...p, posteSecondaire: e.target.value } : p)}>

@@ -1,11 +1,12 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAdminData } from '@/components/admin/context';
 import ListPage from '@/components/admin/pages/ListPage';
 import DetailPage from '@/components/admin/pages/DetailPage';
 import FormPage from '@/components/admin/pages/FormPage';
 import TrashPage from '@/components/admin/pages/TrashPage';
+import { VILLES } from '@/components/admin/config';
 import type { Player, Rapport } from '@/components/admin/config';
 
 export default function JoueursPage() {
@@ -30,6 +31,7 @@ export default function JoueursPage() {
   const [showR, setShowR] = useState(false);
   const [openR, setOpenR] = useState<string | null>(null);
   const [editingReportId, setEditingReportId] = useState<string | null>(null);
+  const [cities, setCities] = useState<string[]>(VILLES);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -44,6 +46,25 @@ export default function JoueursPage() {
       router.replace('/admin/joueurs');
     }
   }, [searchParams, players]);
+
+  useEffect(() => {
+    fetch('/api/cities')
+      .then(r => r.json())
+      .then((d: unknown) => {
+        if (!Array.isArray(d)) return;
+        const next = Array.from(new Set(d.map(v => String(v).trim()).filter(Boolean)));
+        if (next.length > 0) setCities(next);
+      })
+      .catch(() => {});
+  }, []);
+
+  const availableCities = useMemo(() => {
+    const fromPlayers = players.map(p => String(p.ville ?? '').trim()).filter(Boolean);
+    const currentFormCity = form?.ville ? [String(form.ville).trim()] : [];
+    return Array.from(new Set([...cities, ...fromPlayers, ...currentFormCity]))
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, 'fr'));
+  }, [cities, players, form?.ville]);
 
   const sel = players.find(p => p.id === selId);
   const pendingMatches = matches.filter(m => m.statut === 'planifie');
@@ -218,6 +239,7 @@ export default function JoueursPage() {
           fVille={fVille} setFVille={setFVille}
           fPoste={fPoste} setFPoste={setFPoste}
           fDec={fDec} setFDec={setFDec}
+          cities={availableCities}
           filtered={filtered}
           setSelId={setSelId} setView={setView} setTab={setTab}
           setForm={setForm}
@@ -256,6 +278,7 @@ export default function JoueursPage() {
         <FormPage
           form={form} setForm={setForm} players={players}
           onSave={save} uploading={uploading} uploadError={uploadError}
+          cities={availableCities}
           onCancel={() => setView(players.some(p => p.id === form.id) ? 'detail' : 'list')}
           readFile={readFile}
         />
