@@ -25,12 +25,15 @@ export default function ScoutJoueursPage() {
   const [showR, setShowR] = useState(false);
   const [openR, setOpenR] = useState<string | null>(null);
   const [matches, setMatches] = useState<Match[]>([]);
+  const [editingReportId, setEditingReportId] = useState<string | null>(null);
+  const [currentScoutId, setCurrentScoutId] = useState('');
 
   const searchParams = useSearchParams();
   const router = useRouter();
 
   useEffect(() => {
     const scoutId = (() => { try { return JSON.parse(localStorage.getItem('mbarodi_user') ?? '{}').id ?? ''; } catch { return ''; } })();
+    setCurrentScoutId(scoutId);
     fetch('/api/matches')
       .then(r => r.json())
       .then(d => { if (Array.isArray(d)) setMatches(d.filter((m: Match) => (m.scouts ?? []).includes(scoutId)) as Match[]); })
@@ -138,8 +141,47 @@ export default function ScoutJoueursPage() {
     if (!rForm?.conclusion) return;
     const player = players.find((p: any) => p.id === selId);
     if (!player) return;
-    await updatePlayer({ ...player, rapports: [rForm, ...(player.rapports || [])] });
-    setShowR(false); setRForm(null); setTab('rapports');
+    if (editingReportId) {
+      const updatedReports = (player.rapports || []).map((r: any) =>
+        r.id === editingReportId ? { ...rForm, id: r.id, scoutId: r.scoutId, scoutName: r.scoutName } : r
+      );
+      await updatePlayer({ ...player, rapports: updatedReports });
+    } else {
+      await updatePlayer({ ...player, rapports: [rForm, ...(player.rapports || [])] });
+    }
+    setShowR(false); setRForm(null); setEditingReportId(null); setTab('rapports');
+  };
+
+  const startNewReport = () => {
+    setEditingReportId(null);
+    if (!sel) return;
+    setRForm(blankR(sel));
+    setShowR(true);
+  };
+
+  const cancelReportEdit = () => {
+    setEditingReportId(null);
+  };
+
+  const editReport = (report: any) => {
+    setEditingReportId(report.id);
+    setRForm({ ...report });
+    setShowR(true);
+  };
+
+  const deleteReport = async (reportId: string) => {
+    const player = players.find((p: any) => p.id === selId);
+    if (!player) return;
+    const target = (player.rapports || []).find((r: any) => r.id === reportId);
+    const isOwn = Boolean(target) && (target.scoutId === currentScoutId || target.scoutName === scoutNom);
+    if (!target || !isOwn) return;
+    await updatePlayer({ ...player, rapports: (player.rapports || []).filter((r: any) => r.id !== reportId) });
+    if (openR === reportId) setOpenR(null);
+    if (editingReportId === reportId) {
+      setEditingReportId(null);
+      setShowR(false);
+      setRForm(null);
+    }
   };
 
   const addNote = async (text: string) => {
@@ -182,13 +224,18 @@ export default function ScoutJoueursPage() {
       {view === 'detail' && sel && (
         <DetailPage
           sel={sel} tab={tab} setTab={setTab}
-          showR={showR} setShowR={(v: boolean) => { setShowR(v); if (v) setRForm(blankR(sel)); }}
+          showR={showR} setShowR={setShowR}
           rForm={rForm} setRForm={setRForm}
           openR={openR} setOpenR={setOpenR}
-          scoutNom={scoutNom} avg={avg} matches={matches}
+          scoutNom={scoutNom} currentScoutId={currentScoutId} avg={avg} matches={matches}
+          editingReportId={editingReportId}
           onBack={() => setView('list')}
           onEdit={() => { setForm({ ...sel }); setView('form'); }}
           onDelete={del}
+          onStartNewReport={startNewReport}
+          onCancelReportEdit={cancelReportEdit}
+          onEditReport={editReport}
+          onDeleteReport={deleteReport}
           onSaveReport={saveReport}
           onAddNote={addNote}
           onToggleListe={toggleListe}

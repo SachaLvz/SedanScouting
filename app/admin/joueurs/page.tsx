@@ -177,6 +177,18 @@ export default function JoueursPage() {
     setShowR(true);
   };
 
+  const deleteReport = async (reportId: string) => {
+    const player = players.find(p => p.id === selId);
+    if (!player) return;
+    await updatePlayer({ ...player, rapports: (player.rapports ?? []).filter(r => r.id !== reportId) });
+    if (openR === reportId) setOpenR(null);
+    if (editingReportId === reportId) {
+      setEditingReportId(null);
+      setShowR(false);
+      setRForm(null);
+    }
+  };
+
   const addNote = async (text: string) => {
     const player = players.find(p => p.id === selId);
     if (!player || !text.trim()) return;
@@ -235,7 +247,8 @@ export default function JoueursPage() {
           editingReportId={editingReportId}
           onStartNewReport={() => setEditingReportId(null)}
           onCancelReportEdit={() => setEditingReportId(null)}
-          onSaveReport={saveReport} onEditReport={editReport} onDelete={del} onUpdatePhone={updatePhone}
+          onSaveReport={saveReport} onEditReport={editReport} onDeleteReport={deleteReport}
+          onDelete={del} onUpdatePhone={updatePhone}
         />
       )}
 

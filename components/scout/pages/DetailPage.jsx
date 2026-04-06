@@ -18,11 +18,17 @@ import { CATS, DECISIONS, NIVEAUX, VILLES, LISTES, getProfilePhoto, getSc } from
  * @param {string|null} props.openR
  * @param {Function} props.setOpenR
  * @param {string} props.scoutNom
+ * @param {string} props.currentScoutId
  * @param {Function} props.avg
  * @param {import('@/components/admin/config').Match[]} [props.matches]
+ * @param {string|null} [props.editingReportId]
  * @param {Function} props.onBack
  * @param {Function} props.onEdit
  * @param {Function} props.onDelete
+ * @param {Function} props.onStartNewReport
+ * @param {Function} props.onCancelReportEdit
+ * @param {Function} props.onEditReport
+ * @param {Function} props.onDeleteReport
  * @param {Function} props.onSaveReport
  * @param {Function} props.onAddNote
  * @param {Function} props.onToggleListe
@@ -31,8 +37,9 @@ import { CATS, DECISIONS, NIVEAUX, VILLES, LISTES, getProfilePhoto, getSc } from
 export default function DetailPage({
   sel, tab, setTab,
   showR, setShowR, rForm, setRForm, openR, setOpenR,
-  scoutNom, avg, matches = [],
-  onBack, onEdit, onDelete, onSaveReport, onAddNote, onToggleListe, onUpdatePhone,
+  scoutNom, currentScoutId, avg, matches = [], editingReportId = null,
+  onBack, onEdit, onDelete, onStartNewReport, onCancelReportEdit, onEditReport, onDeleteReport,
+  onSaveReport, onAddNote, onToggleListe, onUpdatePhone,
 }) {
   if (!sel) return null;
   const lr = (p) => (p.rapports || [])[0];
@@ -46,6 +53,12 @@ export default function DetailPage({
   useEffect(() => {
     setPhone(sel.phone || '');
   }, [sel?.id, sel?.phone]);
+
+  const closeReportModal = () => {
+    onCancelReportEdit();
+    setShowR(false);
+    setRForm(null);
+  };
 
   return (
     <div className="fu max-w-[860px] mx-auto px-5 pb-[60px]">
@@ -88,7 +101,7 @@ export default function DetailPage({
             {d && <div className="mt-2"><Tag bg={d.bg} color={d.c}>{d.i} {d.l}</Tag></div>}
             <div className="flex gap-1.5 mt-3.5 flex-wrap">
               <button className="btn-g px-4 py-2 text-xs" onClick={onEdit}>✏️ Modifier</button>
-              <button className="btn-p px-[18px] py-2 text-xs" onClick={() => setShowR(true)}>📋 Rapport</button>
+              <button className="btn-p px-[18px] py-2 text-xs" onClick={onStartNewReport}>📋 Rapport</button>
               <button className="btn-g px-3.5 py-2 text-xs text-[#dc2626]" onClick={() => onDelete(sel.id)}>🗑</button>
             </div>
           </div>
@@ -193,7 +206,7 @@ export default function DetailPage({
             : (sel.rapports || []).map(rp => {
               const dec = DECISIONS.find(x => x.v === rp.decision);
               const a = avg(rp.ratings); const open = openR === rp.id;
-              const isOwn = rp.scoutName === scoutNom;
+              const isOwn = rp.scoutId === currentScoutId || rp.scoutName === scoutNom;
               return (
                 <div key={rp.id} className="relative">
                   <div
@@ -221,6 +234,24 @@ export default function DetailPage({
                     </div>
                     {open && (
                       <div className="fu mt-4 pt-4 border-t border-[#e2e8f0]">
+                        <div className="flex justify-end gap-2 mb-2.5">
+                          <button
+                            className="btn-g px-3 py-1.5 text-[11px] font-semibold"
+                            onClick={(e) => { e.stopPropagation(); onEditReport(rp); }}
+                          >
+                            ✏️ Modifier
+                          </button>
+                          <button
+                            className="btn-g px-3 py-1.5 text-[11px] font-semibold text-[#dc2626]"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!window.confirm('Supprimer ce rapport ?')) return;
+                              onDeleteReport(rp.id);
+                            }}
+                          >
+                            🗑 Supprimer
+                          </button>
+                        </div>
                         {rp.contexte && <p className="text-[11px] text-[#94a3b8] m-0 mb-3">📍 {rp.contexte}{rp.minutesJouees ? ` · ${rp.minutesJouees} min` : ""}</p>}
                         <div className="rep-grid gap-3 mb-3.5">
                           {CATS.map(cat => {
@@ -324,15 +355,15 @@ export default function DetailPage({
       {showR && rForm && createPortal(
         <div
           className="fixed inset-0 bg-[rgba(15,23,42,0.5)] z-[1000] flex justify-center px-4 py-6 overflow-y-auto backdrop-blur-[6px]"
-          onClick={e => { if (e.target === e.currentTarget) { setShowR(false); setRForm(null); } }}
+          onClick={e => { if (e.target === e.currentTarget) closeReportModal(); }}
         >
           <div className="card fu max-w-[620px] w-full p-[30px] self-start shadow-[0_12px_40px_rgba(15,23,42,0.1)]">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="m-0 text-[22px] font-extrabold text-[#0c2340]">Rapport de match</h3>
+                <h3 className="m-0 text-[22px] font-extrabold text-[#0c2340]">{editingReportId ? 'Modifier le rapport' : 'Rapport de match'}</h3>
                 <p className="mt-1 mb-0 text-xs text-[#94a3b8]">{(sel.lastName ?? '').toUpperCase()} {sel.firstName} · {sel.poste} · Scout: {scoutNom}</p>
               </div>
-              <button className="btn-g px-2.5 py-1.5 text-base" onClick={() => { setShowR(false); setRForm(null); }}>✕</button>
+              <button className="btn-g px-2.5 py-1.5 text-base" onClick={closeReportModal}>✕</button>
             </div>
 
             {matches.length > 0 && (
@@ -415,14 +446,14 @@ export default function DetailPage({
             </div>
 
             <div className="flex gap-2.5">
-              <button className="btn-g flex-1 py-3.5 text-sm font-semibold" onClick={() => { setShowR(false); setRForm(null); }}>Annuler</button>
+              <button className="btn-g flex-1 py-3.5 text-sm font-semibold" onClick={closeReportModal}>Annuler</button>
               <button
                 className={rForm.conclusion ? "btn-p flex-1 py-3.5 text-sm font-bold" : "btn-g flex-1 py-3.5 text-sm font-bold"}
                 disabled={!rForm.conclusion}
                 style={{ opacity: rForm.conclusion ? 1 : 0.4, cursor: rForm.conclusion ? "pointer" : "not-allowed" }}
                 onClick={onSaveReport}
               >
-                Valider le rapport
+                {editingReportId ? 'Enregistrer les modifications' : 'Valider le rapport'}
               </button>
             </div>
           </div>
