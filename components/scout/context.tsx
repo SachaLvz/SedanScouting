@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useEffect, type ReactNode, type Dispatch, type SetStateAction } from 'react';
-import { uid, today, CATS, VILLES, NIVEAUX } from './config';
+import { uid, today, CATS, VILLES, NIVEAUX, DECISIONS, normalizeDecision } from './config';
 
 interface ScoutUser { id: string; firstName: string; lastName: string; role: string; }
 
@@ -58,14 +58,7 @@ export function ScoutDataProvider({ initialUser, children }: { initialUser: Scou
   const getDec = (p: any) => {
     const r = lr(p);
     if (!r) return null;
-    return ({
-      sans_interet: { c: '#dc2626', bg: '#fef2f2', i: '✕', l: 'Sans intérêt' },
-      revoir_detection: { c: '#d97706', bg: '#fffbeb', i: '◉', l: 'À revoir' },
-      revoir_essai: { c: '#ca8a04', bg: '#fefce8', i: '↻', l: 'À l\'essai' },
-      retenu_academie: { c: '#16a34a', bg: '#f0fdf4', i: '✓', l: 'Retenu' },
-      test_europe: { c: '#2563eb', bg: '#eff6ff', i: '✈', l: 'Europe' },
-      signer: { c: '#9333ea', bg: '#faf5ff', i: '★', l: 'À signer' },
-    } as any)[r.decision] || null;
+    return DECISIONS.find((d: any) => d.v === normalizeDecision(r.decision)) || null;
   };
 
   const blank = () => ({
@@ -82,7 +75,7 @@ export function ScoutDataProvider({ initialUser, children }: { initialUser: Scou
     ratings: { physique: 3, technique: 3, tactique: 3, mentalite: 3 },
     commentaires: { physique: '', technique: '', tactique: '', mentalite: '' },
     conclusion: '', niveauActuel: NIVEAUX[1], potentiel: NIVEAUX[2],
-    decision: 'revoir_detection', scoutName: scoutNom,
+    decision: 'revoir', scoutName: scoutNom,
   });
 
   return (

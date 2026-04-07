@@ -6,7 +6,7 @@ import ListPage from '@/components/admin/pages/ListPage';
 import DetailPage from '@/components/admin/pages/DetailPage';
 import FormPage from '@/components/admin/pages/FormPage';
 import TrashPage from '@/components/admin/pages/TrashPage';
-import { VILLES } from '@/components/admin/config';
+import { VILLES, normalizeDecision } from '@/components/admin/config';
 import type { Player, Rapport } from '@/components/admin/config';
 
 export default function JoueursPage() {
@@ -196,16 +196,17 @@ export default function JoueursPage() {
     if (!rForm?.conclusion) return;
     const player = players.find(p => p.id === selId);
     if (!player) return;
+    const normalizedReport = { ...rForm, decision: normalizeDecision(rForm.decision) };
     if (editingReportId) {
       const updatedReports = (player.rapports ?? []).map(r =>
-        r.id === editingReportId ? { ...rForm, id: r.id, locked: r.locked } : r
+        r.id === editingReportId ? { ...normalizedReport, id: r.id, locked: r.locked } : r
       );
       await updatePlayer({ ...player, rapports: updatedReports });
     } else {
-      await updatePlayer({ ...player, rapports: [{ ...rForm, locked: false }, ...(player.rapports ?? [])] });
+      await updatePlayer({ ...player, rapports: [{ ...normalizedReport, locked: false }, ...(player.rapports ?? [])] });
     }
-    if (rForm.matchId) {
-      const m = matches.find(x => x.id === rForm.matchId);
+    if (normalizedReport.matchId) {
+      const m = matches.find(x => x.id === normalizedReport.matchId);
       if (m) await updateMatch({ ...m, statut: 'termine' });
     }
     setShowR(false); setRForm(null); setEditingReportId(null); setTab('rapports');

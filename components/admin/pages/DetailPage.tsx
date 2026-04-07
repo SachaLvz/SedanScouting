@@ -4,7 +4,7 @@ import Radar from '../Radar';
 import BarLine from '../BarLine';
 import NotesPanel from '../NotesPanel';
 import ReportModal from '../modals/ReportModal';
-import { CATS, DECISIONS, LISTES, getProfilePhoto, getSc } from '../config';
+import { CATS, DECISIONS, LISTES, getProfilePhoto, getSc, normalizeDecision } from '../config';
 import type { Player, Match, Scout, Rapport, Ratings, DecisionItem } from '../config';
 
 interface DetailPageProps {
@@ -51,7 +51,7 @@ export default function DetailPage({
   editingReportId, onStartNewReport, onCancelReportEdit, onSaveReport, onEditReport, onDeleteReport, onDelete, onUpdatePhone,
 }: DetailPageProps) {
   const r = lr(sel);
-  const d = r ? DECISIONS.find(x => x.v === r.decision) : null;
+  const d = r ? DECISIONS.find(x => x.v === normalizeDecision(r.decision)) : null;
   const visibleReports = isAdmin ? allReports(sel) : reportsForPlayer(sel);
   const profilePhoto = getProfilePhoto(sel);
   const photos = Array.from(new Set((sel.photos ?? (sel.photo ? [sel.photo] : [])).filter(Boolean)));
@@ -186,7 +186,7 @@ export default function DetailPage({
           {visibleReports.length === 0
             ? <div className="text-center py-10 text-[#94a3b8]">Aucun rapport visible.</div>
             : visibleReports.map(rp => {
-              const dec = DECISIONS.find(x => x.v === rp.decision);
+              const dec = DECISIONS.find(x => x.v === normalizeDecision(rp.decision));
               const a = avg(rp.ratings);
               const open = openR === rp.id;
               const match = rp.matchId ? matches.find(m => m.id === rp.matchId) : null;

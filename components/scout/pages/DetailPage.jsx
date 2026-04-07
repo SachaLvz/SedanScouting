@@ -4,7 +4,7 @@ import Tag from '../Tag';
 import Radar from '../Radar';
 import NotePicker from '../NotePicker';
 import NotesPanel from '../NotesPanel';
-import { CATS, DECISIONS, NIVEAUX, VILLES, LISTES, getProfilePhoto, getSc } from '../config';
+import { CATS, DECISIONS, NIVEAUX, VILLES, LISTES, getProfilePhoto, getSc, normalizeDecision } from '../config';
 
 /**
  * @param {Object} props
@@ -44,7 +44,7 @@ export default function DetailPage({
   if (!sel) return null;
   const lr = (p) => (p.rapports || [])[0];
   const r = lr(sel);
-  const d = r ? DECISIONS.find(x => x.v === r.decision) : null;
+  const d = r ? DECISIONS.find(x => x.v === normalizeDecision(r.decision)) : null;
   const profilePhoto = getProfilePhoto(sel);
   const photos = Array.from(new Set((sel.photos || (sel.photo ? [sel.photo] : [])).filter(Boolean)));
   const [phone, setPhone] = useState(sel.phone || '');
@@ -204,7 +204,7 @@ export default function DetailPage({
           {(sel.rapports || []).length === 0
             ? <div className="text-center py-10 text-[#94a3b8]">Aucun rapport.</div>
             : (sel.rapports || []).map(rp => {
-              const dec = DECISIONS.find(x => x.v === rp.decision);
+              const dec = DECISIONS.find(x => x.v === normalizeDecision(rp.decision));
               const a = avg(rp.ratings); const open = openR === rp.id;
               const isOwn = rp.scoutId === currentScoutId || rp.scoutName === scoutNom;
               return (
@@ -434,9 +434,9 @@ export default function DetailPage({
                     onClick={() => setRForm(p => ({ ...p, decision: d.v }))}
                     className="px-3.5 py-[9px] rounded-[10px] cursor-pointer text-[11px] font-bold transition-all duration-150 border-2"
                     style={{
-                      borderColor: rForm.decision === d.v ? d.c : 'transparent',
-                      background: rForm.decision === d.v ? d.bg : "#f8fafc",
-                      color: rForm.decision === d.v ? d.c : "#94a3b8",
+                      borderColor: normalizeDecision(rForm.decision) === d.v ? d.c : 'transparent',
+                      background: normalizeDecision(rForm.decision) === d.v ? d.bg : "#f8fafc",
+                      color: normalizeDecision(rForm.decision) === d.v ? d.c : "#94a3b8",
                     }}
                   >
                     {d.i} {d.l}

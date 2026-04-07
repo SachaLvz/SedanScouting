@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useScoutData } from '@/components/scout/context';
+import { normalizeDecision } from '@/components/scout/config';
 import ListPage from '@/components/scout/pages/ListPage';
 import DetailPage from '@/components/scout/pages/DetailPage';
 import FormPage from '@/components/scout/pages/FormPage';
@@ -57,7 +58,7 @@ export default function ScoutJoueursPage() {
     return (!q || `${p.lastName} ${p.firstName}`.toLowerCase().includes(q))
       && (!fVille || p.ville === fVille)
       && (!fPoste || p.poste === fPoste)
-      && (!fDec || lr(p)?.decision === fDec)
+      && (!fDec || normalizeDecision(lr(p)?.decision) === fDec)
       && (!fListe || (p.listes || []).includes(fListe));
   });
 
@@ -141,13 +142,14 @@ export default function ScoutJoueursPage() {
     if (!rForm?.conclusion) return;
     const player = players.find((p: any) => p.id === selId);
     if (!player) return;
+    const normalizedReport = { ...rForm, decision: normalizeDecision(rForm.decision) };
     if (editingReportId) {
       const updatedReports = (player.rapports || []).map((r: any) =>
-        r.id === editingReportId ? { ...rForm, id: r.id, scoutId: r.scoutId, scoutName: r.scoutName } : r
+        r.id === editingReportId ? { ...normalizedReport, id: r.id, scoutId: r.scoutId, scoutName: r.scoutName } : r
       );
       await updatePlayer({ ...player, rapports: updatedReports });
     } else {
-      await updatePlayer({ ...player, rapports: [rForm, ...(player.rapports || [])] });
+      await updatePlayer({ ...player, rapports: [normalizedReport, ...(player.rapports || [])] });
     }
     setShowR(false); setRForm(null); setEditingReportId(null); setTab('rapports');
   };

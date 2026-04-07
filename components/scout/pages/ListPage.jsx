@@ -1,5 +1,5 @@
 import Tag from '../Tag';
-import { POSITIONS, VILLES, DECISIONS, LISTES, getProfilePhoto } from '../config';
+import { POSITIONS, VILLES, DECISIONS, LISTES, getProfilePhoto, normalizeDecision } from '../config';
 
 export default function ListPage({
   players, filtered,
@@ -46,7 +46,7 @@ export default function ListPage({
         {[
           { l: "Joueurs",  v: players.length, c: "#1e6cb6", bg: "#eef5fd" },
           { l: "Rapports", v: players.reduce((s, p) => s + (p.rapports?.length || 0), 0), c: "#9333ea", bg: "#faf5ff" },
-          { l: "Retenus",  v: players.filter(p => ["retenu_academie", "signer", "test_europe"].includes(lr(p)?.decision)).length, c: "#16a34a", bg: "#f0fdf4" },
+          { l: "Retenus",  v: players.filter(p => ["retenu", "signer", "europe"].includes(normalizeDecision(lr(p)?.decision))).length, c: "#16a34a", bg: "#f0fdf4" },
           { l: "Villes",   v: [...new Set(players.map(p => p.ville))].length, c: "#d97706", bg: "#fffbeb" },
         ].map(s => (
           <div key={s.l} className="px-3 py-[18px] text-center rounded-2xl border border-transparent" style={{ background: s.bg }}>

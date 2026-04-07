@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useEffect, type ReactNode, type Dispatch, type SetStateAction } from 'react';
-import { uid, today, CATS, DECISIONS, VILLES, NIVEAUX } from './config';
+import { uid, today, CATS, DECISIONS, VILLES, NIVEAUX, normalizeDecision } from './config';
 import type { Player, Match, Scout, Rapport, Ratings, DecisionItem } from './config';
 
 interface AdminUser { id: string; firstName: string; lastName: string; role: string; }
@@ -102,7 +102,10 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
 
   const lr = (p: Player): Rapport | undefined => (p.rapports ?? [])[0];
   const avg = (r: Ratings): number => CATS.reduce((s, c) => s + (r[c.key] ?? 1), 0) / CATS.length;
-  const getDec = (p: Player): DecisionItem | null => { const r = lr(p); return r ? DECISIONS.find(d => d.v === r.decision) ?? null : null; };
+  const getDec = (p: Player): DecisionItem | null => {
+    const r = lr(p);
+    return r ? DECISIONS.find(d => d.v === normalizeDecision(r.decision)) ?? null : null;
+  };
   const reportsForPlayer = (p: Player): Rapport[] => isAdmin ? (p.rapports ?? []) : (p.rapports ?? []).filter(r => r.scoutId === curScout);
   const allReports = (p: Player): Rapport[] => p.rapports ?? [];
   const reportCount = (p: Player): number => (p.rapports ?? []).length;

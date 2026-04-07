@@ -33,12 +33,19 @@ export const NIVEAUX = [
 
 export const DECISIONS = [
   { v: "sans_interet",    l: "Sans intérêt",          c: "#dc2626", bg: "#fef2f2", i: "✕" },
-  { v: "revoir_detection",l: "À revoir en détection",  c: "#d97706", bg: "#fffbeb", i: "◉" },
-  { v: "revoir_essai",    l: "À revoir à l'essai",     c: "#ca8a04", bg: "#fefce8", i: "↻" },
-  { v: "retenu_academie", l: "Retenu académie",         c: "#16a34a", bg: "#f0fdf4", i: "✓" },
-  { v: "test_europe",     l: "Test Europe",             c: "#2563eb", bg: "#eff6ff", i: "✈" },
+  { v: "revoir",          l: "À revoir en détection",   c: "#d97706", bg: "#fffbeb", i: "◉" },
+  { v: "essai",           l: "À revoir à l'essai",      c: "#ca8a04", bg: "#fefce8", i: "↻" },
+  { v: "retenu",          l: "Retenu académie",         c: "#16a34a", bg: "#f0fdf4", i: "✓" },
+  { v: "europe",          l: "Test Europe",             c: "#2563eb", bg: "#eff6ff", i: "✈" },
   { v: "signer",          l: "À signer",                c: "#9333ea", bg: "#faf5ff", i: "★" },
 ];
+
+const DECISION_ALIASES = {
+  revoir_detection: "revoir",
+  revoir_essai: "essai",
+  retenu_academie: "retenu",
+  test_europe: "europe",
+};
 
 export const LISTES = [
   "Groupe Élite Mbarodi", "Détection Dakar", "Détection Saint-Louis",
@@ -48,4 +55,5 @@ export const LISTES = [
 export const uid = () => crypto.randomUUID();
 export const today = () => new Date().toISOString().split("T")[0];
 export const getSc = v => SCALE.find(s => s.v === v) || SCALE[0];
+export const normalizeDecision = (decision) => DECISION_ALIASES[decision] || decision || "revoir";
 export const getProfilePhoto = (p) => p?.profilePhoto || p?.photo || ((Array.isArray(p?.photos) && p.photos.length > 0) ? p.photos[0] : "");
