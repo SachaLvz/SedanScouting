@@ -76,7 +76,7 @@ export default function JoueursPage() {
       (!q || `${p.lastName} ${p.firstName}`.toLowerCase().includes(q)) &&
       (!fVille || p.ville === fVille) &&
       (!fPoste || p.poste === fPoste) &&
-      (!fDec || lr(p)?.decision === fDec)
+      (!fDec || normalizeDecision(lr(p)?.decision) === fDec)
     );
   });
 
