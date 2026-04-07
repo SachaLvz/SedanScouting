@@ -173,6 +173,13 @@ export const DECISIONS: DecisionItem[] = [
   { v:'signer',       l:'À signer',               c:'#9333ea', bg:'#faf5ff', i:'★' },
 ];
 
+const DECISION_ALIASES: Record<string, string> = {
+  revoir_detection: 'revoir',
+  revoir_essai: 'essai',
+  retenu_academie: 'retenu',
+  test_europe: 'europe',
+};
+
 export const FORMATIONS: Record<string, Formation> = {
   '4-3-3': { label:'4-3-3', slots:[
     {pos:'Gardien',x:50,y:92},{pos:'Latéral Gauche',x:10,y:72},{pos:'Déf. Central',x:35,y:74},{pos:'Déf. Central',x:65,y:74},{pos:'Latéral Droit',x:90,y:72},
@@ -214,5 +221,7 @@ export const LISTES: string[] = [
 export const uid = (): string => crypto.randomUUID();
 export const today = (): string => new Date().toISOString().split('T')[0];
 export const getSc = (v: number): ScaleItem => SCALE.find(s => s.v === v) ?? SCALE[0];
+export const normalizeDecision = (decision?: string | null): string =>
+  DECISION_ALIASES[decision ?? ''] ?? decision ?? 'revoir';
 export const getProfilePhoto = (p: { photo?: string; profilePhoto?: string; photos?: string[] }): string =>
   p.profilePhoto || p.photo || (Array.isArray(p.photos) && p.photos.length > 0 ? p.photos[0] : '') || '';

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Tag from '../Tag';
 import type { Player, Match, DecisionItem, Rapport, Ratings } from '../config';
-import { POSITIONS, DECISIONS, getProfilePhoto } from '../config';
+import { POSITIONS, DECISIONS, getProfilePhoto, normalizeDecision } from '../config';
 
 const PAGE_SIZE = 20;
 
@@ -46,7 +46,7 @@ export default function ListPage({
   const stats = [
     { l: 'Joueurs',  v: players.length,                                                                          c: '#1e6cb6',  bg: '#eef5fd' },
     { l: 'Rapports', v: players.reduce((s, p) => s + reportCount(p), 0),                                        c: '#9333ea',  bg: '#faf5ff' },
-    { l: 'Retenus',  v: players.filter(p => ['retenu','signer','europe'].includes(lr(p)?.decision ?? '')).length, c: '#16a34a',  bg: '#f0fdf4' },
+    { l: 'Retenus',  v: players.filter(p => ['retenu', 'signer', 'europe'].includes(normalizeDecision(lr(p)?.decision))).length, c: '#16a34a',  bg: '#f0fdf4' },
     { l: 'Matchs',   v: matches.length,                                                                          c: '#d97706',  bg: '#fffbeb' },
   ];
 
@@ -104,10 +104,17 @@ export default function ListPage({
         <div className="flex flex-col gap-1.5">
           {paginated.map((p, idx) => {
             const r = lr(p);
-            const d = getDec(p);
             const a = r ? avg(r.ratings) : null;
             const aC = a ? (a >= 5 ? '#16a34a' : a >= 3.5 ? '#d97706' : '#dc2626') : null;
             const rc = reportCount(p);
+            const decisions = Array.from(
+              new Map(
+                (p.rapports ?? [])
+                  .map(rp => DECISIONS.find(dec => dec.v === normalizeDecision(rp.decision)))
+                  .filter((dec): dec is DecisionItem => Boolean(dec))
+                  .map(dec => [dec.v, dec])
+              ).values()
+            );
             return (
               <div
                 key={p.id}
@@ -130,9 +137,12 @@ export default function ListPage({
                     <Tag>{p.ville}</Tag>
                     <Tag>{p.pied}</Tag>
                     {p.agent && <Tag color="#9333ea" bg="#faf5ff">Agent: {p.agent}</Tag>}
+                    {decisions.slice(0, 3).map(dec => (
+                      <Tag key={dec.v} bg={dec.bg} color={dec.c}>{dec.i} {dec.l}</Tag>
+                    ))}
+                    {decisions.length > 3 && <Tag>+{decisions.length - 3}</Tag>}
                   </div>
                 </div>
-                {d && <Tag bg={d.bg} color={d.c}>{d.i} {d.l}</Tag>}
                 <div
                   className="w-11 h-11 rounded-xl shrink-0 flex items-center justify-center border-2"
                   style={{ background: a ? `${aC}08` : '#f8fafc', borderColor: a ? `${aC}20` : '#e2e8f0' }}

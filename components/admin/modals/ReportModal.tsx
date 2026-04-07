@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { CATS, VILLES, NIVEAUX, DECISIONS } from '../config';
+import { CATS, VILLES, NIVEAUX, DECISIONS, normalizeDecision } from '../config';
 import NotePicker from '../NotePicker';
 import type { Rapport, Player, Scout, Match } from '../config';
 
@@ -251,9 +251,9 @@ export default function ReportModal({
                 onClick={() => setRForm(p => p ? { ...p, decision: d.v } : p)}
                 className="px-3 py-2 rounded-[10px] border-2 cursor-pointer text-[11px] font-bold transition-all duration-150"
                 style={{
-                  borderColor: rForm.decision === d.v ? d.c : 'transparent',
-                  background: rForm.decision === d.v ? d.bg : '#f8fafc',
-                  color: rForm.decision === d.v ? d.c : '#94a3b8',
+                  borderColor: normalizeDecision(rForm.decision) === d.v ? d.c : 'transparent',
+                  background: normalizeDecision(rForm.decision) === d.v ? d.bg : '#f8fafc',
+                  color: normalizeDecision(rForm.decision) === d.v ? d.c : '#94a3b8',
                 }}
               >
                 {d.i} {d.l}
