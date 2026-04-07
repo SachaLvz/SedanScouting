@@ -24,6 +24,7 @@ export default function JoueursPage() {
   const [fVille, setFVille] = useState('');
   const [fPoste, setFPoste] = useState('');
   const [fDec, setFDec] = useState('');
+  const [sortBy, setSortBy] = useState<'created_desc' | 'note_desc' | 'note_asc'>('created_desc');
   const [form, setForm] = useState<Player | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(false);
@@ -78,6 +79,24 @@ export default function JoueursPage() {
       (!fDec || lr(p)?.decision === fDec)
     );
   });
+
+  const sortedFiltered = useMemo(() => {
+    const list = [...filtered];
+    if (sortBy === 'created_desc') {
+      return list.sort((a, b) => {
+        const ta = Date.parse(a.createdAt || '');
+        const tb = Date.parse(b.createdAt || '');
+        return (Number.isNaN(tb) ? 0 : tb) - (Number.isNaN(ta) ? 0 : ta);
+      });
+    }
+    return list.sort((a, b) => {
+      const aR = lr(a);
+      const bR = lr(b);
+      const aN = aR ? avg(aR.ratings) : -1;
+      const bN = bR ? avg(bR.ratings) : -1;
+      return sortBy === 'note_desc' ? bN - aN : aN - bN;
+    });
+  }, [filtered, sortBy, lr, avg]);
 
   const compressImage = (file: File): Promise<{ blob: Blob; name: string }> =>
     new Promise((resolve) => {
@@ -239,8 +258,9 @@ export default function JoueursPage() {
           fVille={fVille} setFVille={setFVille}
           fPoste={fPoste} setFPoste={setFPoste}
           fDec={fDec} setFDec={setFDec}
+          sortBy={sortBy} setSortBy={setSortBy}
           cities={availableCities}
-          filtered={filtered}
+          filtered={sortedFiltered}
           setSelId={setSelId} setView={setView} setTab={setTab}
           setForm={setForm}
           lr={lr} getDec={getDec} avg={avg} reportCount={reportCount} blank={blank}

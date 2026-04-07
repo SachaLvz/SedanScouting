@@ -16,6 +16,8 @@ interface ListPageProps {
   setFPoste: (v: string) => void;
   fDec: string;
   setFDec: (v: string) => void;
+  sortBy: 'created_desc' | 'note_desc' | 'note_asc';
+  setSortBy: (v: 'created_desc' | 'note_desc' | 'note_asc') => void;
   cities: string[];
   filtered: Player[];
   setSelId: (id: string) => void;
@@ -32,11 +34,11 @@ interface ListPageProps {
 
 export default function ListPage({
   players, matches, search, setSearch, fVille, setFVille, fPoste, setFPoste, fDec, setFDec,
-  cities, filtered, setSelId, setView, setTab, setForm, lr, getDec, avg, reportCount, blank, onOpenTrash,
+  sortBy, setSortBy, cities, filtered, setSelId, setView, setTab, setForm, lr, getDec, avg, reportCount, blank, onOpenTrash,
 }: ListPageProps) {
   const [page, setPage] = useState(1);
 
-  useEffect(() => { setPage(1); }, [search, fVille, fPoste, fDec]);
+  useEffect(() => { setPage(1); }, [search, fVille, fPoste, fDec, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -76,6 +78,11 @@ export default function ListPage({
         </select>
         <select className="inp w-auto px-3 py-2 text-[11px]" value={fDec} onChange={e => setFDec(e.target.value)}>
           <option value="">Décision</option>{DECISIONS.map(d => <option key={d.v} value={d.v}>{d.l}</option>)}
+        </select>
+        <select className="inp w-auto px-3 py-2 text-[11px]" value={sortBy} onChange={e => setSortBy(e.target.value as 'created_desc' | 'note_desc' | 'note_asc')}>
+          <option value="created_desc">Tri: Plus récents</option>
+          <option value="note_desc">Tri: Meilleure note</option>
+          <option value="note_asc">Tri: Note la plus faible</option>
         </select>
       </div>
 
