@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { VILLES } from '../config';
 import type { Match, Scout } from '../config';
 
@@ -57,9 +58,9 @@ export default function MatchFormModal({ matchForm, setMatchForm, people = [], t
 
   const errBorder = (key: keyof Match) => errors[key] ? '#dc2626' : undefined;
 
-  return (
+  const modal = (
     <div
-      className="fixed inset-0 bg-[rgba(15,23,42,0.5)] z-[1000] flex justify-center px-4 py-10 backdrop-blur-[4px]"
+      className="fixed inset-0 bg-[rgba(15,23,42,0.5)] z-[1000] flex justify-center px-4 py-10 overflow-y-auto backdrop-blur-[4px]"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="card fu max-w-[480px] w-full p-7 self-start shadow-[0_12px_40px_rgba(15,23,42,0.1)]">
@@ -148,4 +149,6 @@ export default function MatchFormModal({ matchForm, setMatchForm, people = [], t
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }
