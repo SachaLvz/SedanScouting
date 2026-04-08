@@ -227,7 +227,7 @@ export default function ShadowPage({
               onDragLeave={() => setDropTarget(null)}
               onDrop={e => onTabDrop(e, null)}
             >
-              <span>Sans catégorie</span>
+              <span>Mbarodi</span>
               <span
                 className="inline-flex items-center justify-center text-[9px] font-extrabold px-[5px] py-[1px] rounded-full leading-none"
                 style={{

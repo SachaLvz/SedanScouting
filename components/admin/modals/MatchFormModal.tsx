@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { VILLES } from '../config';
 import type { Match, Scout } from '../config';
 
@@ -23,6 +23,23 @@ const REQUIRED_FIELDS: { key: keyof Match; label: string }[] = [
 
 export default function MatchFormModal({ matchForm, setMatchForm, people = [], title = 'Programmer un match', submitLabel = 'Programmer', onSave, onClose }: MatchFormModalProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [cities, setCities] = useState<string[]>(VILLES);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const res = await fetch('/api/cities').catch(() => null);
+      const data = res?.ok ? await res.json() : null;
+      const next = Array.isArray(data)
+        ? Array.from(new Set(data.map(v => String(v).trim()).filter(Boolean)))
+            .sort((a, b) => a.localeCompare(b, 'fr'))
+        : VILLES;
+      if (alive) setCities(next.length > 0 ? next : VILLES);
+    })().catch(() => {
+      if (alive) setCities(VILLES);
+    });
+    return () => { alive = false; };
+  }, []);
 
   const errors: Partial<Record<keyof Match, string>> = {};
   if (submitted) {
@@ -67,7 +84,7 @@ export default function MatchFormModal({ matchForm, setMatchForm, people = [], t
             <label className="lbl">Lieu *</label>
             <select className="inp" style={{ borderColor: errBorder('lieu') }} value={matchForm.lieu} onChange={e => setMatchForm(p => p ? { ...p, lieu: e.target.value } : p)}>
               <option value="">— Choisir —</option>
-              {VILLES.map(v => <option key={v}>{v}</option>)}
+              {cities.map(v => <option key={v}>{v}</option>)}
             </select>
             {errors.lieu && <div className="text-[10px] text-[#dc2626] mt-[3px]">{errors.lieu}</div>}
           </div>
