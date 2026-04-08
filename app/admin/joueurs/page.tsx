@@ -68,7 +68,8 @@ export default function JoueursPage() {
   }, [cities, players, form?.ville]);
 
   const sel = players.find(p => p.id === selId);
-  const pendingMatches = matches.filter(m => m.statut === 'planifie');
+  // Pour rattacher un rapport, on doit pouvoir choisir n'importe quel match (peu importe le statut).
+  const pendingMatches = [...matches].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
   const filtered = players.filter(p => {
     const q = search.toLowerCase();
