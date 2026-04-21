@@ -4,8 +4,6 @@ import { useAdminData } from '@/components/admin/context';
 import ShadowPage from '@/components/admin/pages/ShadowPage';
 import type { ShadowTeamItem, ShadowCategory } from '@/components/admin/config';
 
-const OWNER = 'main';
-
 function parseSlots(raw: unknown): Record<number, string[]> {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
   const parsed: Record<number, string[]> = {};
@@ -16,7 +14,7 @@ function parseSlots(raw: unknown): Record<number, string[]> {
 }
 
 export default function ShadowTeamRoute() {
-  const { players, lr, avg } = useAdminData();
+  const { players, lr, avg, currentUserId } = useAdminData();
   const [teams, setTeams] = useState<ShadowTeamItem[]>([]);
   const [categories, setCategories] = useState<ShadowCategory[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -26,10 +24,12 @@ export default function ShadowTeamRoute() {
   const loaded = useRef(false);
 
   useEffect(() => {
-    // Charger catégories et équipes en parallèle
+    loaded.current = false;
+    const ownerId = encodeURIComponent(currentUserId);
+    // Charger catégories et équipes en parallèle (isolées par utilisateur connecté)
     Promise.all([
-      fetch(`/api/shadow-categories?ownerId=${OWNER}`).then(r => r.json()),
-      fetch(`/api/shadow-team?ownerId=${OWNER}`).then(r => r.json()),
+      fetch(`/api/shadow-categories?ownerId=${ownerId}`).then(r => r.json()),
+      fetch(`/api/shadow-team?ownerId=${ownerId}`).then(r => r.json()),
     ]).then(async ([cats, data]) => {
       if (Array.isArray(cats)) setCategories(cats);
 
@@ -38,7 +38,7 @@ export default function ShadowTeamRoute() {
         const res = await fetch('/api/shadow-team', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ownerId: OWNER, name: 'Shadow Team', formation: '4-3-3' }),
+          body: JSON.stringify({ ownerId: currentUserId, name: 'Shadow Team', formation: '4-3-3' }),
         });
         const team = await res.json();
         const t: ShadowTeamItem = {
@@ -67,7 +67,7 @@ export default function ShadowTeamRoute() {
       }
       loaded.current = true;
     }).catch(() => { loaded.current = true; });
-  }, []);
+  }, [currentUserId]);
 
   /* Sauvegarder automatiquement */
   useEffect(() => {
@@ -93,7 +93,7 @@ export default function ShadowTeamRoute() {
     const res = await fetch('/api/shadow-team', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ownerId: OWNER, name, formation: '4-3-3', categoryId: categoryId ?? null }),
+      body: JSON.stringify({ ownerId: currentUserId, name, formation: '4-3-3', categoryId: categoryId ?? null }),
     });
     const team = await res.json();
     const newTeam: ShadowTeamItem = {
@@ -139,7 +139,7 @@ export default function ShadowTeamRoute() {
     const res = await fetch('/api/shadow-categories', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ownerId: OWNER, name }),
+      body: JSON.stringify({ ownerId: currentUserId, name }),
     });
     const cat = await res.json();
     setCategories(prev => [...prev, cat as ShadowCategory]);

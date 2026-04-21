@@ -15,6 +15,8 @@ export interface AdminContextValue {
   curScout: string;
   setCurScout: (id: string) => void;
   scout: Scout | undefined;
+  /** ID utilisateur connecté (admin) — pour données personnelles ex. Shadow Team */
+  currentUserId: string;
   isAdmin: boolean;
   /* CRUD */
   updatePlayer: (player: Player) => Promise<void>;
@@ -65,7 +67,9 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
   }, []);
 
   const scout = scouts.find(s => s.id === curScout);
-  const isAdmin = scout?.role === 'admin';
+  // Le statut admin doit dépendre de l'utilisateur connecté, pas du scout sélectionné.
+  // Sinon un admin qui "switch" de scout perdrait ses droits (et ne verrait plus tous les rapports).
+  const isAdmin = (initialUser.role ?? '').toLowerCase() === 'admin';
 
   const updatePlayer = async (player: Player) => {
     const res = await fetch(`/api/players/${player.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(player) }).catch(console.error);
@@ -106,7 +110,8 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
     const r = lr(p);
     return r ? DECISIONS.find(d => d.v === normalizeDecision(r.decision)) ?? null : null;
   };
-  const reportsForPlayer = (p: Player): Rapport[] => isAdmin ? (p.rapports ?? []) : (p.rapports ?? []).filter(r => r.scoutId === curScout);
+  // Dans l'espace admin, on affiche tous les rapports d'un joueur, peu importe le rôle.
+  const reportsForPlayer = (p: Player): Rapport[] => p.rapports ?? [];
   const allReports = (p: Player): Rapport[] => p.rapports ?? [];
   const reportCount = (p: Player): number => (p.rapports ?? []).length;
 
@@ -136,7 +141,7 @@ export function AdminDataProvider({ initialUser, children }: { initialUser: Admi
   return (
     <AdminContext.Provider value={{
       players, setPlayers, matches, setMatches, scouts, setScouts,
-      curScout, setCurScout, scout, isAdmin,
+      curScout, setCurScout, scout, currentUserId: initialUser.id, isAdmin,
       updatePlayer, createPlayer, deletePlayer, restorePlayer, updateMatch, createMatch, deleteMatch,
       lr, avg, getDec, reportsForPlayer, allReports, reportCount,
       blank, blankR, blankMatch,
