@@ -11,7 +11,6 @@ interface DetailPageProps {
   sel: Player;
   players: Player[];
   matches: Match[];
-  isAdmin: boolean;
   tab: string;
   setTab: (t: string) => void;
   setView: (v: string) => void;
@@ -44,7 +43,7 @@ interface DetailPageProps {
 }
 
 export default function DetailPage({
-  sel, matches, isAdmin, tab, setTab, setView, setForm,
+  sel, matches, tab, setTab, setView, setForm,
   showR, setShowR, rForm, setRForm, openR, setOpenR,
   pendingMatches, scout, addNote, toggleListe,
   allReports, reportsForPlayer, reportCount, lr, avg, getDec, blankR,
@@ -52,7 +51,7 @@ export default function DetailPage({
 }: DetailPageProps) {
   const r = lr(sel);
   const d = r ? DECISIONS.find(x => x.v === normalizeDecision(r.decision)) : null;
-  const visibleReports = isAdmin ? allReports(sel) : reportsForPlayer(sel);
+  const visibleReports = allReports(sel);
   const profilePhoto = getProfilePhoto(sel);
   const photos = Array.from(new Set((sel.photos ?? (sel.photo ? [sel.photo] : [])).filter(Boolean)));
   const [phone, setPhone] = useState(sel.phone || '');
@@ -182,7 +181,6 @@ export default function DetailPage({
       {/* RAPPORTS */}
       {tab === 'rapports' && (
         <div className="fu flex flex-col gap-2">
-          {!isAdmin && <div className="px-4 py-2.5 bg-[#fffbeb] rounded-[10px] text-xs text-[#92400e] mb-2">⚠️ Vous voyez uniquement vos rapports. L&apos;admin voit tous les rapports.</div>}
           {visibleReports.length === 0
             ? <div className="text-center py-10 text-[#94a3b8]">Aucun rapport visible.</div>
             : visibleReports.map(rp => {

@@ -37,16 +37,34 @@ export default function JoueursPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Navigation depuis une autre page (ex: shadow team)
+  // Ouverture directe via URL (?playerId=...) + compat legacy (?player=...)
   useEffect(() => {
-    const pid = searchParams.get('player');
-    if (pid && players.length > 0 && players.some(p => p.id === pid)) {
-      setSelId(pid);
-      setView('detail');
-      setTab('profil');
-      router.replace('/admin/joueurs');
+    const pid = searchParams.get('playerId') || searchParams.get('player');
+    if (!pid) return;
+    if (players.length === 0) return;
+    if (!players.some(p => p.id === pid)) return;
+
+    setSelId(pid);
+    setView('detail');
+    setTab('profil');
+
+    // Normalisation du param legacy vers playerId
+    if (searchParams.get('player') && !searchParams.get('playerId')) {
+      router.replace(`/admin/joueurs?playerId=${encodeURIComponent(pid)}`);
     }
   }, [searchParams, players]);
+
+  // Synchroniser l'URL avec le joueur affiché (permet copier/coller un lien direct)
+  useEffect(() => {
+    const shouldHavePlayerInUrl =
+      Boolean(selId) && (view === 'detail' || view === 'form');
+
+    if (shouldHavePlayerInUrl && selId) {
+      router.replace(`/admin/joueurs?playerId=${encodeURIComponent(selId)}`);
+      return;
+    }
+    router.replace('/admin/joueurs');
+  }, [view, selId]);
 
   useEffect(() => {
     fetch('/api/cities')
@@ -263,7 +281,7 @@ export default function JoueursPage() {
           sortBy={sortBy} setSortBy={setSortBy}
           cities={availableCities}
           filtered={sortedFiltered}
-          setSelId={setSelId} setView={setView} setTab={setTab}
+          setSelId={(id) => setSelId(id)} setView={setView} setTab={setTab}
           setForm={setForm}
           lr={lr} getDec={getDec} avg={avg} reportCount={reportCount} blank={blank}
           onOpenTrash={() => setView('trash')}
@@ -280,7 +298,7 @@ export default function JoueursPage() {
       {view === 'detail' && sel && (
         <DetailPage
           sel={sel} players={players} matches={matches}
-          isAdmin={isAdmin} tab={tab} setTab={setTab} setView={setView}
+          tab={tab} setTab={setTab} setView={setView}
           setForm={setForm}
           showR={showR} setShowR={setShowR} rForm={rForm} setRForm={setRForm}
           openR={openR} setOpenR={setOpenR}
