@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import PitchView from '../PitchView';
 import SlotPickModal from '../modals/SlotPickModal';
 import { FORMATIONS } from '../config';
@@ -26,6 +26,10 @@ interface ShadowPageProps {
   lr: (p: Player) => Rapport | undefined;
   avg: (r: Ratings) => number;
   playerBaseUrl?: string;
+  /** Consultation d'un autre compte : pas de création / édition */
+  readOnly?: boolean;
+  /** Ex. sélecteur de compte (admin) */
+  viewAccountSelect?: ReactNode;
 }
 
 const NONE = '__none__'; // sentinel pour "Sans catégorie"
@@ -36,6 +40,7 @@ export default function ShadowPage({
   onCreateCategory, onRenameCategory, onDeleteCategory,
   players, formation, setFormation, shadowTeam, setShadowTeam,
   slotPick, setSlotPick, lr, avg, playerBaseUrl,
+  readOnly = false, viewAccountSelect,
 }: ShadowPageProps) {
   const slots = FORMATIONS[formation]?.slots ?? [];
   const assignedCount = Object.values(shadowTeam).filter(ids => ids.length > 0).length;
@@ -144,7 +149,16 @@ export default function ShadowPage({
 
   return (
     <div className="fu max-w-[960px] mx-auto px-5 pb-[60px]">
-      <h2 className="m-0 mb-5 text-xl font-extrabold text-[#0c2340]">⚽ Shadow Team</h2>
+      <div className="flex flex-col gap-3 mb-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+        <h2 className="m-0 text-xl font-extrabold text-[#0c2340]">⚽ Shadow Team</h2>
+        {viewAccountSelect}
+      </div>
+      {readOnly && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-950">
+          <strong className="font-bold">Lecture seule</strong>
+          {' — '}Vous consultez la shadow team d’un autre compte. Les modifications ne sont pas possibles depuis cet écran.
+        </div>
+      )}
 
       {/* ══════════ TABS CATÉGORIES ══════════ */}
       <div className="flex items-center gap-2 mb-1">
@@ -178,7 +192,7 @@ export default function ShadowPage({
                       transform: isDragTarget ? 'scale(1.05)' : 'scale(1)',
                     }}
                     onClick={() => setSelectedCat(cat.id)}
-                    onDoubleClick={() => { setEditingCatId(cat.id); setEditCatName(cat.name); }}
+                    onDoubleClick={() => { if (!readOnly) { setEditingCatId(cat.id); setEditCatName(cat.name); } }}
                     onDragOver={e => onTabDragOver(e, cat.id)}
                     onDragLeave={() => setDropTarget(null)}
                     onDrop={e => onTabDrop(e, cat.id)}
@@ -194,6 +208,7 @@ export default function ShadowPage({
                     >
                       {teams.filter(t => t.categoryId === cat.id).length}
                     </span>
+                    {!readOnly && (
                     <span
                       className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-[9px] font-bold leading-none transition-all opacity-30 hover:opacity-100"
                       style={{
@@ -207,6 +222,7 @@ export default function ShadowPage({
                     >
                       ✕
                     </span>
+                    )}
                   </button>
                 )}
               </div>
@@ -242,6 +258,7 @@ export default function ShadowPage({
         </div>
 
         {/* Séparateur + bouton créer (hors scroll, toujours visible) */}
+        {!readOnly && (
         <div className="flex-shrink-0 flex items-center gap-1.5">
           <div className="w-px h-5 bg-[#e2e8f0]" />
           {showCreateCat ? (
@@ -266,6 +283,7 @@ export default function ShadowPage({
             </button>
           )}
         </div>
+        )}
       </div>
 
       {/* ══════════ ÉQUIPES DU TAB SÉLECTIONNÉ ══════════ */}
@@ -276,8 +294,8 @@ export default function ShadowPage({
             <div
               key={t.id}
               className="group relative"
-              draggable={editingTeamId !== t.id && categories.length > 0}
-              onDragStart={e => onDragStart(e, t.id)}
+              draggable={!readOnly && editingTeamId !== t.id && categories.length > 0}
+              onDragStart={e => { if (!readOnly) onDragStart(e, t.id); }}
               onDragEnd={onDragEnd}
               style={{ opacity: draggingId === t.id ? 0.4 : 1 }}
             >
@@ -297,15 +315,15 @@ export default function ShadowPage({
                     background: isActive ? '#0c2340' : '#fff',
                     color: isActive ? '#fff' : '#475569',
                     borderColor: isActive ? '#0c2340' : '#e2e8f0',
-                    cursor: categories.length > 0 ? 'grab' : 'pointer',
+                    cursor: readOnly ? 'pointer' : categories.length > 0 ? 'grab' : 'pointer',
                   }}
                   onClick={() => onSelectTeam(t)}
-                  onDoubleClick={() => { setEditingTeamId(t.id); setEditTeamName(t.name ?? ''); }}
-                  title="Double-clic pour renommer"
+                  onDoubleClick={() => { if (!readOnly) { setEditingTeamId(t.id); setEditTeamName(t.name ?? ''); } }}
+                  title={readOnly ? undefined : 'Double-clic pour renommer'}
                 >
                   {t.name}
                   {/* Bouton supprimer — toujours présent, discret au repos */}
-                  {teams.length > 1 && (
+                  {!readOnly && teams.length > 1 && (
                     <span
                       className="flex items-center justify-center w-3.5 h-3.5 rounded-full text-[9px] font-bold leading-none transition-all opacity-30 group-hover:opacity-100 hover:!opacity-100"
                       style={{
@@ -331,7 +349,7 @@ export default function ShadowPage({
         )}
 
         {/* Créer équipe */}
-        {showCreateTeam ? (
+        {!readOnly && (showCreateTeam ? (
           <div className="flex gap-1.5 items-center">
             <input
               className="border border-[#0c2340] rounded px-2 py-1.5 text-xs outline-none w-32"
@@ -348,8 +366,14 @@ export default function ShadowPage({
           <button className="btn-g px-3 py-1.5 text-xs" onClick={() => setShowCreateTeam(true)}>
             + Équipe
           </button>
-        )}
+        ))}
       </div>
+
+      {readOnly && teams.length === 0 && (
+        <div className="rounded-xl border border-dashed border-[#cbd5e1] bg-[#f8fafc] px-5 py-8 text-center text-sm text-[#64748b]">
+          Aucune shadow team enregistrée pour ce compte.
+        </div>
+      )}
 
       {/* ══════════ FORMATION + TERRAIN ══════════ */}
       {activeTeamId && (
@@ -358,8 +382,11 @@ export default function ShadowPage({
             {Object.keys(FORMATIONS).map(f => (
               <button
                 key={f}
+                type="button"
+                disabled={readOnly}
                 className={formation === f ? 'btn-p px-4 py-2 text-xs' : 'btn-g px-4 py-2 text-xs'}
-                onClick={() => { setFormation(f); setShadowTeam({}); }}
+                style={readOnly ? { opacity: 0.65, cursor: 'not-allowed', pointerEvents: 'none' } : undefined}
+                onClick={() => { if (!readOnly) { setFormation(f); setShadowTeam({}); } }}
               >
                 {FORMATIONS[f].label}
               </button>
@@ -372,10 +399,12 @@ export default function ShadowPage({
             shadowTeam={shadowTeam}
             onSlotClick={(idx, pos) => setSlotPick({ idx, pos })}
             portrait={isMobile}
+            readOnly={readOnly}
           />
 
           <div className="mt-3 text-[11px] text-[#94a3b8] font-semibold text-right">
-            {assignedCount}/{slots.length} postes assignés · Cliquer sur un poste pour gérer les joueurs
+            {assignedCount}/{slots.length} postes assignés
+            {readOnly ? ' · Consultation' : ' · Cliquer sur un poste pour gérer les joueurs'}
           </div>
         </>
       )}
