@@ -7,9 +7,11 @@ interface PitchViewProps {
   shadowTeam: Record<number, string[]>;
   onSlotClick: (idx: number, pos: string) => void;
   portrait?: boolean;
+  /** Pas d'assignation de joueurs (consultation) */
+  readOnly?: boolean;
 }
 
-export default function PitchView({ formation, players, shadowTeam, onSlotClick, portrait = false }: PitchViewProps) {
+export default function PitchView({ formation, players, shadowTeam, onSlotClick, portrait = false, readOnly = false }: PitchViewProps) {
   const f = FORMATIONS[formation];
   if (!f) return null;
 
@@ -71,10 +73,10 @@ export default function PitchView({ formation, players, shadowTeam, onSlotClick,
         return (
           <div
             key={idx}
-            onClick={() => onSlotClick(idx, slot.pos)}
+            onClick={readOnly ? undefined : () => onSlotClick(idx, slot.pos)}
             style={{
               position: 'absolute', left: `${lx}%`, top: `${ly}%`,
-              transform: 'translate(-50%,-50%)', cursor: 'pointer', textAlign: 'center', zIndex: 2,
+              transform: 'translate(-50%,-50%)', cursor: readOnly ? 'default' : 'pointer', textAlign: 'center', zIndex: 2,
               width: cardWidth,
             }}
           >
